@@ -22,7 +22,6 @@ const signUp = asyncHandler(async (req: Request, res: Response) => {
   const adminUser = new User({
     email,
     password,
-    role: "admin",
     isSignUpComplete: true,
   });
 
