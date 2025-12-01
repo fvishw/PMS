@@ -3,6 +3,7 @@ import asyncHandler from "../utils/asyncHandler.ts";
 import { ApiError } from "../utils/ApiError.ts";
 import { User } from "../models/user.model.ts";
 import { ApiResponse } from "../utils/ApiResponse.ts";
+import AuthService from "../utils/AuthService.ts";
 
 const signUp = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -15,7 +16,11 @@ const signUp = asyncHandler(async (req: Request, res: Response) => {
     isSignUpComplete: true,
   });
 
-  if (existingUser) {
+  if (!existingUser) {
+    throw new ApiError(403, "Please contact Admin to create an account");
+  }
+
+  if (existingUser && existingUser.isSignUpComplete) {
     throw new ApiError(409, "User already exists");
   }
 
@@ -54,11 +59,56 @@ const login = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(401, "Invalid email or password");
   }
 
-  const token = user.generateAuthToken();
+  const accessToken = user.generateAuthToken();
+  const refreshToken = user.generateRefreshToken();
+  user.refreshToken = refreshToken;
+  await user.save();
 
   return res
     .status(200)
-    .json(new ApiResponse(200, { token }, "Login successful"));
+    .json(
+      new ApiResponse(200, { accessToken, refreshToken }, "Login successful")
+    );
 });
 
-export { signUp, login };
+const logout = asyncHandler(async (req: Request, res: Response) => {
+  // Invalidate the token on the client side by instructing the client to delete it.
+  const userId = req.user?.id;
+  const user = await User.findById(userId);
+  if (user) {
+    user.refreshToken = "";
+    await user.save();
+  }
+
+  return res.status(200).json(new ApiResponse(200, null, "Logout successful"));
+});
+
+const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    throw new ApiError(400, "Refresh token is required");
+  }
+  const decodedToken = AuthService.verifyRefreshToken(refreshToken);
+  if (
+    typeof decodedToken === "string" ||
+    decodedToken.tokenType !== "refresh"
+  ) {
+    throw new ApiError(401, "Invalid refresh token");
+  }
+
+  const user = await User.findById(decodedToken.id);
+  if (!user || user.refreshToken !== refreshToken) {
+    throw new ApiError(401, "Invalid refresh token");
+  }
+
+  const newAccessToken = user.generateAuthToken();
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, { accessToken: newAccessToken }, "Token refreshed")
+    );
+});
+
+export { signUp, login, logout, refreshAccessToken };

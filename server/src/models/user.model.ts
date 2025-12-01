@@ -8,8 +8,10 @@ export interface IUser extends Document {
   createdAt: Date;
   updatedAt: Date;
   isSignUpComplete?: boolean;
+  refreshToken: string;
   comparePassword(password: string): boolean;
   generateAuthToken(): string;
+  generateRefreshToken(): string;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -18,6 +20,7 @@ const UserSchema = new Schema<IUser>(
     password: { type: String, required: true },
     role: { type: String, enum: ["admin", "user", "manager"] },
     isSignUpComplete: { type: Boolean, default: false },
+    refreshToken: { type: String, default: "" },
   },
   { timestamps: true }
 );
@@ -31,7 +34,10 @@ UserSchema.method("comparePassword", function (password: string) {
   return bcrypt.compareSync(password, this.password);
 });
 UserSchema.method("generateAuthToken", function () {
-  return AuthService.generateToken(this._id, this.role, this.email);
+  return AuthService.generateAccessToken(this._id, this.role, this.email);
+});
+UserSchema.method("generateRefreshToken", function () {
+  return AuthService.generateRefreshToken(this._id, this.email);
 });
 
 export const User = model<IUser>("User", UserSchema);
