@@ -4,7 +4,6 @@ import { ApiError } from "../utils/ApiError.ts";
 import { User } from "../models/user.model.ts";
 import { ApiResponse } from "../utils/ApiResponse.ts";
 import AuthService from "../utils/AuthService.ts";
-import { generateOtp } from "../utils/otp.ts";
 
 const signUp = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -112,7 +111,7 @@ const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
     );
 });
 
-const forgetPassword = asyncHandler(async (req: Request, res: Response) => {
+const sendResetLink = asyncHandler(async (req: Request, res: Response) => {
   const { email } = req.body;
   if (!email) {
     throw new ApiError(400, "Email is required");
@@ -121,43 +120,55 @@ const forgetPassword = asyncHandler(async (req: Request, res: Response) => {
   if (!user) {
     throw new ApiError(404, "User not found");
   }
-  const { otp, expiry } = generateOtp(10);
-  user.passwordResetOtp = otp;
-  user.passwordResetOtpExpiry = expiry;
+  const resetToken = AuthService.generatePasswordResetToken(
+    user._id,
+    user.email
+  );
+  user.passwordResetToken = resetToken;
   await user.save();
 
-  // need to send otp to user's email address
+  // need to send reset link to user's email address
 
   return res
     .status(200)
-    .json(new ApiResponse(200, null, "OTP sent to registered email address"));
+    .json(
+      new ApiResponse(
+        200,
+        null,
+        "Password Reset link sent to registered email address"
+      )
+    );
 });
 
-const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
-  const { email, otp } = req.body;
-  if (!email || !otp) {
-    throw new ApiError(400, "Email and OTP are required");
-  }
-  const parsedOtp = parseInt(otp, 10);
-  if (isNaN(parsedOtp)) {
-    throw new ApiError(400, "OTP must be a number");
-  }
-  const user = await User.findOne({ email });
-  if (!user) {
-    throw new ApiError(404, "User with given email not found");
-  }
-  if (
-    user.passwordResetOtp !== parsedOtp ||
-    !user.passwordResetOtpExpiry ||
-    user.passwordResetOtpExpiry < new Date()
-  ) {
-    throw new ApiError(400, "Invalid or expired OTP");
-  }
+const verifyPasswordResetLink = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { token } = req.body;
+    if (!token) {
+      throw new ApiError(400, "Token is required");
+    }
+    const decodedToken = AuthService.verifyPasswordResetToken(token);
+    if (
+      typeof decodedToken === "string" ||
+      decodedToken.tokenType !== "reset"
+    ) {
+      throw new ApiError(401, "Invalid password reset token");
+    }
+    const user = await User.findById(decodedToken.id);
+    if (!user || user.passwordResetToken !== token) {
+      throw new ApiError(401, "Invalid password reset token");
+    }
+    user.postPasswordResetCleanup();
+    await user.save();
 
-  user.postPasswordResetCleanup();
-  await user.save();
+    return res.status(200).json(new ApiResponse(200, null, "OTP verified"));
+  }
+);
 
-  return res.status(200).json(new ApiResponse(200, null, "OTP verified"));
-});
-
-export { signUp, login, logout, refreshAccessToken, forgetPassword, verifyOtp };
+export {
+  signUp,
+  login,
+  logout,
+  refreshAccessToken,
+  sendResetLink,
+  verifyPasswordResetLink,
+};

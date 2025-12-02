@@ -1,12 +1,12 @@
 import { Router } from "express";
 import authMiddleware from "../middlewares/auth.middleware.ts";
 import {
-  forgetPassword,
+  sendResetLink,
   login,
   logout,
   refreshAccessToken,
   signUp,
-  verifyOtp,
+  verifyPasswordResetLink,
 } from "../controllers/userAuth.controller.ts";
 
 const userAuth = Router();
@@ -19,8 +19,8 @@ userAuth.put("/logout", authMiddleware(["admin", "user", "manager"]), logout);
 
 userAuth.post("/refresh-token", refreshAccessToken);
 
-userAuth.post("/forget-password", forgetPassword);
+userAuth.post("/send-reset-link", sendResetLink);
 
-userAuth.post("/verify-otp", verifyOtp);
+userAuth.post("/verify-password-reset-link", verifyPasswordResetLink);
 
 export default userAuth;

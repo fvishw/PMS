@@ -9,8 +9,7 @@ export interface IUser extends Document {
   updatedAt: Date;
   isSignUpComplete?: boolean;
   refreshToken: string;
-  passwordResetOtp?: number | null;
-  passwordResetOtpExpiry?: Date | null;
+  passwordResetToken?: string | null;
   postPasswordResetCleanup(): void;
   comparePassword(password: string): boolean;
   generateAuthToken(): string;
@@ -24,8 +23,7 @@ const UserSchema = new Schema<IUser>(
     role: { type: String, enum: ["admin", "user", "manager"] },
     isSignUpComplete: { type: Boolean, default: false },
     refreshToken: { type: String, default: "" },
-    passwordResetOtp: { type: Number },
-    passwordResetOtpExpiry: { type: Date },
+    passwordResetToken: { type: String, default: null },
   },
   { timestamps: true }
 );
@@ -45,8 +43,7 @@ UserSchema.method("generateRefreshToken", function () {
   return AuthService.generateRefreshToken(this._id, this.email);
 });
 UserSchema.method("postPasswordResetCleanup", function () {
-  this.passwordResetOtp = null;
-  this.passwordResetOtpExpiry = null;
+  this.passwordResetToken = null;
 });
 
 export const User = model<IUser>("User", UserSchema);
