@@ -13,7 +13,7 @@ const signUp = asyncHandler(async (req: Request, res: Response) => {
   }
   const existingUser = await User.findOne({
     email,
-    isSignUpComplete: true,
+    isSignUpComplete: false,
   });
 
   if (!existingUser) {
@@ -24,14 +24,11 @@ const signUp = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(409, "User already exists");
   }
 
-  const adminUser = new User({
-    email,
-    password,
-    isSignUpComplete: true,
-  });
-
-  const user = await adminUser.save();
-
+  existingUser.password = password;
+  existingUser.isSignUpComplete = true;
+  await existingUser.save();
+  
+  const user = await existingUser.save()
   if (!user) {
     throw new ApiError(400, "Please Contact Admin to create an account");
   }
