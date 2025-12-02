@@ -157,12 +157,34 @@ const verifyPasswordResetLink = asyncHandler(
     if (!user || user.passwordResetToken !== token) {
       throw new ApiError(401, "Invalid password reset token");
     }
-    user.postPasswordResetCleanup();
-    await user.save();
-
-    return res.status(200).json(new ApiResponse(200, null, "OTP verified"));
+    return res
+      .status(200)
+      .json(new ApiResponse(200, null, "Password reset token is valid"));
   }
 );
+
+const resetPassword = asyncHandler(async (req: Request, res: Response) => {
+  const { token, newPassword } = req.body;
+  if (!token || !newPassword) {
+    throw new ApiError(400, "Token and new password are required");
+  }
+  const decodedToken = AuthService.verifyPasswordResetToken(token);
+  if (typeof decodedToken === "string" || decodedToken.tokenType !== "reset") {
+    throw new ApiError(401, "Invalid password reset token");
+  }
+  const user = await User.findById(decodedToken.id);
+
+  if (!user || user.passwordResetToken !== token) {
+    throw new ApiError(401, "Invalid password reset token");
+  }
+
+  user.password = newPassword;
+  user.postPasswordResetCleanup();
+  await user.save();
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Password reset successful"));
+});
 
 export {
   signUp,
@@ -171,4 +193,5 @@ export {
   refreshAccessToken,
   sendResetLink,
   verifyPasswordResetLink,
+  resetPassword,
 };

@@ -89,7 +89,7 @@ class AuthService {
       );
     }
 
-    const token = jwt.sign(payload, secretKey, { expiresIn: "15m" });
+    const token = jwt.sign(payload, secretKey, { expiresIn: "10m" });
     return token;
   }
   static verifyPasswordResetToken(token: string): TokenPayload | string {

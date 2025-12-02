@@ -7,6 +7,7 @@ import {
   refreshAccessToken,
   signUp,
   verifyPasswordResetLink,
+  resetPassword,
 } from "../controllers/userAuth.controller.ts";
 
 const userAuth = Router();
@@ -22,5 +23,7 @@ userAuth.post("/refresh-token", refreshAccessToken);
 userAuth.post("/send-reset-link", sendResetLink);
 
 userAuth.post("/verify-password-reset-link", verifyPasswordResetLink);
+
+userAuth.post("/reset-password", resetPassword);
 
 export default userAuth;
