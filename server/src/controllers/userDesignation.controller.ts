@@ -15,7 +15,15 @@ const getAllDesignations = asyncHandler(async (req: Request, res: Response) => {
 
 const addDesignation = asyncHandler(async (req: Request, res: Response) => {
   const { name, description } = req.body;
-  const designation = new Designation({ name, description });
+  if (!name) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Name and description are required"));
+  }
+  const designation = new Designation({
+    name,
+    description,
+  });
   await designation.save();
   res
     .status(201)

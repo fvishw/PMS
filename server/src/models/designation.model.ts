@@ -8,7 +8,7 @@ interface IDesignation extends Document {
 const DesignationSchema = new Schema<IDesignation>(
   {
     name: { type: String, required: true, unique: true },
-    description: { type: String, required: true },
+    description: { type: String },
   },
   { timestamps: true }
 );

@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import AuthService from "../utils/AuthService.ts";
 
 export interface IUser extends Document {
+  fullName: string;
   email: string;
   password: string;
   role: "admin" | "user" | "manager";
@@ -20,8 +21,9 @@ export interface IUser extends Document {
 
 const UserSchema = new Schema<IUser>(
   {
+    fullName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String },
     role: { type: String, enum: ["admin", "user", "manager"] },
     designation: {
       type: Schema.Types.ObjectId,

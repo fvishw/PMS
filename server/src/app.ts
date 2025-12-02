@@ -2,6 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
+import type { ApiError } from "./utils/ApiError.ts";
 
 dotenv.config();
 
@@ -13,8 +14,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 import userAuth from "./routes/userAuth.routes.ts";
 import userDesignation from "./routes/userDesignation.routes.ts";
-import type { ApiError } from "./utils/ApiError.ts";
+import userRouter from "./routes/user.route.ts";
 
+app.use("/api/user", userRouter);
 app.use("/api/user/auth", userAuth);
 app.use("/api/user/designation", userDesignation);
 
