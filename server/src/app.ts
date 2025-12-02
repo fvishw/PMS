@@ -12,9 +12,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 import userAuth from "./routes/userAuth.routes.ts";
+import userDesignation from "./routes/userDesignation.routes.ts";
 import type { ApiError } from "./utils/ApiError.ts";
 
 app.use("/api/user/auth", userAuth);
+app.use("/api/user/designation", userDesignation);
 
 app.use(
   (

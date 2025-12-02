@@ -1,10 +1,12 @@
 import { Schema, model, Document } from "mongoose";
 import bcrypt from "bcrypt";
 import AuthService from "../utils/AuthService.ts";
+
 export interface IUser extends Document {
   email: string;
   password: string;
   role: "admin" | "user" | "manager";
+  designation: Schema.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
   isSignUpComplete?: boolean;
@@ -21,6 +23,11 @@ const UserSchema = new Schema<IUser>(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, enum: ["admin", "user", "manager"] },
+    designation: {
+      type: Schema.Types.ObjectId,
+      ref: "Designation",
+      required: true,
+    },
     isSignUpComplete: { type: Boolean, default: false },
     refreshToken: { type: String, default: "" },
     passwordResetToken: { type: String, default: null },
