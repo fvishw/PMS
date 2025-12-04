@@ -111,7 +111,15 @@ const sendResetLink = asyncHandler(async (req: Request, res: Response) => {
   }
   const user = await User.findOne({ email });
   if (!user) {
-    throw new ApiError(404, "User not found");
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          null,
+          "If an account exists with this email, a password reset link has been sent"
+        )
+      );
   }
   const resetToken = AuthService.generatePasswordResetToken(
     user._id,
@@ -128,7 +136,7 @@ const sendResetLink = asyncHandler(async (req: Request, res: Response) => {
       new ApiResponse(
         200,
         null,
-        "Password Reset link sent to registered email address"
+        "If an account exists with this email, a password reset link has been sent"
       )
     );
 });
