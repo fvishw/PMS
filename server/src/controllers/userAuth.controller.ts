@@ -26,12 +26,8 @@ const signUp = asyncHandler(async (req: Request, res: Response) => {
 
   existingUser.password = password;
   existingUser.isSignUpComplete = true;
-  await existingUser.save();
-  
-  const user = await existingUser.save()
-  if (!user) {
-    throw new ApiError(400, "Please Contact Admin to create an account");
-  }
+
+  const user = await existingUser.save();
 
   return res
     .status(201)
