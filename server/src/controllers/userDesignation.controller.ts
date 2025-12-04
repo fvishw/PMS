@@ -18,7 +18,7 @@ const addDesignation = asyncHandler(async (req: Request, res: Response) => {
   if (!name) {
     return res
       .status(400)
-      .json(new ApiResponse(400, null, "Name and description are required"));
+      .json(new ApiResponse(400, null, "Name is required"));
   }
   const designation = new Designation({
     name,
