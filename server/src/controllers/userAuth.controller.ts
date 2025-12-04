@@ -1,4 +1,4 @@
-import { type Request, type Response } from "express";
+import type { Request, Response } from "express";
 import asyncHandler from "../utils/asyncHandler.ts";
 import { ApiError } from "../utils/ApiError.ts";
 import { User } from "../models/user.model.ts";
