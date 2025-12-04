@@ -24,7 +24,12 @@ const UserSchema = new Schema<IUser>(
     fullName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String },
-    role: { type: String, enum: ["admin", "user", "manager"] },
+    role: {
+      type: String,
+      enum: ["admin", "user", "manager"],
+      default: "user",
+      required: true,
+    },
     designation: {
       type: Schema.Types.ObjectId,
       ref: "Designation",
