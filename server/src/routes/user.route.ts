@@ -1,17 +1,9 @@
 import { Router } from "express";
 import { addUser } from "../controllers/user.controller.ts";
+import authMiddleware from "../middlewares/auth.middleware.ts";
 
 const userRouter = Router();
 
-// Example route handlers
-// userRouter.get("/");
-
-userRouter.post("/add", addUser);
-
-// userRouter.get("/:id");
-
-// userRouter.put("/:id");
-
-// userRouter.delete("/:id");
+userRouter.post("/add", authMiddleware(["admin"]), addUser);
 
 export default userRouter;
