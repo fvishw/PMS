@@ -173,7 +173,6 @@ const managerReviewKpi = asyncHandler(async (req: Request, res: Response) => {
 
   performance.competencies = parsedPayload.data.competencies;
   performance.stage = "manager_review";
-  performance.status = "completed";
 
   await performance.save();
 
@@ -207,7 +206,6 @@ const reviewerReviewKpi = asyncHandler(async (req: Request, res: Response) => {
 
   performance.finalReview.reviewerComments = reviewerComments;
   performance.stage = "reviewer_review";
-  performance.status = "completed";
 
   await performance.save();
 
@@ -241,7 +239,6 @@ const appraiserReviewKpi = asyncHandler(async (req: Request, res: Response) => {
 
   performance.finalReview.appraiserComments = appraiserComments;
   performance.stage = "appraiser_review";
-  performance.status = "completed";
 
   await performance.save();
 
@@ -276,7 +273,6 @@ const userFinalReviewKpi = asyncHandler(async (req: Request, res: Response) => {
 
   performance.finalReview.selfReview = selfReviewerComments;
   performance.stage = "self_review";
-  performance.status = "completed";
 
   await performance.save();
 

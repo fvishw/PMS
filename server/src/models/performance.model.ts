@@ -31,7 +31,6 @@ interface IPerformance extends Document {
   kpis: Types.ObjectId;
   competencies: ICompetency;
   finalReview: IFinalReview;
-  status: "pending" | "completed"; // e.g., "Pending", "In Review", "Completed"
   stage:
     | "kpi_acceptance"
     | "self_review"
@@ -74,12 +73,6 @@ const PerformanceSchema = new Schema<IPerformance>(
         remarks: { type: String },
         comments: { type: String },
       },
-    },
-    status: {
-      type: String,
-      required: true,
-      default: "pending",
-      enum: ["pending", "completed"],
     },
     stage: {
       type: String,
