@@ -75,7 +75,6 @@ const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
     userId: userId,
     kpis: newUserKpi._id,
     stage: "kpi_acceptance",
-    status: "completed",
   });
   await performance.save();
 
