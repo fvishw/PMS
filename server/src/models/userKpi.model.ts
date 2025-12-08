@@ -39,6 +39,7 @@ const UserKpiSchema = new Schema<IUserKpi>(
   { timestamps: true }
 );
 
-const UserKpi = model<IUserKpi>("UserKpi", UserKpiSchema);
+UserKpiSchema.index({ user: 1, designation: 1 }, { unique: true });
 
+const UserKpi = model<IUserKpi>("UserKpi", UserKpiSchema);
 export { UserKpi };

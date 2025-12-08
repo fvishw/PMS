@@ -99,7 +99,7 @@ const selfReviewKpi = asyncHandler(async (req: Request, res: Response) => {
   const userKpi = await UserKpi.findOne({
     isKpiLocked: true,
     user: userId,
-  }).lean();
+  });
 
   if (!userKpi) {
     throw new ApiError(404, "User KPI not found");
@@ -114,11 +114,11 @@ const selfReviewKpi = asyncHandler(async (req: Request, res: Response) => {
       kpiCriterion.selfComments = item.selfComments;
     }
   });
-  await UserKpi.updateOne({ _id: userKpi._id }, { criteria: userKpi.criteria });
+  await userKpi.save();
 
   await Performance.updateOne(
     { userId: userId, kpis: userKpi._id },
-    { stage: "self_review", status: "completed" }
+    { stage: "self_review" }
   );
 
   return res
@@ -271,7 +271,7 @@ const userFinalReviewKpi = asyncHandler(async (req: Request, res: Response) => {
   const selfReviewerComments = parsedPayload.data.selfReview;
 
   performance.finalReview.selfReview = selfReviewerComments;
-  performance.stage = "self_review";
+  performance.stage = "user_final_review";
 
   await performance.save();
 

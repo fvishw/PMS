@@ -37,7 +37,7 @@ interface IPerformance extends Document {
     | "manager_review"
     | "reviewer_review"
     | "appraiser_review"
-    | "user_review";
+    | "user_final_review";
   interval: {
     quarterly: "Q1" | "Q2" | "Q3" | "Q4";
     year: number;
@@ -47,7 +47,7 @@ interface IPerformance extends Document {
 const PerformanceSchema = new Schema<IPerformance>(
   {
     userId: { type: Types.ObjectId, ref: "User", required: true },
-    kpis: { type: Types.ObjectId, ref: "Kpi", required: true },
+    kpis: { type: Types.ObjectId, ref: "UserKpi", required: true },
     competencies: {
       communication: { type: Number, max: 5, min: 1 },
       problemSolving: { type: Number, max: 5, min: 1 },
@@ -84,15 +84,15 @@ const PerformanceSchema = new Schema<IPerformance>(
         "manager_review",
         "reviewer_review",
         "appraiser_review",
-        "user_review",
+        "user_final_review",
       ],
     },
     interval: {
       quarterly: {
         type: String,
         enum: ["Q1", "Q2", "Q3", "Q4"],
+        set: (v: String) => v?.toUpperCase(),
         // required: true,
-        capitalize: true,
       },
       year: {
         type: Number,

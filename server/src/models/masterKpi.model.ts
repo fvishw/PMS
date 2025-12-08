@@ -21,6 +21,7 @@ const KpiSchema = new Schema<IKpi>(
       type: Types.ObjectId,
       ref: "Designation",
       required: true,
+      unique: true,
     },
     criteria: [
       {

@@ -33,7 +33,7 @@ const UserSchema = new Schema<IUser>(
     designation: {
       type: Schema.Types.ObjectId,
       ref: "Designation",
-      // required: true,
+      required: true,
     },
     isSignUpComplete: { type: Boolean, default: false },
     refreshToken: { type: String, default: "" },
