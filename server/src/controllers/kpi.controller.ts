@@ -145,7 +145,7 @@ const managerReviewKpi = asyncHandler(async (req: Request, res: Response) => {
     isKpiLocked: true,
     user: employeeId,
     managerId: managerId,
-  }).lean();
+  });
 
   if (!userKpi) {
     throw new ApiError(404, "User KPI not found");
