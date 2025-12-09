@@ -1,5 +1,4 @@
 import z from "zod";
-import type { selfReviewKpi } from "../controllers/kpi.controller.ts";
 
 const selfCriteria = z.object({
   _id: z.string(),
@@ -13,7 +12,7 @@ const managerCriteria = z.object({
   managerComments: z.string().max(500),
 });
 
-const Competencies = z.object({
+const CompetenciesSchema = z.object({
   communication: z.number().min(1).max(5),
   problemSolving: z.number().min(1).max(5),
   leadership: z.number().min(1).max(5),
@@ -51,13 +50,13 @@ const SelfCriteriaSchema = z.object({
 
 const ManagerScorePayloadSchema = z.object({
   criteria: z.array(managerCriteria),
-  competencies: Competencies,
+  competencies: CompetenciesSchema,
   employeeId: z.string(),
 });
 
 type SelfCriteria = z.infer<typeof selfCriteria>;
 type ManagerCriteria = z.infer<typeof managerCriteria>;
-type Competencies = z.infer<typeof Competencies>;
+type Competencies = z.infer<typeof CompetenciesSchema>;
 
 export {
   SelfCriteriaSchema,
