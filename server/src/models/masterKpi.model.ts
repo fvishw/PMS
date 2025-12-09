@@ -1,5 +1,5 @@
 import { Document, Schema, model, Types } from "mongoose";
-interface ICriteria extends Document {
+interface ICriteria {
   name: string;
   description: string;
   weight: number;

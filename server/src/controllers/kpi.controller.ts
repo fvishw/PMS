@@ -27,6 +27,16 @@ const addKpi = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(400, "Designation and criteria are required");
   }
 
+  let totalWeight = 0;
+
+  criteria.forEach((c) => {
+    totalWeight += c.weight;
+  });
+
+  if (totalWeight !== 100) {
+    throw new ApiError(400, "Sum of Kpi's Weight must be 100");
+  }
+
   const kpi = new MasterKpi({
     designation: designationId,
     criteria,
