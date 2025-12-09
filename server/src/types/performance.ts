@@ -57,6 +57,7 @@ const ManagerScorePayloadSchema = z.object({
 
 type SelfCriteria = z.infer<typeof selfCriteria>;
 type ManagerCriteria = z.infer<typeof managerCriteria>;
+type Competencies = z.infer<typeof Competencies>;
 
 export {
   SelfCriteriaSchema,
