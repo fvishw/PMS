@@ -1,10 +1,10 @@
 import { ThemeProvider } from "./contexts/theme-provider";
-import Page from "./pages/dashboard";
+import SignupPage from "./pages/signup";
 
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <Page />
+      <SignupPage />
     </ThemeProvider>
   );
 }
