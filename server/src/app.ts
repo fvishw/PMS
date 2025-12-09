@@ -15,10 +15,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 import userAuth from "./routes/userAuth.routes.ts";
 import userDesignation from "./routes/userDesignation.routes.ts";
 import userRouter from "./routes/user.route.ts";
+import kpiRouter from "./routes/kpi.route.ts";
 
 app.use("/api/user", userRouter);
 app.use("/api/user/auth", userAuth);
 app.use("/api/user/designation", userDesignation);
+app.use("/api/kpis", kpiRouter);
 
 app.use(
   (

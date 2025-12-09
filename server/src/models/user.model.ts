@@ -1,4 +1,4 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document, Types } from "mongoose";
 import bcrypt from "bcrypt";
 import AuthService from "../utils/AuthService.ts";
 
@@ -7,7 +7,7 @@ export interface IUser extends Document {
   email: string;
   password: string;
   role: "admin" | "user" | "manager";
-  designation: Schema.Types.ObjectId;
+  designation: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
   isSignUpComplete?: boolean;
