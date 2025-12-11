@@ -1,5 +1,5 @@
 import { getDynamicApiUrl } from "@/utils/url";
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosError, AxiosInstance } from "axios";
 
 export class API {
   instance: AxiosInstance;
@@ -15,6 +15,16 @@ export class API {
       },
     });
     this.setInterceptor();
+  }
+
+  private async request<T>(promise: Promise<{ data: T }>): Promise<T> {
+    try {
+      const response = await promise;
+      return response.data;
+    } catch (error: AxiosError | any) {
+      const message = error?.response?.data?.message || "Something went wrong";
+      throw new Error(message);
+    }
   }
 
   setInterceptor() {
