@@ -8,18 +8,51 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useMutation } from "@tanstack/react-query";
+import { publicApi } from "@/api/publicApi";
+import { useAuth } from "@/hooks/useAuthContext";
+import { Spinner } from "@/components/ui/spinner";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  
+  const { login, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const { mutate, isPending } = useMutation({
+    mutationFn: ({ email, password }: { email: string; password: string }) =>
+      publicApi.singInUser(email, password),
+    onSuccess: (data) => {
+      console.log(data);
+      const accessToken = data.accessToken;
+      const refreshToken = data.refreshToken;
+      const user = data.user;
+      login(accessToken, refreshToken, user);
+      navigate("/dashboard");
+    },
+    onError: (error) => {
+      console.log("error", error);
+    },
+  });
+
+  if (isAuthenticated) {
+    navigate("/dashboard");
+  }
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    mutate({ email, password });
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8">
+          <form className="p-6 md:p-8" onSubmit={handleSubmit}>
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
@@ -33,6 +66,7 @@ export function LoginForm({
                   id="email"
                   type="email"
                   placeholder="v@nexforge.com"
+                  name="email"
                   required
                 />
               </Field>
@@ -46,10 +80,18 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" type="password" required name="password" />
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                <Button type="submit" disabled={isPending}>
+                  {isPending ? (
+                    <>
+                      <Spinner />
+                    </>
+                  ) : (
+                    "Login"
+                  )}
+                </Button>
               </Field>
               <FieldDescription className="text-center">
                 Don&apos;t have an account? <Link to="/signup">Sign up</Link>
