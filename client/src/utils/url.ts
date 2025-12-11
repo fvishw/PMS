@@ -1,9 +1,10 @@
 function getDynamicApiUrl(): string {
-  const isProdEnv = import.meta.env.VITE_IS_PRODUCTION_ENV;
-  const localEnv = import.meta.env.SERVER_LOCAL_URL;
-  const prodEnv = import.meta.env.SERVER_PROD_URL;
+  const isProdEnv = import.meta.env.VITE_IS_PROD === "true";
+  const localApiURL = import.meta.env.VITE_LOCAL_API_URL!;
+  const prodEnvUrl = import.meta.env.VITE_SERVER_PROD_URL!;
 
-  return isProdEnv ? prodEnv : localEnv;
+  const url = isProdEnv ? prodEnvUrl : localApiURL;
+  return url;
 }
 
 export { getDynamicApiUrl };
