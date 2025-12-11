@@ -5,12 +5,13 @@ interface IUser {
   name: string;
   email: string;
   role: string;
+  designation: { name: string };
 }
 
 interface AuthContextType {
   user: IUser | null;
   isAuthenticated: boolean;
-  login: (user: IUser) => void;
+  login: (accessToken: string, refreshToken: string, user: IUser) => void;
   logout: () => void;
 }
 
@@ -34,7 +35,14 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     isAuthenticated: false,
   });
 
-  const login = (userDetails: IUser) => {
+  const login = (
+    accessToken: string,
+    refreshToken: string,
+    userDetails: IUser
+  ) => {
+    console.log("in login:", accessToken, refreshToken, userDetails);
+    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem("refreshToken", refreshToken);
     setUser({
       user: userDetails,
       isAuthenticated: true,
@@ -52,7 +60,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     logout,
   };
 
-  <AuthContext.Provider value={authCtx}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={authCtx}>{children}</AuthContext.Provider>
+  );
 };
 
 export { AuthContext, type AuthContextType };
