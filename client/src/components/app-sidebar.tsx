@@ -22,80 +22,99 @@ import {
 } from "@/components/ui/sidebar";
 
 import NFLogo from "../assets/nf-logo.svg";
+import { useAuth } from "@/hooks/useAuthContext";
+
+interface IUserConfig {
+  name: string;
+  email: string;
+  avatar: string;
+}
 
 const sidebarItems = {
-  userInfo: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   admin: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "dashboard",
       icon: IconDashboard,
     },
     {
       title: "Personal Details",
-      url: "#",
+      url: "me",
       icon: IconUser,
     },
     {
       title: "My Goals",
-      url: "#",
+      url: "my-goals",
       icon: IconTargetArrow,
     },
     {
       title: "Checkins",
-      url: "#",
+      url: "checkins",
       icon: IconListCheck,
     },
     {
       title: "My Appraisal",
-      url: "#",
+      url: "my-appraisal",
       icon: IconTrophy,
     },
     {
       title: "Review Goals",
-      url: "#",
+      url: "review-goals",
       icon: IconListDetails,
     },
     {
       title: "Review Appraisals",
-      url: "#",
+      url: "review-appraisals",
       icon: IconEyeEdit,
     },
   ],
   user: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "dashboard",
       icon: IconDashboard,
     },
     {
       title: "Personal Details",
-      url: "#",
+      url: "me",
       icon: IconUser,
     },
     {
       title: "KPIs",
-      url: "#",
+      url: "kpis",
       icon: IconTargetArrow,
     },
     {
       title: "Checkins",
-      url: "#",
+      url: "checkins",
       icon: IconListCheck,
     },
     {
       title: "My Appraisal",
-      url: "#",
+      url: "my-appraisal",
       icon: IconTrophy,
     },
   ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useAuth();
+  const isAdmin = user?.role.toLowerCase() === "admin";
+
+  const userConfig: IUserConfig = user
+    ? {
+        name: user.fullName,
+        email: user.email,
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(
+          user.fullName
+        )}&background=random&size=128`,
+      }
+    : {
+        name: "",
+        email: "",
+        avatar: "",
+      };
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -119,10 +138,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={sidebarItems.admin} />
+        <NavMain items={isAdmin ? sidebarItems.admin : sidebarItems.user} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={sidebarItems.userInfo} />
+        <NavUser user={userConfig} />
       </SidebarFooter>
     </Sidebar>
   );

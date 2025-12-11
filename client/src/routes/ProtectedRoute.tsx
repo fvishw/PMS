@@ -1,9 +1,15 @@
-import { Navigate, Outlet } from "react-router";
+import { Navigate } from "react-router";
 
-const ProtectedRoute = () => {
+const ProtectedRoute: React.FC<React.PropsWithChildren<{}>> = ({
+  children,
+}) => {
   const token = localStorage.getItem("accessToken");
 
-  return token ? <Outlet /> : <Navigate to="/" replace />;
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

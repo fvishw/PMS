@@ -1,9 +1,10 @@
 import { createBrowserRouter } from "react-router";
-import DashboardPage from "@/pages/dashboard";
+import { lazy } from "react";
 import SignupPage from "@/pages/signup";
 import LoginPage from "@/pages/login";
-import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
+import ProtectedDashboard from "./protectedDashboard";
+import HomeOutlet from "@/pages/outlets/homeOutlet";
 
 const router = createBrowserRouter([
   {
@@ -22,11 +23,43 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
-    Component: ProtectedRoute,
+    Component: ProtectedDashboard,
     children: [
       {
         path: "dashboard",
-        Component: DashboardPage,
+        Component: HomeOutlet,
+      },
+      {
+        path: "profile",
+        Component: lazy(() => import("@/pages/outlets/profileLayout")),
+      },
+      {
+        path: "my-appraisal",
+        Component: lazy(() => import("@/pages/outlets/myApperaisalLayout")),
+      },
+      {
+        path: "checkins",
+        Component: lazy(() => import("@/pages/outlets/chekinLayout")),
+      },
+      {
+        path: "me",
+        Component: lazy(() => import("@/pages/outlets/profileLayout")),
+      },
+      {
+        path: "kpis",
+        Component: lazy(() => import("@/pages/outlets/kpisLayout")),
+      },
+      {
+        path: "my-goals",
+        Component: lazy(() => import("@/pages/outlets/myGoalLayout")),
+      },
+      {
+        path: "review-appraisals",
+        Component: lazy(() => import("@/pages/outlets/reviewAppraisalLayout")),
+      },
+      {
+        path: "review-goals",
+        Component: lazy(() => import("@/pages/outlets/reviewGoalsLayout")),
       },
     ],
   },
