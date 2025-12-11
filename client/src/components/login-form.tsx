@@ -18,7 +18,7 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { login, isAuthenticated } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const { mutate, isPending } = useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
@@ -35,10 +35,6 @@ export function LoginForm({
       console.log("error", error);
     },
   });
-
-  if (isAuthenticated) {
-    navigate("/dashboard");
-  }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -65,7 +61,7 @@ export function LoginForm({
                 <Input
                   id="email"
                   type="email"
-                  placeholder="v@nexforge.com"
+                  placeholder="v@nexforge.tech"
                   name="email"
                   required
                 />

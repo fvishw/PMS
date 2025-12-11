@@ -1,8 +1,8 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 
 interface IUser {
   id: string;
-  name: string;
+  fullName: string;
   email: string;
   role: string;
   designation: { name: string };
@@ -15,11 +15,6 @@ interface AuthContextType {
   logout: () => void;
 }
 
-interface IAuthDetails {
-  user: IUser | null;
-  isAuthenticated: boolean;
-}
-
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isAuthenticated: false,
@@ -30,23 +25,33 @@ const AuthContext = createContext<AuthContextType>({
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<IAuthDetails>({
-    user: null,
-    isAuthenticated: false,
-  });
+  const [user, setUser] = useState<IUser | null>(
+    localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user")!)
+      : null
+  );
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
+    !!localStorage.getItem("accessToken")
+  );
+
+  useEffect(() => {
+    if (user) {
+      console.log("AuthProvider - user changed:", user);
+    }
+    localStorage.setItem("user", JSON.stringify(user));
+  }, [user]);
 
   const login = (
     accessToken: string,
     refreshToken: string,
     userDetails: IUser
   ) => {
-    console.log("in login:", accessToken, refreshToken, userDetails);
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
     setUser({
-      user: userDetails,
-      isAuthenticated: true,
+      ...userDetails,
     });
+    setIsAuthenticated(true);
   };
   const logout = () => {
     localStorage.removeItem("accessToken");
@@ -54,8 +59,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     //here we need to call logout api to remove refresh toke from db
   };
   const authCtx = {
-    user: user.user,
-    isAuthenticated: user.isAuthenticated,
+    user: user,
+    isAuthenticated,
     login,
     logout,
   };
