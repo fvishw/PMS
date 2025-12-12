@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   addKpi,
   appraiserReviewKpi,
+  assignKpisToUsers,
   managerReviewKpi,
   reviewerReviewKpi,
   selfReviewKpi,
@@ -26,4 +27,7 @@ router.put("/reviewer-review", authMiddleware(["admin"]), reviewerReviewKpi);
 router.put("/appraiser-review", authMiddleware(["admin"]), appraiserReviewKpi);
 
 router.put("/user-review", authMiddleware(["user"]), userFinalReviewKpi);
+
+router.post('/assign-kpis', authMiddleware(["admin"]), assignKpisToUsers);
+
 export default router;
