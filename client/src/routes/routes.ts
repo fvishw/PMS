@@ -19,6 +19,10 @@ const router = createBrowserRouter([
         path: "signup",
         Component: SignupPage,
       },
+      {
+        path: "verify-otp",
+        Component: lazy(() => import("@/pages/otp")),
+      },
     ],
   },
   {
@@ -60,6 +64,10 @@ const router = createBrowserRouter([
       {
         path: "review-goals",
         Component: lazy(() => import("@/pages/outlets/reviewGoalsLayout")),
+      },
+      {
+        path: "assign-kpi",
+        Component: lazy(() => import("@/pages/outlets/assignKpiLayout")),
       },
     ],
   },

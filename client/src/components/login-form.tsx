@@ -24,7 +24,6 @@ export function LoginForm({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       publicApi.singInUser(email, password),
     onSuccess: (data) => {
-      console.log(data);
       const accessToken = data.accessToken;
       const refreshToken = data.refreshToken;
       const user = data.user;
