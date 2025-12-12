@@ -7,7 +7,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 
 export function NavMain({
   items,
@@ -19,6 +19,8 @@ export function NavMain({
   }[];
 }) {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
@@ -26,6 +28,7 @@ export function NavMain({
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
+                isActive={pathname.includes(item.url)}
                 tooltip={item.title}
                 onClick={() => {
                   navigate(`/${item.url}`);
