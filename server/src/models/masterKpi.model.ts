@@ -12,7 +12,6 @@ interface ICriteria {
 interface IKpi extends Document {
   designation: Types.ObjectId; // e.g., "Software Engineer", "Product Manager" must be unique by reference
   criteria: ICriteria[];
-  isKpiLocked: boolean; // true as user accepts the kpis
 }
 
 const KpiSchema = new Schema<IKpi>(
@@ -34,7 +33,6 @@ const KpiSchema = new Schema<IKpi>(
         managerComments: { type: String },
       },
     ],
-    isKpiLocked: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

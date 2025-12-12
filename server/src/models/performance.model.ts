@@ -42,6 +42,8 @@ interface IPerformance extends Document {
     quarterly: "Q1" | "Q2" | "Q3" | "Q4";
     year: number;
   }; // e.g., "Q1 2024"
+  managerId: Types.ObjectId;
+  isKpiLocked: boolean;
 }
 
 const PerformanceSchema = new Schema<IPerformance>(
@@ -61,13 +63,11 @@ const PerformanceSchema = new Schema<IPerformance>(
         remarks: { type: String },
         recommendation: { type: String },
         finalComments: { type: String },
-        // accessTo: { type: Types.ObjectId, ref: "User" },
       },
       reviewerComments: {
         remarks: { type: String },
         recommendation: { type: String },
         finalComments: { type: String },
-        // accessTo: { type: Types.ObjectId, ref: "User" },
       },
       selfReview: {
         remarks: { type: String },
@@ -99,6 +99,8 @@ const PerformanceSchema = new Schema<IPerformance>(
         // required: true
       },
     },
+    managerId: { type: Types.ObjectId, ref: "User", required: true },
+    isKpiLocked: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

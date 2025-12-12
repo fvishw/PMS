@@ -3,7 +3,6 @@ import type { IKpi } from "./masterKpi.model.ts";
 
 interface IUserKpi extends IKpi {
   user: Types.ObjectId;
-  managerId: Types.ObjectId;
 }
 
 const UserKpiSchema = new Schema<IUserKpi>(
@@ -29,12 +28,6 @@ const UserKpiSchema = new Schema<IUserKpi>(
         managerComments: { type: String },
       },
     ],
-    managerId: {
-      type: Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    isKpiLocked: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
