@@ -9,19 +9,21 @@ const getAllDesignations = asyncHandler(async (req: Request, res: Response) => {
   res
     .status(200)
     .json(
-      new ApiResponse(200, designations, "Designations fetched successfully")
+      new ApiResponse(
+        200,
+        { designations },
+        "Designations fetched successfully"
+      )
     );
 });
 
 const addDesignation = asyncHandler(async (req: Request, res: Response) => {
-  const { name, description } = req.body;
-  if (!name) {
-    return res
-      .status(400)
-      .json(new ApiResponse(400, null, "Name is required"));
+  const { title, description } = req.body;
+  if (!title) {
+    return res.status(400).json(new ApiResponse(400, null, "Name is required"));
   }
   const designation = new Designation({
-    name,
+    title,
     description,
   });
   await designation.save();
