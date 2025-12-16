@@ -7,7 +7,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
 export function NavMain({
   items,
@@ -20,7 +20,7 @@ export function NavMain({
 }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-
+ 
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
