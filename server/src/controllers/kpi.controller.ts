@@ -50,30 +50,9 @@ const addKpi = asyncHandler(async (req: Request, res: Response) => {
 
 const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
-
   if (!userId) {
     throw new ApiError(401, "Unauthorized");
   }
-
-  const userPerformance = await Performance.findOneAndUpdate(
-    { userId: userId },
-    { isKpiLocked: true }
-  );
-  if (!userPerformance) {
-    throw new ApiError(404, "Performance record not found");
-  }
-  return res
-    .status(200)
-    .json(new ApiResponse(200, null, "KPI status updated successfully"));
-});
-
-const assignKpisToUsers = asyncHandler(async (req: Request, res: Response) => {
-  const { userId, managerId } = req.body;
-
-  if (!userId || !managerId) {
-    throw new ApiError(400, "User ID and Manager ID are required");
-  }
-
   const user = await User.findById(userId);
 
   if (!user) {
@@ -81,6 +60,7 @@ const assignKpisToUsers = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const userDesignation = user?.designation;
+  const userParentReviewer = user?.parentReviewer;
 
   const masterKpi = await MasterKpi.findOne({ designation: userDesignation });
 
@@ -98,22 +78,20 @@ const assignKpisToUsers = asyncHandler(async (req: Request, res: Response) => {
     ...templateKpi,
     isKpiLocked: true,
     user: userId,
-    managerId: managerId,
   });
 
-  await newUserKpi.save();
+  newUserKpi.save();
 
   const performance = new Performance({
     userId: userId,
     kpis: newUserKpi._id,
     stage: "kpi_acceptance",
-    managerId: managerId,
+    parentReviewer: userParentReviewer,
   });
   await performance.save();
-
   return res
-    .status(201)
-    .json(new ApiResponse(201, null, "KPI assigned successfully"));
+    .status(200)
+    .json(new ApiResponse(200, null, "KPI status updated successfully"));
 });
 
 const selfReviewKpi = asyncHandler(async (req: Request, res: Response) => {
@@ -313,6 +291,16 @@ const userFinalReviewKpi = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, null, "Self review submitted successfully"));
 });
 
+const getAllUserKpiStatus = asyncHandler(
+  async (req: Request, res: Response) => {
+    const users = await User.aggregate;
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, users, "Users fetched successfully"));
+  }
+);
+
 export {
   addKpi,
   updateKpiStatus,
@@ -321,5 +309,5 @@ export {
   reviewerReviewKpi,
   appraiserReviewKpi,
   userFinalReviewKpi,
-  assignKpisToUsers,
+  getAllUserKpiStatus,
 };

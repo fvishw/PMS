@@ -42,7 +42,9 @@ interface IPerformance extends Document {
     quarterly: "Q1" | "Q2" | "Q3" | "Q4";
     year: number;
   }; // e.g., "Q1 2024"
-  managerId: Types.ObjectId;
+  parentReviewer: Types.ObjectId;
+  adminReviewer?: Types.ObjectId;
+  appraiserReviewer?: Types.ObjectId;
   isKpiLocked: boolean;
 }
 
