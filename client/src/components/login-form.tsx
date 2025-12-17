@@ -15,6 +15,7 @@ import { useAuth } from "@/hooks/useAuthContext";
 import { Spinner } from "@/components/ui/spinner";
 import { useState } from "react";
 import { IconEye, IconEyeClosed } from "@tabler/icons-react";
+import { toast } from "sonner";
 
 export function LoginForm({
   className,
@@ -27,6 +28,9 @@ export function LoginForm({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       publicApi.singInUser(email, password),
     onSuccess: (data) => {
+      toast.success("Login successful!", {
+        position: "top-right",
+      });
       const accessToken = data.accessToken;
       const refreshToken = data.refreshToken;
       const user = data.user;
