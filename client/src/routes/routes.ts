@@ -66,8 +66,8 @@ const router = createBrowserRouter([
         Component: lazy(() => import("@/pages/outlets/reviewGoalsLayout")),
       },
       {
-        path: "assign-kpi",
-        Component: lazy(() => import("@/pages/outlets/assignKpiLayout")),
+        path: "manage-users",
+        Component: lazy(() => import("@/pages/outlets/userManagementLayout")),
       },
     ],
   },
