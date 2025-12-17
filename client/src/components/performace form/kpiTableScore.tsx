@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/table";
 
 import { columns, data } from "./kpiTableConfig";
+import SectionWrapper from "./sectionWrapper";
 
 export function KpiScoreTable() {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -54,8 +55,8 @@ export function KpiScoreTable() {
   });
 
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-8">
-      <div className="flex items-center py-4">
+    <SectionWrapper title="Section A: KPI Scorecard">
+      <div className="flex items-center pb-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -133,6 +134,6 @@ export function KpiScoreTable() {
           </TableBody>
         </Table>
       </div>
-    </div>
+    </SectionWrapper>
   );
 }
