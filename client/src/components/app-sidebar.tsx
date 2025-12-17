@@ -7,6 +7,7 @@ import {
   IconTargetArrow,
   IconTrophy,
   IconUser,
+  IconUsers,
 } from "@tabler/icons-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -38,9 +39,9 @@ const sidebarItems = {
       icon: IconDashboard,
     },
     {
-      title: "Personal Details",
-      url: "me",
-      icon: IconUser,
+      title: "User Management",
+      url: "manage-users",
+      icon: IconUsers,
     },
     {
       title: "My Goals",
@@ -66,6 +67,11 @@ const sidebarItems = {
       title: "Review Appraisals",
       url: "review-appraisals",
       icon: IconEyeEdit,
+    },
+    {
+      title: "Personal Details",
+      url: "me",
+      icon: IconUser,
     },
   ],
   user: [
@@ -130,7 +136,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   alt="NexForge Logo"
                   className="!h-8 !w-8 object-contain"
                 />
-
                 <span className="text-base font-semibold mt-1.5">NexForge</span>
               </a>
             </SidebarMenuButton>

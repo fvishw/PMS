@@ -3,10 +3,6 @@ import axios, { AxiosError, AxiosInstance } from "axios";
 
 export class API {
   instance: AxiosInstance;
-
-  isRefreshing = false;
-  refreshSubscribers: ((token: string) => void)[] = [];
-
   constructor(token?: string) {
     this.instance = axios.create({
       baseURL: getDynamicApiUrl(),
@@ -30,57 +26,30 @@ export class API {
   setInterceptor() {
     this.instance.interceptors.request.use((config) => {
       const token = localStorage.getItem("accessToken");
-      if (token) config.headers.Authorization = `Bearer ${token}`;
+
+      if (token) {
+        config.headers = config.headers || {};
+        config.headers["Authorization"] = `Bearer ${token}`;
+      }
+
       return config;
     });
+  }
 
-    // RESPONSE INTERCEPTOR
-    this.instance.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        const originalRequest = error.config;
-
-        // Access token expired
-        if (error.response?.status === 401 && !originalRequest._retry) {
-          originalRequest._retry = true;
-
-          if (!this.isRefreshing) {
-            this.isRefreshing = true;
-
-            const refreshToken = localStorage.getItem("refreshToken");
-
-            const res = await axios.post(
-              `${getDynamicApiUrl()}/user/auth/refresh-token`,
-              {
-                refreshToken,
-              }
-            );
-
-            const { accessToken, refreshToken: newRefresh } = res.data;
-
-            localStorage.setItem("accessToken", accessToken);
-            localStorage.setItem("refreshToken", newRefresh);
-
-            this.isRefreshing = false;
-
-            this.refreshSubscribers.forEach((callback) =>
-              callback(accessToken)
-            );
-            this.refreshSubscribers = [];
-          }
-
-          // queue requests until refresh done
-          return new Promise((resolve) => {
-            this.refreshSubscribers.push((token: string) => {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
-              resolve(this.instance(originalRequest));
-            });
-          });
-        }
-
-        return Promise.reject(error);
-      }
-    );
+  fetchUserKpi() {
+    return this.request(this.instance.get("/user/kpis"));
+  }
+  submitUserKpis() {
+    return this.request(this.instance.put("/kpis/accept-kpi"));
+  }
+  fetchAllUser() {
+    return this.request(this.instance.get("/user/all-user"));
+  }
+  fetchAllUserKpiStatus() {
+    return this.request(this.instance.get("/kpis/all-user-kpi-status"));
+  }
+  fetchAllDesignations() {
+    return this.request(this.instance.get("/user/designation/all"));
   }
 }
 
