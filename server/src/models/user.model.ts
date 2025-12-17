@@ -6,8 +6,9 @@ export interface IUser extends Document {
   fullName: string;
   email: string;
   password: string;
-  role: "admin" | "user" | "manager";
+  role: "admin" | "employee" | "manager";
   designation: Types.ObjectId;
+  parentReviewer?: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
   isSignUpComplete?: boolean;
@@ -26,8 +27,8 @@ const UserSchema = new Schema<IUser>(
     password: { type: String },
     role: {
       type: String,
-      enum: ["admin", "user", "manager"],
-      default: "user",
+      enum: ["admin", "employee", "manager"],
+      default: "employee",
       required: true,
     },
     designation: {
@@ -35,6 +36,7 @@ const UserSchema = new Schema<IUser>(
       ref: "Designation",
       required: true,
     },
+    parentReviewer: { type: Schema.Types.ObjectId, ref: "User" },
     isSignUpComplete: { type: Boolean, default: false },
     refreshToken: { type: String, default: "" },
     passwordResetToken: { type: String, default: null },

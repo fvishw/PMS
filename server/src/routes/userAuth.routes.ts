@@ -16,7 +16,7 @@ userAuth.post("/signup", signUp);
 
 userAuth.post("/login", login);
 
-userAuth.put("/logout", authMiddleware(["admin", "user", "manager"]), logout);
+userAuth.put("/logout", authMiddleware(["admin", "employee", "manager"]), logout);
 
 userAuth.post("/refresh-token", refreshAccessToken);
 
