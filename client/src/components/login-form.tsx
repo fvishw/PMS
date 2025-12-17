@@ -13,6 +13,8 @@ import { useMutation } from "@tanstack/react-query";
 import { publicApi } from "@/api/publicApi";
 import { useAuth } from "@/hooks/useAuthContext";
 import { Spinner } from "@/components/ui/spinner";
+import { useState } from "react";
+import { IconEye, IconEyeClosed } from "@tabler/icons-react";
 
 export function LoginForm({
   className,
@@ -20,6 +22,7 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [isPasswordShow, setIsPasswordShow] = useState<boolean>(false);
   const { mutate, isPending } = useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       publicApi.singInUser(email, password),
@@ -75,7 +78,24 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required name="password" />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={isPasswordShow ? "text" : "password"}
+                    required
+                    name="password"
+                  />
+                  <span
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                    onClick={() => setIsPasswordShow((prev) => !prev)}
+                  >
+                    {isPasswordShow ? (
+                      <IconEye size={18} />
+                    ) : (
+                      <IconEyeClosed size={18} />
+                    )}
+                  </span>
+                </div>
               </Field>
               <Field>
                 <Button type="submit" disabled={isPending}>
