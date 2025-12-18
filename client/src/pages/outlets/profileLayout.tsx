@@ -1,4 +1,5 @@
 import OutletWrapper from "@/components/mainLayout";
+import Profile from "@/components/profile/profile";
 import { SiteHeader } from "@/components/site-header";
 
 function ProfileLayout() {
@@ -6,10 +7,7 @@ function ProfileLayout() {
     <>
       <SiteHeader headerName="Profile" />
       <OutletWrapper>
-        <div>
-          {/* Profile content goes here */}
-          This is the Profile page.
-        </div>
+        <Profile />
       </OutletWrapper>
     </>
   );
