@@ -1,4 +1,4 @@
-import { OTPForm } from "@/components/otp-form";
+import { OTPForm } from "@/components/auth/otp-form";
 
 function OtpPage() {
   return (
