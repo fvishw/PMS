@@ -40,7 +40,7 @@ export function UserTable() {
   }
 
   return (
-    <div className="px-4 lg:px-6">
+    <>
       <div className="flex  py-4 items-end">
         <AddUserModal />
       </div>
@@ -68,6 +68,6 @@ export function UserTable() {
           </TableBody>
         </Table>
       </div>
-    </div>
+    </>
   );
 }

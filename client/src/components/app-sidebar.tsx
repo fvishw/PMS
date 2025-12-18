@@ -1,6 +1,7 @@
 import * as React from "react";
 import {
   IconDashboard,
+  IconDatabaseCog,
   IconEyeEdit,
   IconListCheck,
   IconListDetails,
@@ -52,6 +53,11 @@ const sidebarItems = {
       title: "Checkins",
       url: "checkins",
       icon: IconListCheck,
+    },
+    {
+      title: "KPI Management",
+      url: "manage-kpis",
+      icon: IconDatabaseCog,
     },
     {
       title: "My Appraisal",

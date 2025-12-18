@@ -6,7 +6,7 @@ interface SectionHeadingProps {
 }
 const SectionWrapper: React.FC<SectionHeadingProps> = ({ children, title }) => {
   return (
-    <div className="w-full px-4 lg:px-6">
+    <div className="">
       <div className="  w-full px-4 mb-4 text-white">
         <h1 className="font-bold text-lg dark:text-white text-black">
           {title}

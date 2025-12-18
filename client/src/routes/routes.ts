@@ -69,6 +69,10 @@ const router = createBrowserRouter([
         path: "manage-users",
         Component: lazy(() => import("@/pages/outlets/userManagementLayout")),
       },
+      {
+        path: "manage-kpis",
+        Component: lazy(() => import("@/pages/outlets/kpiManagementLayout")),
+      },
     ],
   },
 ]);
