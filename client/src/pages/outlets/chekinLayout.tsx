@@ -1,3 +1,4 @@
+import CheckIns from "@/components/checkins/checkins";
 import OutletWrapper from "@/components/mainLayout";
 import { SiteHeader } from "@/components/site-header";
 
@@ -6,10 +7,7 @@ function CheckIn() {
     <>
       <SiteHeader headerName="CheckIn" />
       <OutletWrapper>
-        <div>
-          {/* CheckIn content goes here */}
-          this one is for monthly checkins
-        </div>
+        <CheckIns />
       </OutletWrapper>
     </>
   );
