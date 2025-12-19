@@ -73,6 +73,12 @@ const router = createBrowserRouter([
         path: "manage-kpis",
         Component: lazy(() => import("@/pages/outlets/kpiManagementLayout")),
       },
+      {
+        path: "manage-checkins",
+        Component: lazy(
+          () => import("@/pages/outlets/checkInManagementLayout")
+        ),
+      },
     ],
   },
 ]);

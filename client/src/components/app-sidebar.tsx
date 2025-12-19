@@ -50,8 +50,8 @@ const sidebarItems = {
       icon: IconTargetArrow,
     },
     {
-      title: "Checkins",
-      url: "checkins",
+      title: "CheckIn Management",
+      url: "manage-checkins",
       icon: IconListCheck,
     },
     {
