@@ -22,16 +22,13 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { IDesignationOption } from "@/types/user";
 import { Spinner } from "../ui/spinner";
-import { getColumns } from "./addKpiTable.config";
+import { getColumns, KpiFormRow, KpiPayload } from "./addKpiTable.config";
 import { useFieldArray, useForm, Controller } from "react-hook-form";
-import { DataTable, KpiForm, KpiFormRow } from "./addKpiTable";
-
-
+import { CustomDataTable } from "../customTable";
 
 export function AddKpiFormModal() {
-  const form = useForm<KpiForm>({
+  const form = useForm<KpiPayload>({
     defaultValues: {
-      designationId: "",
       kpis: [{ objective: "", indicators: "", weight: "" }],
     },
   });
@@ -44,6 +41,7 @@ export function AddKpiFormModal() {
     control: form.control,
     name: "kpis",
   });
+  console.log(fields);
 
   const columns: ColumnDef<KpiFormRow>[] = getColumns(form.control, remove);
 
@@ -104,7 +102,7 @@ export function AddKpiFormModal() {
                 Add Kpi
               </Button>
             </div>
-            <DataTable columns={columns} data={fields} />
+            <CustomDataTable columns={columns} data={fields} />
           </div>
 
           <DialogFooter>

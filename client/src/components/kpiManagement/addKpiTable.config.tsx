@@ -8,19 +8,29 @@ type KpiFormRow = {
   objective: string;
   indicators: string;
   weight: number | "";
+  accessorFn?: () => any;
 };
 
 type KpiForm = {
   kpis: KpiFormRow[];
 };
 
-export interface IColumnsProps {
+type KpiFormPayload = {
+  designationId: string;
+  kpis: KpiFormRow[];
+};
+
+interface IColumnsProps {
   control: Control<KpiForm>;
   remove: (index: number) => void;
 }
+interface KpiPayload {
+  kpis: KpiFormRow[];
+  designationId: string;
+}
 
 export const getColumns = (
-  control: Control<KpiForm>,
+  control: Control<KpiPayload>,
   remove: (index: number) => void
 ): ColumnDef<KpiFormRow>[] => [
   {
@@ -72,3 +82,5 @@ export const getColumns = (
     ),
   },
 ];
+
+export { KpiFormPayload, KpiFormRow, IColumnsProps, KpiForm, KpiPayload };

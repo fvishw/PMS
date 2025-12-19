@@ -5,14 +5,12 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-
-
 type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 };
 
-export function DataTable<TData, TValue>({
+export function CustomDataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {

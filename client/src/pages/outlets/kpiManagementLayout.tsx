@@ -1,4 +1,4 @@
-import KpiTable from "@/components/kpiManagement/kpiTable";
+import Kpi from "@/components/kpiManagement/kpi";
 import OutletWrapper from "@/components/mainLayout";
 import { SiteHeader } from "@/components/site-header";
 
@@ -7,7 +7,7 @@ function kpiManagementLayout() {
     <>
       <SiteHeader headerName="KPI Management" />
       <OutletWrapper>
-        <KpiTable />
+        <Kpi />
       </OutletWrapper>
     </>
   );
