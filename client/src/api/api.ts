@@ -1,3 +1,4 @@
+import { CheckInPayload } from "@/types/chekin";
 import { getDynamicApiUrl } from "@/utils/url";
 import axios, { AxiosError, AxiosInstance } from "axios";
 
@@ -50,6 +51,20 @@ export class API {
   }
   fetchAllDesignations() {
     return this.request(this.instance.get("/user/designation/all"));
+  }
+  addCheckIns(data: CheckInPayload) {
+    return this.request(
+      this.instance.post("/check-ins/add", {
+        checkIns: JSON.stringify(data),
+      })
+    );
+  }
+  addCheckInsQuestions(data: any) {
+    return this.request(
+      this.instance.post("/check-ins/add-questions", {
+        checkInsQuestions: data,
+      })
+    );
   }
 }
 
