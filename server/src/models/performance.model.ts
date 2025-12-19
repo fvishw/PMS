@@ -101,7 +101,6 @@ const PerformanceSchema = new Schema<IPerformance>(
         // required: true
       },
     },
-    managerId: { type: Types.ObjectId, ref: "User", required: true },
     isKpiLocked: { type: Boolean, default: false },
   },
   { timestamps: true }
