@@ -45,7 +45,7 @@ export function CustomDataTable<TData, TValue>({
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="even:bg-muted">
+            <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
                 <td key={cell.id} className="border-b p-4">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
