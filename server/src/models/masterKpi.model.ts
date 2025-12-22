@@ -1,6 +1,6 @@
 import { Document, Schema, model, Types } from "mongoose";
 interface ICriteria {
-  name: string;
+  indicator: string;
   description: string;
   weight: number;
   selfScore: number;
@@ -9,12 +9,12 @@ interface ICriteria {
   managerComments: string;
 }
 
-interface IKpi extends Document {
-  designation: Types.ObjectId; // e.g., "Software Engineer", "Product Manager" must be unique by reference
-  criteria: ICriteria[];
+interface IMasterKpi extends Document {
+  designation: Types.ObjectId;
+  kpiCriteria: ICriteria[];
 }
 
-const KpiSchema = new Schema<IKpi>(
+const MasterKpiSchema = new Schema<IMasterKpi>(
   {
     designation: {
       type: Types.ObjectId,
@@ -22,10 +22,10 @@ const KpiSchema = new Schema<IKpi>(
       required: true,
       unique: true,
     },
-    criteria: [
+    kpiCriteria: [
       {
-        name: { type: String, required: true },
-        description: { type: String, required: true },
+        objective: { type: String, required: true },
+        indicator: { type: String, required: true },
         weight: { type: Number, required: true },
         selfScore: { type: Number },
         selfComments: { type: String },
@@ -37,6 +37,6 @@ const KpiSchema = new Schema<IKpi>(
   { timestamps: true }
 );
 
-const MasterKpi = model<IKpi>("MasterKpi", KpiSchema);
+const MasterKpi = model<IMasterKpi>("MasterKpi", MasterKpiSchema);
 
-export { MasterKpi, type IKpi };
+export { MasterKpi, type IMasterKpi };

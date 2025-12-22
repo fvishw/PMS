@@ -1,14 +1,5 @@
 import { Schema, model, Document, Types } from "mongoose";
 
-interface ICompetency {
-  communication: number;
-  problemSolving: number;
-  leadership: number;
-  collaborationAndTeamwork: number;
-  employeeAreaOfStrength: string;
-  opportunitiesForDevelopment: string;
-}
-
 interface IDecisionAndRemarks {
   remarks: string;
   recommendation: string; //must be one of the predefined options
@@ -29,7 +20,7 @@ interface IFinalReview {
 interface IPerformance extends Document {
   userId: Types.ObjectId;
   kpis: Types.ObjectId;
-  competencies: ICompetency;
+  competencies: Types.ObjectId;
   finalReview: IFinalReview;
   stage:
     | "kpi_acceptance"
@@ -53,12 +44,9 @@ const PerformanceSchema = new Schema<IPerformance>(
     userId: { type: Types.ObjectId, ref: "User", required: true },
     kpis: { type: Types.ObjectId, ref: "UserKpi", required: true },
     competencies: {
-      communication: { type: Number, max: 5, min: 1 },
-      problemSolving: { type: Number, max: 5, min: 1 },
-      leadership: { type: Number, max: 5, min: 1 },
-      collaborationAndTeamwork: { type: Number, max: 5, min: 1 },
-      employeeAreaOfStrength: { type: String },
-      opportunitiesForDevelopment: { type: String },
+      type: Types.ObjectId,
+      ref: "UserCompetency",
+      required: true,
     },
     finalReview: {
       appraiserComments: {

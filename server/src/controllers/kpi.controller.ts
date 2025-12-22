@@ -9,27 +9,30 @@ import { UserKpi } from "../models/userKpi.model.ts";
 import {
   appraiserPayloadSchema,
   ManagerScorePayloadSchema,
+  MasterPerformancePayload,
   reviewerPayloadSchema,
   SelfCriteriaSchema,
   selfReviewPayloadSchema,
   type ManagerCriteria,
   type SelfCriteria,
 } from "../types/performance.ts";
+import MasterCompetency from "../models/masterCompetency.model.ts";
+import UserCompetency from "../models/userCompetency.model.ts";
 
 const addKpi = asyncHandler(async (req: Request, res: Response) => {
-  const { designationId, criteria } = req.body;
-  if (
-    !designationId ||
-    !criteria ||
-    !Array.isArray(criteria) ||
-    criteria.length === 0
-  ) {
-    throw new ApiError(400, "Designation and criteria are required");
+  const payload = req.body;
+
+  const parsedPayload = MasterPerformancePayload.safeParse(payload);
+
+  if (!parsedPayload.success) {
+    throw new ApiError(401, "Invalid Performance Payload");
   }
+
+  const { competencies, designationId, kpiCriteria } = parsedPayload.data;
 
   let totalWeight = 0;
 
-  criteria.forEach((c) => {
+  kpiCriteria.forEach((c) => {
     totalWeight += c.weight;
   });
 
@@ -39,13 +42,20 @@ const addKpi = asyncHandler(async (req: Request, res: Response) => {
 
   const kpi = new MasterKpi({
     designation: designationId,
-    criteria,
+    kpiCriteria: kpiCriteria,
   });
-  const newKpi = await kpi.save();
+  await kpi.save();
+
+  const competency = new MasterCompetency({
+    designation: designationId,
+    competencies: competencies,
+  });
+
+  await competency.save();
 
   return res
     .status(201)
-    .json(new ApiResponse(201, newKpi, "KPI added successfully"));
+    .json(new ApiResponse(201, null, "KPI added successfully"));
 });
 
 const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
@@ -62,17 +72,31 @@ const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
   const userDesignation = user?.designation;
   const userParentReviewer = user?.parentReviewer;
 
-  const masterKpi = await MasterKpi.findOne({ designation: userDesignation });
+  const masterKpi = await MasterKpi.findOne({
+    designation: userDesignation,
+  });
 
-  if (!masterKpi) {
-    throw new ApiError(404, "Master KPI not found for user's designation");
+  const masterCompetency = await MasterCompetency.findOne({
+    designation: userDesignation,
+  });
+
+  if (!masterKpi || !masterCompetency) {
+    throw new ApiError(404, "Master Template not found for user's designation");
   }
 
-  const templateKpi = {
-    ...JSON.parse(JSON.stringify(masterKpi)),
-  };
+  const templateKpi = { ...JSON.parse(JSON.stringify(masterKpi)) };
+
+  const templateCompetency = JSON.parse(
+    JSON.stringify(masterCompetency.competencies)
+  );
 
   delete templateKpi._id;
+
+  const newUserCompetency = new UserCompetency({
+    competencies: templateCompetency,
+    user: userId,
+    designation: userDesignation,
+  });
 
   const newUserKpi = new UserKpi({
     ...templateKpi,
@@ -80,15 +104,18 @@ const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
     user: userId,
   });
 
-  newUserKpi.save();
+  await newUserKpi.save();
+  await newUserCompetency.save();
 
   const performance = new Performance({
     userId: userId,
     kpis: newUserKpi._id,
+    competencies: newUserCompetency._id,
     stage: "kpi_acceptance",
     parentReviewer: userParentReviewer,
   });
   await performance.save();
+
   return res
     .status(200)
     .json(new ApiResponse(200, null, "KPI status updated successfully"));
@@ -117,7 +144,7 @@ const selfReviewKpi = asyncHandler(async (req: Request, res: Response) => {
   }
 
   parsedCriteria.data.criteria.forEach((item: SelfCriteria) => {
-    const kpiCriterion = userKpi.criteria.find(
+    const kpiCriterion = userKpi.kpiCriteria.find(
       (c) => c._id.toString() === item._id
     );
     if (kpiCriterion) {
@@ -168,7 +195,7 @@ const managerReviewKpi = asyncHandler(async (req: Request, res: Response) => {
   });
 
   parsedCriteria.forEach((item: ManagerCriteria) => {
-    const kpiCriterion = userKpi.criteria.find(
+    const kpiCriterion = userKpi.kpiCriteria.find(
       (c) => c._id.toString() === item._id
     );
     if (kpiCriterion) {

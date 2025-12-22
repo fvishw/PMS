@@ -1,7 +1,7 @@
 import { Schema, model, Types } from "mongoose";
-import type { IKpi } from "./masterKpi.model.ts";
+import type { IMasterKpi } from "./masterKpi.model.ts";
 
-interface IUserKpi extends IKpi {
+interface IUserKpi extends IMasterKpi {
   user: Types.ObjectId;
 }
 
@@ -17,10 +17,10 @@ const UserKpiSchema = new Schema<IUserKpi>(
       ref: "Designation",
       required: true,
     },
-    criteria: [
+    kpiCriteria: [
       {
-        name: { type: String, required: true },
-        description: { type: String, required: true },
+        objective: { type: String, required: true },
+        indicator: { type: String, required: true },
         weight: { type: Number, required: true },
         selfScore: { type: Number },
         selfComments: { type: String },
@@ -32,7 +32,6 @@ const UserKpiSchema = new Schema<IUserKpi>(
   { timestamps: true }
 );
 
-UserKpiSchema.index({ user: 1, designation: 1 }, { unique: true });
 
 const UserKpi = model<IUserKpi>("UserKpi", UserKpiSchema);
 export { UserKpi };

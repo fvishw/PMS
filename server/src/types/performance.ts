@@ -54,6 +54,23 @@ const ManagerScorePayloadSchema = z.object({
   employeeId: z.string(),
 });
 
+const KpiCriteria = z.object({
+  objective: z.string(),
+  indicator: z.string(),
+  weight: z.number(),
+});
+
+const Competency = z.object({
+  title: z.string(),
+  indicators: z.array(z.string()),
+});
+
+const MasterPerformancePayload = z.object({
+  designationId: z.string(),
+  kpiCriteria: z.array(KpiCriteria),
+  competencies: z.array(Competency).max(4, "Maximum 4 Competency Allowed"),
+});
+
 type SelfCriteria = z.infer<typeof selfCriteria>;
 type ManagerCriteria = z.infer<typeof managerCriteria>;
 type Competencies = z.infer<typeof CompetenciesSchema>;
@@ -64,6 +81,7 @@ export {
   appraiserPayloadSchema,
   reviewerPayloadSchema,
   selfReviewPayloadSchema,
+  MasterPerformancePayload,
   type SelfCriteria,
   type ManagerCriteria,
   type Competencies,
