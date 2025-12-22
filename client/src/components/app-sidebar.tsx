@@ -55,8 +55,8 @@ const sidebarItems = {
       icon: IconListCheck,
     },
     {
-      title: "KPI Management",
-      url: "manage-kpis",
+      title: "Performance Management",
+      url: "manage-performance",
       icon: IconDatabaseCog,
     },
     {

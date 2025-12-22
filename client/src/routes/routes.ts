@@ -70,8 +70,10 @@ const router = createBrowserRouter([
         Component: lazy(() => import("@/pages/outlets/userManagementLayout")),
       },
       {
-        path: "manage-kpis",
-        Component: lazy(() => import("@/pages/outlets/kpiManagementLayout")),
+        path: "manage-performance",
+        Component: lazy(
+          () => import("@/pages/outlets/performanceManagementLayout")
+        ),
       },
       {
         path: "manage-checkins",

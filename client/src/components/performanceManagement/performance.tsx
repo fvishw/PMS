@@ -1,10 +1,10 @@
 import { columns, data } from "./kpiTable.config";
 
 import { Dialog } from "../ui/dialog";
-import { AddKpiFormModal } from "./addKpiFormModal";
+import { AddKpiFormModal } from "./addPerformanceFormModal";
 import { CustomDataTable } from "../customTable";
 
-function Kpi() {
+function Performance() {
   return (
     <Dialog>
       <div className=" pb-4">
@@ -15,4 +15,4 @@ function Kpi() {
   );
 }
 
-export default Kpi;
+export default Performance;
