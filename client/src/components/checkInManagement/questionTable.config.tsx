@@ -1,5 +1,4 @@
 import { Controller, Control } from "react-hook-form";
-import { Input } from "../ui/input";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../ui/button";
 import {
@@ -15,7 +14,6 @@ import { Textarea } from "../ui/textarea";
 
 type QuestionRow = {
   question: string;
-  key: string;
   type: string;
   accessorFn?: () => any;
 };
@@ -49,22 +47,11 @@ export const getColumns = (
       <Controller
         control={control}
         name={`questions.${row.index}.question`}
-        render={({ field }) => <Textarea {...field} />}
+        render={({ field }) => <Textarea className="w-[250px]" {...field} />}
       />
     ),
   },
-  {
-    header: "Key",
-    cell: ({ row }) => (
-      <Controller
-        control={control}
-        name={`questions.${row.index}.key`}
-        render={({ field }) => (
-          <Input {...field} placeholder={"manager_communication"} />
-        )}
-      />
-    ),
-  },
+
   {
     header: "Type",
     cell: ({ row }) => (
@@ -74,7 +61,7 @@ export const getColumns = (
         name={`questions.${row.index}.type`}
         render={({ field }) => (
           <Select value={field.value} onValueChange={field.onChange}>
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="w-[120px]">
               <SelectValue placeholder="Select type" />
             </SelectTrigger>
             <SelectContent>
