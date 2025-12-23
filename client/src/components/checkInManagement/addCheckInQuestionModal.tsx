@@ -22,7 +22,7 @@ import { CustomDataTable } from "../customTable";
 export function AddCheckInQuestionModal() {
   const form = useForm<QuestionFormPayload>({
     defaultValues: {
-      questions: [{ question: "", key: "", type: "" }],
+      questions: [{ question: "", type: "" }],
     },
   });
 
@@ -59,7 +59,7 @@ export function AddCheckInQuestionModal() {
             <div className="ml-auto">
               <Button
                 type="button"
-                onClick={() => append({ question: "", key: "", type: "" })}
+                onClick={() => append({ question: "", type: "" })}
               >
                 Add Question
               </Button>
