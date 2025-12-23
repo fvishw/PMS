@@ -1,4 +1,5 @@
 import { CheckInPayload } from "@/types/chekin";
+import { PastCheckIns } from "@/types/response";
 import { getDynamicApiUrl } from "@/utils/url";
 import axios, { AxiosError, AxiosInstance } from "axios";
 
@@ -55,7 +56,7 @@ export class API {
   addCheckIns(data: CheckInPayload) {
     return this.request(
       this.instance.post("/check-ins/add", {
-        checkIns: JSON.stringify(data),
+        checkIns: data,
       })
     );
   }
@@ -63,6 +64,19 @@ export class API {
     return this.request(
       this.instance.post("/check-ins/add-questions", {
         checkInsQuestions: data,
+      })
+    );
+  }
+  getCheckIns() {
+    return this.request(this.instance.get("/check-ins/"));
+  }
+  getPastCheckIns(year: number, month: number): Promise<PastCheckIns> {
+    return this.request(
+      this.instance.get("/check-ins/past-checkins", {
+        params: {
+          month,
+          year,
+        },
       })
     );
   }
