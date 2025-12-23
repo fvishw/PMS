@@ -48,7 +48,7 @@ export function AddCheckInQuestionModal() {
         <Button variant="outline">Add Question set</Button>
       </DialogTrigger>
       <form onSubmit={form.handleSubmit(console.log)}>
-        <DialogContent className="sm:max-w-[800px]">
+        <DialogContent className="sm:max-w-[900px]">
           <DialogHeader>
             <DialogTitle>Add Questions</DialogTitle>
             <DialogDescription>
