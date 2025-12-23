@@ -1,23 +1,23 @@
 import { model, Document, Schema } from "mongoose";
 
-interface ICheckInQuestion {
-  key: string;
+interface ICheckInQuestion extends Document {
   question: string;
   type: "rating" | "text";
   version: number;
   isActive: boolean;
+  createdAt: Date;
 }
 
-const CheckInQuestionSchema = new Schema<ICheckInQuestion>(
-  {
-    key: { type: String, required: true, unique: true },
-    question: { type: String, required: true },
-    type: { type: String, enum: ["rating", "text"], required: true },
-    version: { type: Number, default: 1 },
-    isActive: { type: Boolean, default: true },
+const CheckInQuestionSchema = new Schema<ICheckInQuestion>({
+  question: String,
+  type: {
+    type: String,
+    enum: ["rating", "text"],
   },
-  { timestamps: true }
-);
+  version: { type: Number, default: 1 },
+  isActive: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now },
+});
 
 export const CheckInsQuestions = model<ICheckInQuestion>(
   "CheckInQuestion",

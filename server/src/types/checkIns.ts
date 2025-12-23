@@ -1,19 +1,24 @@
 import z, { number } from "zod";
 
 const Question = z.object({
-  key: z.string().min(1, "Key cannot be empty"),
-  question: z.string().min(1, "Question cannot be empty"),
   type: z.enum(["rating", "text"]),
+  question: z.string().min(1, "Question cannot be empty"),
+});
+
+const QuestionsPayload = z.object({
+  questions: z.array(Question).min(1, "At least one question is required"),
   version: z.number().min(1),
   isActive: z.boolean(),
 });
 
-const CheckIn = z.object({
-  questionId: z.string().min(1, "Question cannot be empty"),
-  type: z.enum(["rating", "text"]),
-  answer: z.string().min(1, "Answer cannot be empty"),
-  questionVersion: z.number().min(1),
+const AnswerPayload = z.object({
+  version: z.number().min(1),
+  answers: z.array(
+    z.object({
+      questionId: z.string().min(1, "questionId cannot be empty"),
+      answer: z.string().min(1, "Answer cannot be empty"),
+    })
+  ),
 });
 
-export const CheckInsPayload = z.record(z.string(), CheckIn);
-export const CheckInQuestionsPayload = z.array(Question);
+export { QuestionsPayload, AnswerPayload };
