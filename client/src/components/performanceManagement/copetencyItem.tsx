@@ -2,6 +2,7 @@ import { Controller, useFieldArray } from "react-hook-form";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { IconTrash } from "@tabler/icons-react";
 
 type CompetencyItemProps = {
   control: any;
@@ -27,13 +28,9 @@ function CompetencyItem({
     <div className="space-y-4 p-4 border rounded-lg">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">Competency {index + 1}</h3>
-        <Button
-          type="button"
-          variant="destructive"
-          onClick={() => removeCompetency(index)}
-        >
-          Remove
-        </Button>
+        <span>
+          <IconTrash className="text-red-600 cursor-pointer hover:text-red-700 h-5" onClick={() => removeCompetency(index)} />
+        </span>
       </div>
 
       {/* Title */}

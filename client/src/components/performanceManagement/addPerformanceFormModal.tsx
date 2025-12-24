@@ -35,7 +35,7 @@ export function AddKpiFormModal() {
       competencies: [
         {
           title: "",
-          indicators: [""],
+          indicators: [],
         },
       ],
     },
@@ -76,7 +76,7 @@ export function AddKpiFormModal() {
       </DialogTrigger>
 
       <form onSubmit={handleSubmit(console.log)} className="max-h-[80vh]">
-        <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-auto ">
+        <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto ">
           <DialogHeader>
             <DialogTitle>Create Performance Record</DialogTitle>
             <DialogDescription>
@@ -126,14 +126,20 @@ export function AddKpiFormModal() {
 
           {/* competencies */}
           <div className="space-y-4">
-            <h1 className="font-bold text-lg dark:text-white text-black">
+            <h1 className="font-bold text-lg dark:text-white text-black space-x-2">
               Competencies
+              <span className="text-gray-400 font-normal text-sm">max 4</span>
             </h1>
 
             <Button
               type="button"
               className="ml-auto block"
-              onClick={() => appendCompetency({ title: "", indicators: [""] })}
+              disabled={competencyFields.length >= 4}
+              onClick={() => {
+                if (competencyFields.length < 4) {
+                  appendCompetency({ title: "", indicators: [""] });
+                }
+              }}
             >
               Add Competency
             </Button>

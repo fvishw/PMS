@@ -2,7 +2,7 @@ import { Controller, Control } from "react-hook-form";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "../ui/button";
+import { IconTrash } from "@tabler/icons-react";
 
 type KpiFormRow = {
   objective: string;
@@ -73,13 +73,12 @@ export const getColumns = (
     id: "actions",
     header: "Actions",
     cell: ({ row }) => (
-      <Button
-        variant="ghost"
-        className="text-red-600"
-        onClick={() => remove(row.index)}
-      >
-        Delete
-      </Button>
+      <span>
+        <IconTrash
+          className="text-red-600 cursor-pointer hover:text-red-700 h-5"
+          onClick={() => remove(row.index)}
+        />
+      </span>
     ),
   },
 ];
