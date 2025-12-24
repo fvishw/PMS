@@ -22,14 +22,22 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { IDesignationOption } from "@/types/user";
 import { Spinner } from "../ui/spinner";
-import { getColumns, KpiFormRow, KpiPayload } from "./addKpiTable.config";
+import { getColumns, KpiFormRow, PerformanceValue } from "./addKpiTable.config";
 import { useFieldArray, useForm, Controller } from "react-hook-form";
 import { CustomDataTable } from "../customTable";
+import CompetencyItem from "./copetencyItem";
 
 export function AddKpiFormModal() {
-  const form = useForm<KpiPayload>({
+  const { control, handleSubmit } = useForm<PerformanceValue>({
     defaultValues: {
       kpis: [{ objective: "", indicators: "", weight: "" }],
+      designationId: "",
+      competencies: [
+        {
+          title: "",
+          indicators: [""],
+        },
+      ],
     },
   });
   const { data: designationsData, isPending: designationLoader } = useQuery({
@@ -38,12 +46,19 @@ export function AddKpiFormModal() {
   });
 
   const { fields, append, remove } = useFieldArray({
-    control: form.control,
+    control: control,
     name: "kpis",
   });
-  console.log(fields);
+  const {
+    fields: competencyFields,
+    append: appendCompetency,
+    remove: removeCompetency,
+  } = useFieldArray({
+    control,
+    name: "competencies",
+  });
 
-  const columns: ColumnDef<KpiFormRow>[] = getColumns(form.control, remove);
+  const columns: ColumnDef<KpiFormRow>[] = getColumns(control, remove);
 
   if (designationLoader) {
     return (
@@ -57,21 +72,22 @@ export function AddKpiFormModal() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Add KPI</Button>
+        <Button variant="outline">Create New Record</Button>
       </DialogTrigger>
-      <form onSubmit={form.handleSubmit(console.log)}>
-        <DialogContent className="sm:max-w-[800px]">
+
+      <form onSubmit={handleSubmit(console.log)} className="max-h-[80vh]">
+        <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-auto ">
           <DialogHeader>
-            <DialogTitle>Add KPI</DialogTitle>
+            <DialogTitle>Create Performance Record</DialogTitle>
             <DialogDescription>
-              Fill the form below to add a new KPI.
+              Fill the form below to add a new Performance record.
             </DialogDescription>
           </DialogHeader>
           <div className="grid space-y-4">
             <div className="grid gap-3">
               <Label htmlFor="designation">Designation</Label>
               <Controller
-                control={form.control}
+                control={control}
                 name="designationId"
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
@@ -92,6 +108,9 @@ export function AddKpiFormModal() {
               />
             </div>
 
+            <h1 className="font-bold text-lg dark:text-white text-black">
+              Key Performance Indicators
+            </h1>
             <div className="ml-auto">
               <Button
                 type="button"
@@ -99,10 +118,34 @@ export function AddKpiFormModal() {
                   append({ objective: "", indicators: "", weight: "" })
                 }
               >
-                Add Kpi
+                Add Row
               </Button>
             </div>
             <CustomDataTable columns={columns} data={fields} />
+          </div>
+
+          {/* competencies */}
+          <div className="space-y-4">
+            <h1 className="font-bold text-lg dark:text-white text-black">
+              Competencies
+            </h1>
+
+            <Button
+              type="button"
+              className="ml-auto block"
+              onClick={() => appendCompetency({ title: "", indicators: [""] })}
+            >
+              Add Competency
+            </Button>
+
+            {competencyFields.map((_, index) => (
+              <CompetencyItem
+                key={index}
+                control={control}
+                index={index}
+                removeCompetency={removeCompetency}
+              />
+            ))}
           </div>
 
           <DialogFooter>

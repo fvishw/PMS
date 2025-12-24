@@ -15,22 +15,23 @@ type KpiForm = {
   kpis: KpiFormRow[];
 };
 
-type KpiFormPayload = {
-  designationId: string;
-  kpis: KpiFormRow[];
-};
-
 interface IColumnsProps {
-  control: Control<KpiForm>;
+  control: Control<PerformanceValue>;
   remove: (index: number) => void;
 }
-interface KpiPayload {
+type Indicator = string;
+type Competency = {
+  title: string;
+  indicators: Indicator[];
+};
+interface PerformanceValue {
   kpis: KpiFormRow[];
   designationId: string;
+  competencies: Competency[];
 }
 
 export const getColumns = (
-  control: Control<KpiPayload>,
+  control: Control<PerformanceValue>,
   remove: (index: number) => void
 ): ColumnDef<KpiFormRow>[] => [
   {
@@ -43,7 +44,7 @@ export const getColumns = (
     cell: ({ row }) => (
       <Controller
         control={control}
-        name={`kpis.${row.index}.objective`}
+        name={`kpis.${row.index}.objective` as const}
         render={({ field }) => <Input {...field} />}
       />
     ),
@@ -83,4 +84,4 @@ export const getColumns = (
   },
 ];
 
-export { KpiFormPayload, KpiFormRow, IColumnsProps, KpiForm, KpiPayload };
+export { KpiFormRow, IColumnsProps, KpiForm, PerformanceValue };
