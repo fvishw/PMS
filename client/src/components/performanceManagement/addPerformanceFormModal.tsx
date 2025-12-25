@@ -19,18 +19,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { IDesignationOption } from "@/types/user";
 import { Spinner } from "../ui/spinner";
-import { getColumns, KpiFormRow, PerformanceValue } from "./addKpiTable.config";
+import {
+  getColumns,
+  KpiFormRow,
+  PerformanceFormValue,
+} from "./addKpiTable.config";
 import { useFieldArray, useForm, Controller } from "react-hook-form";
 import { CustomDataTable } from "../customTable";
 import CompetencyItem from "./copetencyItem";
+import { toast } from "sonner";
 
-export function AddKpiFormModal() {
-  const { control, handleSubmit } = useForm<PerformanceValue>({
+export function AddPerformanceFormModal() {
+  const { control, handleSubmit } = useForm<PerformanceFormValue>({
     defaultValues: {
-      kpis: [{ objective: "", indicators: "", weight: "" }],
+      kpis: [{ objective: "", indicator: "", weight: "" }],
       designationId: "",
       competencies: [
         {
@@ -58,6 +63,20 @@ export function AddKpiFormModal() {
     name: "competencies",
   });
 
+  const { mutate: addPerformanceRecord } = useMutation({
+    mutationFn: (data: PerformanceFormValue) => Api.addPerformanceRecord(data),
+    onSuccess: () => {
+      toast.success("Performance Record Added Successfully", {
+        position: "top-right",
+      });
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to add Performance Record", {
+        position: "top-right",
+      });
+    },
+  });
+
   const columns: ColumnDef<KpiFormRow>[] = getColumns(control, remove);
 
   if (designationLoader) {
@@ -75,8 +94,11 @@ export function AddKpiFormModal() {
         <Button variant="outline">Create New Record</Button>
       </DialogTrigger>
 
-      <form onSubmit={handleSubmit(console.log)} className="max-h-[80vh]">
-        <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto ">
+      <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto ">
+        <form
+          onSubmit={handleSubmit((data) => addPerformanceRecord(data))}
+          className="max-h-[80vh]"
+        >
           <DialogHeader>
             <DialogTitle>Create Performance Record</DialogTitle>
             <DialogDescription>
@@ -115,7 +137,7 @@ export function AddKpiFormModal() {
               <Button
                 type="button"
                 onClick={() =>
-                  append({ objective: "", indicators: "", weight: "" })
+                  append({ objective: "", indicator: "", weight: "" })
                 }
               >
                 Add Row
@@ -125,11 +147,13 @@ export function AddKpiFormModal() {
           </div>
 
           {/* competencies */}
-          <div className="space-y-4">
-            <h1 className="font-bold text-lg dark:text-white text-black space-x-2">
-              Competencies
-              <span className="text-gray-400 font-normal text-sm">max 4</span>
-            </h1>
+          <div className="space-y-4 ">
+            <div className="flex items-center gap-1">
+              <h1 className="font-bold text-lg dark:text-white text-black ">
+                Competencies
+              </h1>
+              <span className="text-gray-400 font-normal text-sm">(max 4)</span>
+            </div>
 
             <Button
               type="button"
@@ -153,12 +177,11 @@ export function AddKpiFormModal() {
               />
             ))}
           </div>
-
-          <DialogFooter>
-            <Button type="submit">Submit</Button>
+          <DialogFooter className=" p-4">
+            <Button type="submit">Create Record</Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 }

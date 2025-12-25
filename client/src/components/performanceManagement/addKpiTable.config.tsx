@@ -6,7 +6,7 @@ import { IconTrash } from "@tabler/icons-react";
 
 type KpiFormRow = {
   objective: string;
-  indicators: string;
+  indicator: string;
   weight: number | "";
   accessorFn?: () => any;
 };
@@ -16,7 +16,7 @@ type KpiForm = {
 };
 
 interface IColumnsProps {
-  control: Control<PerformanceValue>;
+  control: Control<PerformanceFormValue>;
   remove: (index: number) => void;
 }
 type Indicator = string;
@@ -24,14 +24,14 @@ type Competency = {
   title: string;
   indicators: Indicator[];
 };
-interface PerformanceValue {
+interface PerformanceFormValue {
   kpis: KpiFormRow[];
   designationId: string;
   competencies: Competency[];
 }
 
 export const getColumns = (
-  control: Control<PerformanceValue>,
+  control: Control<PerformanceFormValue>,
   remove: (index: number) => void
 ): ColumnDef<KpiFormRow>[] => [
   {
@@ -54,7 +54,7 @@ export const getColumns = (
     cell: ({ row }) => (
       <Controller
         control={control}
-        name={`kpis.${row.index}.indicators`}
+        name={`kpis.${row.index}.indicator` as const}
         render={({ field }) => <Textarea {...field} />}
       />
     ),
@@ -83,4 +83,4 @@ export const getColumns = (
   },
 ];
 
-export { KpiFormRow, IColumnsProps, KpiForm, PerformanceValue };
+export { KpiFormRow, IColumnsProps, KpiForm, PerformanceFormValue };

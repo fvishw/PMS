@@ -19,44 +19,58 @@ import {
 import MasterCompetency from "../models/masterCompetency.model.ts";
 import UserCompetency from "../models/userCompetency.model.ts";
 
-const addKpi = asyncHandler(async (req: Request, res: Response) => {
-  const payload = req.body;
+const createPerformanceRecord = asyncHandler(
+  async (req: Request, res: Response) => {
+    const payload = req.body;
+    const createdById = req.user?.id!;
+    const parsedPayload = MasterPerformancePayload.safeParse(payload);
 
-  const parsedPayload = MasterPerformancePayload.safeParse(payload);
+    if (!parsedPayload.success) {
+      throw new ApiError(401, "Invalid Performance Payload");
+    }
 
-  if (!parsedPayload.success) {
-    throw new ApiError(401, "Invalid Performance Payload");
+    const isPerformanceExist = await MasterKpi.findOne({
+      designation: parsedPayload.data.designationId,
+    });
+
+    if (isPerformanceExist) {
+      throw new ApiError(
+        400,
+        "Performance Record for this designation already exists"
+      );
+    }
+
+    const { competencies, designationId, kpis } = parsedPayload.data;
+
+    let totalWeight = 0;
+
+    kpis.forEach((c) => {
+      totalWeight += c.weight;
+    });
+
+    if (totalWeight !== 100) {
+      throw new ApiError(400, "Sum of Kpi's Weight must be 100");
+    }
+
+    const kpi = new MasterKpi({
+      designation: designationId,
+      kpiCriteria: kpis,
+      createdBy: createdById,
+    });
+    await kpi.save();
+
+    const competency = new MasterCompetency({
+      designation: designationId,
+      competencies: competencies,
+    });
+
+    await competency.save();
+
+    return res
+      .status(201)
+      .json(new ApiResponse(201, null, "KPI added successfully"));
   }
-
-  const { competencies, designationId, kpiCriteria } = parsedPayload.data;
-
-  let totalWeight = 0;
-
-  kpiCriteria.forEach((c) => {
-    totalWeight += c.weight;
-  });
-
-  if (totalWeight !== 100) {
-    throw new ApiError(400, "Sum of Kpi's Weight must be 100");
-  }
-
-  const kpi = new MasterKpi({
-    designation: designationId,
-    kpiCriteria: kpiCriteria,
-  });
-  await kpi.save();
-
-  const competency = new MasterCompetency({
-    designation: designationId,
-    competencies: competencies,
-  });
-
-  await competency.save();
-
-  return res
-    .status(201)
-    .json(new ApiResponse(201, null, "KPI added successfully"));
-});
+);
 
 const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
@@ -328,8 +342,25 @@ const getAllUserKpiStatus = asyncHandler(
   }
 );
 
+const getAllPerformance = asyncHandler(async (req: Request, res: Response) => {
+  const performances = await MasterKpi.find()
+    .select("-kpiCriteria")
+    .populate("createdBy", "fullName email")
+    .populate("designation", "title");
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { performances },
+        "Performance records fetched successfully"
+      )
+    );
+});
+
 export {
-  addKpi,
+  createPerformanceRecord,
   updateKpiStatus,
   selfReviewKpi,
   managerReviewKpi,
@@ -337,4 +368,5 @@ export {
   appraiserReviewKpi,
   userFinalReviewKpi,
   getAllUserKpiStatus,
+  getAllPerformance,
 };
