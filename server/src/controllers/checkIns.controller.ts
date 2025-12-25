@@ -137,4 +137,22 @@ const getPastCheckIns = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, result, "Past Check-ins fetched"));
 });
 
-export { addCheckIns, addCheckInsQuestions, getCheckIns, getPastCheckIns };
+const getAllUserCheckIns = asyncHandler(async (req: Request, res: Response) => {
+  const userCheckIns = await UserCheckIns.find()
+    .populate("user", "fullName email")
+    .lean();
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, { checkIns: userCheckIns }, "User Check-ins fetched")
+    );
+});
+
+export {
+  addCheckIns,
+  addCheckInsQuestions,
+  getCheckIns,
+  getPastCheckIns,
+  getAllUserCheckIns,
+};
