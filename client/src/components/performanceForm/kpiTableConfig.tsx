@@ -4,9 +4,8 @@ import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 
 export type KPI = {
-  srNo: string;
-  name: string;
-  description: string;
+  objective: string;
+  indicator: string;
   weight: number;
   selfScore?: number;
   managerScore?: number;
@@ -21,18 +20,18 @@ export const columns: ColumnDef<KPI>[] = [
     cell: ({ row }) => <div className="capitalize text-center">{row.id}</div>,
   },
   {
-    accessorKey: "name",
+    accessorKey: "objective",
     header: () => <div className="text-center">Objective</div>,
     cell: ({ row }) => (
-      <div className="capitalize text-center">{row.getValue("name")}</div>
+      <div className="capitalize text-center">{row.getValue("objective")}</div>
     ),
   },
   {
-    accessorKey: "description",
+    accessorKey: "indicator",
     header: () => <div className="text-center ">Indicator</div>,
     cell: ({ row }) => (
       <div className="lowercase w-[200px] text-center whitespace-normal break-after-all">
-        {row.getValue("description")}
+        {row.getValue("indicator")}
       </div>
     ),
   },
@@ -105,9 +104,8 @@ export const columns: ColumnDef<KPI>[] = [
 
 export const data: KPI[] = [
   {
-    srNo: "1",
-    name: "Timely Delivery of Assigned Tasks",
-    description:
+    objective: "Timely Delivery of Assigned Tasks",
+    indicator:
       "% of tasks delivered on or before deadline (based on sprint/project schedule)",
     weight: 20,
     selfScore: 0,
@@ -116,9 +114,8 @@ export const data: KPI[] = [
     managerComments: "",
   },
   {
-    srNo: "2",
-    name: "Improve customer satisfaction",
-    description: "Customer feedback surveys",
+    objective: "Improve customer satisfaction",
+    indicator: "Customer feedback surveys",
     weight: 15,
   },
 ];
