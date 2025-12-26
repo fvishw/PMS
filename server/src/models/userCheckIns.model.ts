@@ -9,40 +9,40 @@ interface IUserCheckIns {
   user: Types.ObjectId;
   version: number;
   answers: IAnswer[];
+  createdAt?: Date;
 }
 
-const UserCheckInsSchema = new Schema<IUserCheckIns>(
-  {
-    user: {
-      type: Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    version: {
-      type: Number,
-      required: true,
-    },
-    answers: [
-      {
-        questionId: {
-          type: Types.ObjectId,
-          ref: "CheckInQuestion",
-        },
-        type: {
-          type: String,
-          enum: ["rating", "text"],
-        },
-        answer: {
-          type: String,
-          required: true,
-        },
-      },
-    ],
+const UserCheckInsSchema = new Schema<IUserCheckIns>({
+  user: {
+    type: Types.ObjectId,
+    ref: "User",
+    required: true,
   },
-  {
-    timestamps: true,
-  }
-);
+  version: {
+    type: Number,
+    required: true,
+  },
+  answers: [
+    {
+      questionId: {
+        type: Types.ObjectId,
+        ref: "CheckInQuestion",
+      },
+      type: {
+        type: String,
+        enum: ["rating", "text"],
+      },
+      answer: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
 const UserCheckIns = model<IUserCheckIns>("UserCheckIn", UserCheckInsSchema);
 

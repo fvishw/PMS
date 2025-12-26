@@ -21,10 +21,12 @@ function CheckInQuestionAns(props: CheckInQuestionAnsProps) {
   const { questions, register, setValue, isPastCheckIn } = props;
 
   return (
-    <>
+    <div className="overflow-x-hidden space-y-4">
       {questions?.map((checkIn, idx) => (
         <div key={checkIn._id} className="space-y-2 border p-4 rounded flex ">
-          <label className="font-medium w-[500px] flex items-center">{checkIn.question}</label>
+          <label className="font-medium w-[500px] flex items-center">
+            {checkIn.question}
+          </label>
           {checkIn.type === "rating" ? (
             <div className="flex flex-col space-y-1">
               <RadioGroup
@@ -72,7 +74,7 @@ function CheckInQuestionAns(props: CheckInQuestionAnsProps) {
           />
         </div>
       ))}
-    </>
+    </div>
   );
 }
 

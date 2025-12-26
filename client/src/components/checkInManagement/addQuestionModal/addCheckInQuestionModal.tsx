@@ -1,4 +1,3 @@
-import Api from "@/api/api";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,14 +9,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ColumnDef } from "@tanstack/react-table";
-import { Spinner } from "../ui/spinner";
 import {
   getColumns,
   QuestionFormPayload,
   QuestionRow,
-} from "./questionTable.config";
+} from "./addQuestionTable.config";
 import { useFieldArray, useForm } from "react-hook-form";
-import { CustomDataTable } from "../customTable";
+import { CustomDataTable } from "../../customTable";
 
 export function AddCheckInQuestionModal() {
   const form = useForm<QuestionFormPayload>({
@@ -34,18 +32,10 @@ export function AddCheckInQuestionModal() {
 
   const columns: ColumnDef<QuestionRow>[] = getColumns(form.control, remove);
 
-  // if (designationLoader) {
-  //   return (
-  //     <div className="w-full ">
-  //       <Spinner className="size-8 text-primary" />
-  //     </div>
-  //   );
-  // }
-
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Add Question set</Button>
+        <Button>Add Question set</Button>
       </DialogTrigger>
       <form onSubmit={form.handleSubmit(console.log)}>
         <DialogContent className="sm:max-w-[900px]">

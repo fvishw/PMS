@@ -1,6 +1,6 @@
 import OutletWrapper from "@/components/mainLayout";
 import { SiteHeader } from "@/components/site-header";
-import CheckInManagement from "@/components/checkInManagement/checkInManagement";
+import { CheckInManagement } from "@/components/checkInManagement/checkInManagement/checkInManagement";
 
 function checkInManagementLayout() {
   return (

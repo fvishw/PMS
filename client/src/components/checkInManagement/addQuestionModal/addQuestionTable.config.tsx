@@ -1,6 +1,6 @@
 import { Controller, Control } from "react-hook-form";
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import {
   Select,
   SelectContent,
@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TypeOptions } from "@/types/option";
-import { Textarea } from "../ui/textarea";
+import { Textarea } from "../../ui/textarea";
 
 type QuestionRow = {
   question: string;

@@ -1,8 +1,8 @@
-import CheckIns from "@/components/checkins/checkins";
+import CheckIns from "@/components/checkIns/checkIns";
 import OutletWrapper from "@/components/mainLayout";
 import { SiteHeader } from "@/components/site-header";
 
-function CheckIn() {
+function CheckInLayout() {
   return (
     <>
       <SiteHeader headerName="CheckIn" />
@@ -13,4 +13,4 @@ function CheckIn() {
   );
 }
 
-export default CheckIn;
+export default CheckInLayout;

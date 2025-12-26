@@ -5,6 +5,7 @@ import {
   getCheckIns,
   getPastCheckIns,
   getAllUserCheckIns,
+  getUserCheckInById,
 } from "../controllers/checkIns.controller.ts";
 import authMiddleware from "../middlewares/auth.middleware.ts";
 
@@ -22,6 +23,12 @@ router.get(
   getPastCheckIns
 );
 
-router.get("/user-checkins", authMiddleware(["employee"]), getAllUserCheckIns);
+router.get("/user-checkins", authMiddleware(["admin"]), getAllUserCheckIns);
+
+router.get(
+  "/user-past-checkins",
+  authMiddleware(["admin"]),
+  getUserCheckInById
+);
 
 export default router;
