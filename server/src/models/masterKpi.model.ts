@@ -12,10 +12,16 @@ interface ICriteria {
 interface IMasterKpi extends Document {
   designation: Types.ObjectId;
   kpiCriteria: ICriteria[];
+  createdBy: Types.ObjectId;
 }
 
 const MasterKpiSchema = new Schema<IMasterKpi>(
   {
+    createdBy: {
+      type: Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     designation: {
       type: Types.ObjectId,
       ref: "Designation",
