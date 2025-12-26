@@ -1,4 +1,4 @@
-import Kpis from "@/components/kpi";
+import Kpis from "@/components/kpi/kpi";
 import OutletWrapper from "@/components/mainLayout";
 import { PerformanceForm } from "@/components/performanceForm/performanceForm";
 import { SiteHeader } from "@/components/site-header";

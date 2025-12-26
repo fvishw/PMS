@@ -35,7 +35,7 @@ function Performance() {
 
   return (
     <Dialog>
-      <div className=" pb-4">
+      <div className="flex justify-end">
         <AddPerformanceFormModal />
       </div>
       <CustomDataTable columns={columns} data={tableData} />

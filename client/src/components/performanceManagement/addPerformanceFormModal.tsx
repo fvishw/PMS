@@ -91,10 +91,10 @@ export function AddPerformanceFormModal() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Create New Record</Button>
+        <Button>Add Master Performance</Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto ">
+      <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto overflow-x-hidden">
         <form
           onSubmit={handleSubmit((data) => addPerformanceRecord(data))}
           className="max-h-[80vh]"

@@ -359,6 +359,33 @@ const getAllPerformance = asyncHandler(async (req: Request, res: Response) => {
     );
 });
 
+const getUserKpiDetails = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized");
+  }
+
+  const designationId = await User.findById(userId).select("designation");
+
+  if (!designationId) {
+    throw new ApiError(404, "User or Designation not found");
+  }
+  const masterKpi = await MasterKpi.findOne({
+    designation: designationId.designation,
+  });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { criteria: masterKpi?.kpiCriteria || [] },
+        "User KPI details fetched successfully"
+      )
+    );
+});
+
 export {
   createPerformanceRecord,
   updateKpiStatus,
@@ -369,4 +396,5 @@ export {
   userFinalReviewKpi,
   getAllUserKpiStatus,
   getAllPerformance,
+  getUserKpiDetails,
 };
