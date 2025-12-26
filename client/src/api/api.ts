@@ -1,3 +1,4 @@
+import { PerformanceFormValue } from "@/components/performanceManagement/addKpiTable.config";
 import { CheckInPayload } from "@/types/chekin";
 import { PastCheckIns } from "@/types/response";
 import { getDynamicApiUrl } from "@/utils/url";
@@ -38,8 +39,8 @@ export class API {
     });
   }
 
-  fetchUserKpi() {
-    return this.request(this.instance.get("/user/kpis"));
+  fetchUserPerformanceForm() {
+    return this.request(this.instance.get("/user/performance-form"));
   }
   submitUserKpis() {
     return this.request(this.instance.put("/kpis/accept-kpi"));
@@ -76,6 +77,37 @@ export class API {
         params: {
           month,
           year,
+        },
+      })
+    );
+  }
+  addPerformanceRecord(data: PerformanceFormValue) {
+    return this.request(this.instance.post("/performance/add", data));
+  }
+  fetchAllPerformanceRecords() {
+    return this.request(this.instance.get("/performance/all-performance"));
+  }
+  fetchAllUserCheckIns() {
+    return this.request(this.instance.get("/check-ins/user-checkins"));
+  }
+  fetchUserKpiDetails() {
+    return this.request(this.instance.get("/performance/user-kpi-details"));
+  }
+  fetchUserPastCheckIns(employeeId: string): Promise<PastCheckIns> {
+    return this.request(
+      this.instance.get("/check-ins/user-past-checkins", {
+        params: {
+          employeeId,
+        },
+      })
+    );
+  }
+
+  fetchCheckIn(checkInId: string): Promise<PastCheckIns> {
+    return this.request(
+      this.instance.get("/check-ins/user-past-checkins", {
+        params: {
+          checkInId,
         },
       })
     );
