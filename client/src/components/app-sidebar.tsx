@@ -45,11 +45,6 @@ const sidebarItems = {
       icon: IconUsers,
     },
     {
-      title: "My Goals",
-      url: "my-goals",
-      icon: IconTargetArrow,
-    },
-    {
       title: "CheckIn Management",
       url: "manage-checkins",
       icon: IconListCheck,
@@ -58,11 +53,6 @@ const sidebarItems = {
       title: "Performance Management",
       url: "manage-performance",
       icon: IconDatabaseCog,
-    },
-    {
-      title: "My Appraisal",
-      url: "my-appraisal",
-      icon: IconTrophy,
     },
     {
       title: "Review Goals",

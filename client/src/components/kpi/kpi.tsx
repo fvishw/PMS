@@ -1,10 +1,10 @@
 import Api from "@/api/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Spinner } from "./ui/spinner";
-import Criteria from "./ui/criteria";
-import { Checkbox } from "./ui/checkbox";
-import { Label } from "./ui/label";
-import { Button } from "./ui/button";
+import { Spinner } from "../ui/spinner";
+import Criteria from "../ui/criteria";
+import { Checkbox } from "../ui/checkbox";
+import { Label } from "../ui/label";
+import { Button } from "../ui/button";
 import { useState } from "react";
 
 const termsAndConditions: string[] = [
@@ -18,11 +18,12 @@ function Kpis() {
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const { isLoading, data, error } = useQuery({
     queryKey: ["kpis"],
-    queryFn: () => Api.fetchUserKpi(),
+    queryFn: () => Api.fetchUserKpiDetails(),
   });
   const { mutate, isPending } = useMutation({
     mutationFn: () => Api.submitUserKpis(),
   });
+  console.log(data);
   if (isLoading) {
     return (
       <div className="w-full ">
@@ -45,13 +46,13 @@ function Kpis() {
         <Criteria
           key={criteria.id}
           id={criteria.id}
-          name={criteria.name}
-          description={criteria.description}
+          objective={criteria.objective}
+          indicator={criteria.indicator}
           weight={criteria.weight}
         />
       )) || <p>No KPIs found.</p>}
 
-      <div className="border p-4 rounded-md   ">
+      <div className="border p-4 rounded-md">
         <div className="grid grid-cols-1  sm:grid-cols-3 space-y-5 space-x-2 items-center justify-evenly">
           <div className="space-y-2 grid col-span-2">
             <h3 className="font-semibold">Important Instructions:</h3>
