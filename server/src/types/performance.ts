@@ -57,7 +57,7 @@ const ManagerScorePayloadSchema = z.object({
 const KpiCriteria = z.object({
   objective: z.string(),
   indicator: z.string(),
-  weight: z.number(),
+  weight: z.coerce.number(),
 });
 
 const Competency = z.object({
@@ -66,8 +66,8 @@ const Competency = z.object({
 });
 
 const MasterPerformancePayload = z.object({
-  designationId: z.string(),
-  kpiCriteria: z.array(KpiCriteria),
+  designationId: z.string().min(1),
+  kpis: z.array(KpiCriteria),
   competencies: z.array(Competency).max(4, "Maximum 4 Competency Allowed"),
 });
 

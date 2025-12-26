@@ -19,13 +19,13 @@ app.use((req, res, next) => {
 import userAuth from "./routes/userAuth.routes.ts";
 import userDesignation from "./routes/userDesignation.routes.ts";
 import userRouter from "./routes/user.route.ts";
-import kpiRouter from "./routes/kpi.route.ts";
+import performanceRouter from "./routes/performance.route.ts";
 import CheckInsRouter from "./routes/checkIns.routes.ts";
 
 app.use("/api/user", userRouter);
 app.use("/api/user/auth", userAuth);
 app.use("/api/user/designation", userDesignation);
-app.use("/api/kpis", kpiRouter);
+app.use("/api/performance", performanceRouter);
 app.use("/api/check-ins", CheckInsRouter);
 
 app.use(
