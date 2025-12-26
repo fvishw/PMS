@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
-import { Spinner } from "./ui/spinner";
+import { Spinner } from "../ui/spinner";
 import { IDesignationOption } from "@/types/user";
 
 const roles = [
@@ -59,7 +59,7 @@ export function AddUserModal() {
     <Dialog>
       <form>
         <DialogTrigger asChild>
-          <Button variant="outline">Add User</Button>
+          <Button>Add User</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>

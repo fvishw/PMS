@@ -1,6 +1,6 @@
 import OutletWrapper from "@/components/mainLayout";
 import { SiteHeader } from "@/components/site-header";
-import { UserTable } from "@/components/userTable";
+import { UserTable } from "@/components/userManagement/userTable";
 
 function userManagementLayout() {
   return (
