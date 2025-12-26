@@ -39,11 +39,11 @@ const router = createBrowserRouter([
       },
       {
         path: "my-appraisal",
-        Component: lazy(() => import("@/pages/outlets/myApperaisalLayout")),
+        Component: lazy(() => import("@/pages/outlets/myAppraisalLayout")),
       },
       {
         path: "checkins",
-        Component: lazy(() => import("@/pages/outlets/chekinLayout")),
+        Component: lazy(() => import("@/pages/outlets/checkInLayout")),
       },
       {
         path: "me",
@@ -51,7 +51,7 @@ const router = createBrowserRouter([
       },
       {
         path: "kpis",
-        Component: lazy(() => import("@/pages/outlets/kpisLayout")),
+        Component: lazy(() => import("@/pages/outlets/performanceLayout")),
       },
       {
         path: "my-goals",

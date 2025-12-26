@@ -1,5 +1,6 @@
-import { DataTable } from "@/components/data-table";
+import { CustomDataTable } from "@/components/customTable";
 import OutletWrapper from "@/components/mainLayout";
+import { columns } from "@/components/performanceManagement/kpiTable.config";
 import { SectionCards } from "@/components/section-cards";
 import { SiteHeader } from "@/components/site-header";
 
@@ -9,7 +10,7 @@ function HomeOutlet() {
       <SiteHeader headerName="Home" />
       <OutletWrapper>
         <SectionCards />
-        <DataTable data={[]} />
+        <CustomDataTable data={[]} columns={columns} />
       </OutletWrapper>
     </>
   );
