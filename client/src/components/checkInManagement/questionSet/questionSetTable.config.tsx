@@ -1,34 +1,21 @@
-import { IconEye } from "@tabler/icons-react";
 import { type ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
+import { Badge } from "@/components/ui/badge";
+import { QuestionTableAction } from "./questionTableAction";
 
 export type QuestionTableColumn = {
   version: string;
   srNo: string;
   createdAt: string;
-  createdBy: string;
+  isActive: boolean;
 };
 
 export const columns: ColumnDef<QuestionTableColumn>[] = [
   {
-    accessorKey: "srNo",
-    header: () => <div className="text-center">Sr. No.</div>,
-    cell: ({ row }) => (
-      <div className="font-medium text-center">{row.index + 1}</div>
-    ),
-  },
-  {
     accessorKey: "version",
     header: () => <div className="text-center">Version</div>,
     cell: ({ row }) => (
-      <div className="capitalize text-center">v.{row.getValue("version")}</div>
-    ),
-  },
-  {
-    accessorKey: "createdBy",
-    header: () => <div className="text-center">Created By</div>,
-    cell: ({ row }) => (
-      <div className="capitalize text-center">{row.getValue("createdBy")}</div>
+      <div className="capitalize text-center">{row.getValue("version")}</div>
     ),
   },
   {
@@ -41,12 +28,23 @@ export const columns: ColumnDef<QuestionTableColumn>[] = [
     },
   },
   {
+    accessorKey: "isActive",
+    header: () => <div className="text-center">Status</div>,
+    cell: ({ row }) => (
+      <div className="text-center">
+        {row.getValue("isActive") ? (
+          <Badge variant="default">Active</Badge>
+        ) : (
+          <Badge variant="outline">Inactive</Badge>
+        )}
+      </div>
+    ),
+  },
+  {
     accessorKey: "actions",
     header: () => <div className="text-center">Actions</div>,
     cell: ({ row }) => (
-      <div className="flex justify-center items-center space-x-2 text-gray-300 hover:text-gray-400 cursor-pointer transition duration-150">
-        <IconEye />
-      </div>
+      <QuestionTableAction version={row.getValue("version")} />
     ),
   },
 ];

@@ -28,6 +28,8 @@ function NewCheckIn() {
   });
   const { register, handleSubmit, setValue } = useForm<CheckInFormValue[]>();
 
+  const version = data?.questions[0]?.version || "";
+
   const onSubmit = (data: CheckInPayload) => {
     const ansPayload = [];
     console.log(data);
@@ -35,7 +37,7 @@ function NewCheckIn() {
       ansPayload.push(value);
     }
     const payload = {
-      version: 1,
+      version: version,
       answers: ansPayload,
     };
     mutate(payload);

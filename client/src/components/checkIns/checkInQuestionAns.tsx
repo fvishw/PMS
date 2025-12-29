@@ -4,7 +4,7 @@ import { Textarea } from "../ui/textarea";
 import { Input } from "../ui/input";
 import criteriaOptions from "./options";
 
-type IQuestion = {
+export type IQuestion = {
   _id: string;
   question: string;
   type: "rating" | "text";

@@ -112,6 +112,25 @@ export class API {
       })
     );
   }
+  getAllQuestionByVersion() {
+    return this.request(this.instance.get("/check-ins/question-sets"));
+  }
+  setActiveQuestionSet(version: string) {
+    return this.request(
+      this.instance.put("/check-ins/set-active-question-set", {
+        version,
+      })
+    );
+  }
+  fetchCheckInQuestions(version: string) {
+    return this.request(
+      this.instance.get("/check-ins/questions-by-version", {
+        params: {
+          version,
+        },
+      })
+    );
+  }
 }
 
 const Api = new API();

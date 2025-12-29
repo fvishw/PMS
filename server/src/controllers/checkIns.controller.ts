@@ -199,6 +199,101 @@ const getUserCheckInById = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, flattenedCheckIns, "Past Check-ins fetched"));
 });
 
+const getAllCheckInQuestions = asyncHandler(
+  async (req: Request, res: Response) => {
+    const checkInQuestions = await CheckInsQuestions.aggregate([
+      {
+        $group: {
+          _id: "$version",
+          createdAt: { $first: "$createdAt" },
+          isActive: { $first: "$isActive" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          version: "$_id",
+          createdAt: 1,
+          isActive: 1,
+        },
+      },
+    ]);
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { question_set: checkInQuestions },
+          "Check-in questions fetched"
+        )
+      );
+  }
+);
+
+const activateQuestionSet = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { version } = req.body;
+    if (!version || typeof version !== "string") {
+      throw new ApiError(400, "Invalid or missing version parameter");
+    }
+    // await CheckInsQuestions.updateMany({ version: 1 }, { version: "1" });
+
+    await CheckInsQuestions.updateMany(
+      { isActive: true },
+      { $set: { isActive: false } }
+    );
+
+    const result = await CheckInsQuestions.updateMany(
+      { version: version },
+      { $set: { isActive: true } }
+    );
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, result, "Question set activated"));
+  }
+);
+
+const getAllCheckInQuestionsByVersion = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { version } = req.query;
+
+    if (!version || typeof version !== "string") {
+      throw new ApiError(400, "Invalid or missing version parameter");
+    }
+
+    const checkInQuestions = await CheckInsQuestions.aggregate([
+      { $match: { version: version } },
+      {
+        $group: {
+          _id: "$version",
+          question_set: {
+            $push: { question: "$question", type: "$type", _id: "$_id" },
+          },
+          createdAt: { $first: "$createdAt" },
+          isActive: { $first: "$isActive" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          version: "$_id",
+          question_set: 1,
+          createdAt: 1,
+          isActive: 1,
+        },
+      },
+    ]);
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, checkInQuestions[0], "Check-in questions fetched")
+      );
+  }
+);
+
 export {
   addCheckIns,
   addCheckInsQuestions,
@@ -206,4 +301,7 @@ export {
   getPastCheckIns,
   getAllUserCheckIns,
   getUserCheckInById,
+  getAllCheckInQuestions,
+  activateQuestionSet,
+  getAllCheckInQuestionsByVersion,
 };
