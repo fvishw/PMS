@@ -1,6 +1,6 @@
 import { type ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
-import { UserPastCheckInModal } from "./userPastCheckInModal";
+import { CheckInTableAction } from "./checkInTableAction";
 export type CheckInQuestionTableColumn = {
   _id: string;
   user: string;
@@ -45,10 +45,6 @@ export const columns: ColumnDef<CheckInQuestionTableColumn>[] = [
   {
     accessorKey: "actions",
     header: () => <div className="text-center">Actions</div>,
-    cell: ({ row }) => (
-      <div className="flex justify-center items-center space-x-2 text-gray-300 hover:text-gray-400 cursor-pointer transition duration-150">
-        <UserPastCheckInModal checkInId={row.original._id} />
-      </div>
-    ),
+    cell: ({ row }) => <CheckInTableAction checkInId={row.original._id} />,
   },
 ];
