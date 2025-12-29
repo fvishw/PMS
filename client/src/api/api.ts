@@ -1,5 +1,5 @@
 import { PerformanceFormValue } from "@/components/performanceManagement/addKpiTable.config";
-import { CheckInPayload } from "@/types/chekin";
+import { CheckInPayload, ICheckInPayload } from "@/types/chekin";
 import { PastCheckIns } from "@/types/response";
 import { getDynamicApiUrl } from "@/utils/url";
 import axios, { AxiosError, AxiosInstance } from "axios";
@@ -61,10 +61,10 @@ export class API {
       })
     );
   }
-  addCheckInsQuestions(data: any) {
+  addCheckInsQuestions(CheckInPayload: ICheckInPayload) {
     return this.request(
       this.instance.post("/check-ins/add-questions", {
-        checkInsQuestions: data,
+        checkInsQuestions: CheckInPayload,
       })
     );
   }

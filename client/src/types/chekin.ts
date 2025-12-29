@@ -23,4 +23,13 @@ interface ICheckInsResponse {
   checkIns: ICheckIn[];
 }
 
-export { CheckInPayload, ICheckInsResponse };
+interface ICheckInPayload {
+  designationId?: string;
+  questions: {
+    question: string;
+    type: string;
+  }[];
+  version: string;
+}
+
+export { CheckInPayload, ICheckInsResponse, ICheckInPayload };

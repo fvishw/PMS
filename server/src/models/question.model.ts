@@ -3,7 +3,7 @@ import { model, Document, Schema } from "mongoose";
 interface ICheckInQuestion extends Document {
   question: string;
   type: "rating" | "text";
-  version: number;
+  version: string;
   isActive: boolean;
   createdAt: Date;
 }
@@ -14,7 +14,7 @@ const CheckInQuestionSchema = new Schema<ICheckInQuestion>({
     type: String,
     enum: ["rating", "text"],
   },
-  version: { type: Number, default: 1 },
+  version: { type: String },
   isActive: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
 });

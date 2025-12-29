@@ -36,25 +36,30 @@ const addCheckIns = asyncHandler(async (req: Request, res: Response) => {
 
 const addCheckInsQuestions = asyncHandler(
   async (req: Request, res: Response) => {
-    const checkInQuestionPayload = req.body;
+    const { checkInsQuestions } = req.body;
 
-    const parsedCheckInsQuestions = QuestionsPayload.safeParse(
-      checkInQuestionPayload
-    );
+    const parsedCheckInsQuestions =
+      QuestionsPayload.safeParse(checkInsQuestions);
 
     if (parsedCheckInsQuestions.success === false) {
       throw new ApiError(400, "Invalid checkInsQuestions payload");
     }
-    const validCheckInsQuestions = parsedCheckInsQuestions.data;
+    const { questions, version } = parsedCheckInsQuestions.data;
 
-    const questionsToInsert = validCheckInsQuestions.questions.map(
-      (question) => ({
-        question: question.question,
-        type: question.type,
-        version: validCheckInsQuestions.version,
-        isActive: true,
-      })
-    );
+    const isVersionExists = await CheckInsQuestions.findOne({
+      version: version,
+    });
+
+    if (isVersionExists) {
+      throw new ApiError(400, "Version already exists");
+    }
+
+    const questionsToInsert = questions.map((question) => ({
+      question: question.question,
+      type: question.type,
+      version: version,
+      isActive: true,
+    }));
 
     const employeeCheckInsQuestions = await CheckInsQuestions.insertMany(
       questionsToInsert
@@ -151,7 +156,6 @@ const getAllUserCheckIns = asyncHandler(async (req: Request, res: Response) => {
     name: (checkIn.user as typeof User).fullName,
     email: (checkIn.user as typeof User).email,
   }));
-  console.log("flattenedCheckIns", flattenedCheckIns);
 
   return res
     .status(200)
@@ -163,41 +167,6 @@ const getAllUserCheckIns = asyncHandler(async (req: Request, res: Response) => {
       )
     );
 });
-
-const getUserPastCheckIns = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { employeeId } = req.query;
-
-    if (!employeeId || typeof employeeId !== "string") {
-      throw new ApiError(400, "Invalid or missing employeeId parameter");
-    }
-    const pastCheckIns = await UserCheckIns.find({
-      user: employeeId,
-    })
-      .populate("answers.questionId", "question type")
-      .lean();
-
-    const flattenedCheckIns = pastCheckIns.map((checkIn) => ({
-      ...checkIn,
-      answers: checkIn.answers.map((item) => ({
-        _id: item.questionId._id,
-        question: item.questionId?.question,
-        answer: item.answer,
-        type: item.questionId?.type,
-      })),
-    }));
-
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          { checkIns: flattenedCheckIns },
-          "Past Check-ins fetched"
-        )
-      );
-  }
-);
 
 const getUserCheckInById = asyncHandler(async (req: Request, res: Response) => {
   const { checkInId } = req.query;

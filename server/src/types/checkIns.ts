@@ -7,12 +7,11 @@ const Question = z.object({
 
 const QuestionsPayload = z.object({
   questions: z.array(Question).min(1, "At least one question is required"),
-  version: z.number().min(1),
-  isActive: z.boolean(),
+  version: z.string().min(1, "Version cannot be empty"),
 });
 
 const AnswerPayload = z.object({
-  version: z.number().min(1),
+  version: z.string().min(1, "Version cannot be empty"),
   answers: z.array(
     z.object({
       questionId: z.string().min(1, "questionId cannot be empty"),

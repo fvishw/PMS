@@ -4,8 +4,8 @@ interface IOption {
 }
 const TypeOptions = [
   {
-    label: "String",
-    value: "string",
+    label: "Text",
+    value: "text",
   },
   {
     label: "Rating",

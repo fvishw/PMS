@@ -16,36 +16,68 @@ import {
 } from "./addQuestionTable.config";
 import { useFieldArray, useForm } from "react-hook-form";
 import { CustomDataTable } from "../../customTable";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import Api from "@/api/api";
+import { useMutation } from "@tanstack/react-query";
 
 export function AddCheckInQuestionModal() {
-  const form = useForm<QuestionFormPayload>({
+  const { control, handleSubmit, register } = useForm<QuestionFormPayload>({
     defaultValues: {
       questions: [{ question: "", type: "" }],
+      version: "",
     },
   });
 
   const { fields, append, remove } = useFieldArray({
-    control: form.control,
+    control,
     name: "questions",
   });
-  console.log(fields);
 
-  const columns: ColumnDef<QuestionRow>[] = getColumns(form.control, remove);
+  const columns: ColumnDef<QuestionRow>[] = getColumns(control, remove);
+
+  const { mutate } = useMutation({
+    mutationFn: (data: QuestionFormPayload) => Api.addCheckInsQuestions(data),
+    onSuccess: () => {
+      toast.success("Questions added successfully", {
+        position: "top-right",
+      });
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to add questions", {
+        position: "top-right",
+      });
+    },
+  });
+
+  const onSubmit = (data: QuestionFormPayload) => {
+    mutate(data);
+  };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button>Add Question set</Button>
       </DialogTrigger>
-      <form onSubmit={form.handleSubmit(console.log)}>
-        <DialogContent className="sm:max-w-[900px]">
+      <DialogContent className="sm:max-w-[900px]">
+        <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
             <DialogTitle>Add Questions</DialogTitle>
             <DialogDescription>
               Fill the form below to add new questions.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 ">
+          <div className="grid space-y-4 py-4">
+            <div className="flex flex-col space-y-2">
+              <Label htmlFor="version">Question Version</Label>
+              <Input
+                {...register("version", { required: true })}
+                className="w-[200px]"
+                placeholder="v.1"
+                id="version"
+              />
+            </div>
             <div className="ml-auto">
               <Button
                 type="button"
@@ -56,12 +88,11 @@ export function AddCheckInQuestionModal() {
             </div>
             <CustomDataTable columns={columns} data={fields} />
           </div>
-
           <DialogFooter>
             <Button type="submit">Submit</Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 }

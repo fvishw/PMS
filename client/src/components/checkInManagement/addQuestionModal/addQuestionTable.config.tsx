@@ -25,6 +25,7 @@ type QuestionForm = {
 type QuestionFormPayload = {
   designationId: string;
   questions: QuestionRow[];
+  version: string;
 };
 
 interface IColumnsProps {
