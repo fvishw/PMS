@@ -1,10 +1,12 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
 import Api from "@/api/api";
 import { CheckInPayload } from "@/types/chekin";
 import { Spinner } from "../ui/spinner";
 import CheckInQuestionAns from "./checkInQuestionAns";
+import { toast } from "sonner";
+import { queryClient } from "@/utils/queryClient";
 
 export type CheckInFormValue = {
   questionId: string;
@@ -15,10 +17,15 @@ function NewCheckIn() {
   const { mutate } = useMutation({
     mutationFn: (data: CheckInPayload) => Api.addCheckIns(data),
     onSuccess: () => {
-      // Invalidate and refetch
+      toast.success("Check-In submitted successfully!", {
+        position: "top-right",
+      });
+      queryClient.invalidateQueries({ queryKey: ["getCheckIns"] });
     },
-    onError: () => {
-      // Show error message
+    onError: (error) => {
+      toast.error(`Error submitting Check-In: ${error}`, {
+        position: "top-right",
+      });
     },
   });
 
