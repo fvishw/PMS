@@ -138,6 +138,23 @@ export function AddUserModal() {
                 </SelectContent>
               </Select>
             </div>
+            <div className="grid gap-3">
+              <Label htmlFor="adminReviewer">Admin Reviewer</Label>
+              <Select>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Select an admin reviewer" />
+                </SelectTrigger>
+                <SelectContent onChange={() => {}}>
+                  <SelectGroup>
+                    {designationOptions.map((designation: any) => (
+                      <SelectItem key={designation._id} value={designation._id}>
+                        {designation.title}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <DialogFooter>
             <Button type="submit">Add User</Button>
