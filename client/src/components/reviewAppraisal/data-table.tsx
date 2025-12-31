@@ -29,7 +29,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { columns, data, ReviewTableColumn } from "./reviewGoalTable.config";
+import { columns, data, ReviewTableColumn } from "./reviewAppraisalTable.config";
 
 export function DataTable() {
   const [sorting, setSorting] = useState<SortingState>([]);

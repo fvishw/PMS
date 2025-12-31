@@ -49,7 +49,7 @@ export class API {
     return this.request(this.instance.get("/user/all-user"));
   }
   fetchAllUserKpiStatus() {
-    return this.request(this.instance.get("/kpis/all-user-kpi-status"));
+    return this.request(this.instance.get("/performance/all-user-kpi-status"));
   }
   fetchAllDesignations() {
     return this.request(this.instance.get("/user/designation/all"));

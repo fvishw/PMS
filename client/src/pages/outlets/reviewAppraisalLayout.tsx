@@ -1,5 +1,5 @@
 import OutletWrapper from "@/components/mainLayout";
-import { ReviewGoals } from "@/components/reviewGoals/reviewGoals";
+import { ReviewAppraisal } from "@/components/reviewAppraisal/reviewAppraisal";
 import { SiteHeader } from "@/components/site-header";
 
 function ReviewAppraisalLayout() {
@@ -7,7 +7,7 @@ function ReviewAppraisalLayout() {
     <>
       <SiteHeader headerName="Review Appraisal" />
       <OutletWrapper>
-        <ReviewGoals />
+        <ReviewAppraisal />
       </OutletWrapper>
     </>
   );

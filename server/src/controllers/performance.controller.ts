@@ -334,11 +334,15 @@ const userFinalReviewKpi = asyncHandler(async (req: Request, res: Response) => {
 
 const getAllUserKpiStatus = asyncHandler(
   async (req: Request, res: Response) => {
-    const users = await User.aggregate;
+    const performances = await Performance.find()
+      .populate("userId", "fullName email")
+      .select("stage createdAt updatedAt");
 
     return res
       .status(200)
-      .json(new ApiResponse(200, users, "Users fetched successfully"));
+      .json(
+        new ApiResponse(200, { performances }, "Users fetched successfully")
+      );
   }
 );
 
