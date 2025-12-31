@@ -19,7 +19,7 @@ class PublicApi {
     }
   }
 
-  singInUser(email: string, password: string) {
+  signInUser(email: string, password: string) {
     return this.request(
       this.instance.post("/user/auth/login", {
         email,

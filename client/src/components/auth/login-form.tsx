@@ -26,7 +26,7 @@ export function LoginForm({
   const [isPasswordShow, setIsPasswordShow] = useState<boolean>(false);
   const { mutate, isPending } = useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
-      publicApi.singInUser(email, password),
+      publicApi.signInUser(email, password),
     onSuccess: (data) => {
       toast.success("Login successful!", {
         position: "top-right",
