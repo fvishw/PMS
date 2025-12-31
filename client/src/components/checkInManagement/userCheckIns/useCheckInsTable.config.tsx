@@ -24,7 +24,7 @@ export const columns: ColumnDef<CheckInTableColumn>[] = [
     ),
   },
   {
-    accessorKey: "checkInDate",
+    accessorKey: "createdAt",
     header: () => <div className="text-center ">Check-In Date</div>,
     cell: ({ row }) => (
       <div className="lowercase  text-center whitespace-normal break-after-all">
