@@ -25,7 +25,7 @@ const FinalDecisionAndRemark: React.FC<ICommenterNameProps> = ({ name }) => {
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Select remark" />
             </SelectTrigger>
-            <SelectContent onChange={() => {}}>
+            <SelectContent>
               <SelectGroup>
                 {remarkOptions.map((role) => (
                   <SelectItem key={role.value} value={role.value}>
@@ -42,7 +42,7 @@ const FinalDecisionAndRemark: React.FC<ICommenterNameProps> = ({ name }) => {
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Select Recommendation" />
             </SelectTrigger>
-            <SelectContent onChange={() => {}}>
+            <SelectContent>
               <SelectGroup>
                 {performanceRatingOptions.map((performance) => (
                   <SelectItem key={performance.value} value={performance.value}>

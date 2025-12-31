@@ -88,7 +88,7 @@ export function AddUserModal() {
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Select role" />
                 </SelectTrigger>
-                <SelectContent onChange={() => {}}>
+                <SelectContent>
                   <SelectGroup>
                     {roles.map((role) => (
                       <SelectItem key={role.value} value={role.value}>
@@ -105,7 +105,7 @@ export function AddUserModal() {
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Select a designation" />
                 </SelectTrigger>
-                <SelectContent onChange={() => {}}>
+                <SelectContent>
                   <SelectGroup>
                     {designationOptions.map(
                       (designation: IDesignationOption) => (
@@ -127,7 +127,7 @@ export function AddUserModal() {
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Select a parent reviewer" />
                 </SelectTrigger>
-                <SelectContent onChange={() => {}}>
+                <SelectContent>
                   <SelectGroup>
                     {designationOptions.map((designation: any) => (
                       <SelectItem key={designation._id} value={designation._id}>
@@ -144,7 +144,7 @@ export function AddUserModal() {
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Select an admin reviewer" />
                 </SelectTrigger>
-                <SelectContent onChange={() => {}}>
+                <SelectContent>
                   <SelectGroup>
                     {designationOptions.map((designation: any) => (
                       <SelectItem key={designation._id} value={designation._id}>

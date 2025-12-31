@@ -2,6 +2,7 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import {
@@ -44,11 +45,11 @@ export function CustomDataTable<TData, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
 
   return (
     <div className="space-y-4">
-
       <div className="overflow-hidden rounded-lg border">
         <DndContext
           collisionDetection={closestCenter}

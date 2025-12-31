@@ -30,7 +30,7 @@ function FinalReview() {
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Select Recommendation" />
                 </SelectTrigger>
-                <SelectContent onChange={() => {}}>
+                <SelectContent>
                   <SelectGroup>
                     {agreementOptions.map((performance) => (
                       <SelectItem
