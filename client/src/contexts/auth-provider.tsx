@@ -57,6 +57,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     //here we need to call logout api to remove refresh toke from db
+    localStorage.removeItem("user");
+    setUser(null);
+    setIsAuthenticated(false);
   };
   const authCtx = {
     user: user,

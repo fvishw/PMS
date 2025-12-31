@@ -94,7 +94,7 @@ export const columns: ColumnDef<KPI>[] = [
           <Textarea
             className="h-5 w-[200px]"
             rows={1}
-            defaultValue={row.getValue("selfComments") || ""}
+            defaultValue={row.getValue("managerComments") || ""}
           />
         </span>
       );
