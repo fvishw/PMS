@@ -1,13 +1,64 @@
 import { Schema, model, Document, Types } from "mongoose";
-import type { IFinalReview, IMasterPerformance } from "./masterPerformance.ts";
 
-interface IUserPerformance extends IMasterPerformance {
-  userId: Types.ObjectId;
+export interface IDecisionAndRemarks {
+  remarks: string;
+  recommendation: string;
+  finalComments: string;
 }
 
-const UserPerformanceSchema = new Schema<IUserPerformance>(
+export interface ISelfReview {
+  remarks: string;
+  comments: string;
+}
+
+export interface IFinalReview {
+  adminReview: IDecisionAndRemarks;
+  selfReview: ISelfReview;
+}
+export interface ICriteria {
+  _id: string;
+  indicator: string;
+  description: string;
+  weight: number;
+  selfScore: number;
+  selfComments: string;
+  managerScore: number;
+  managerComments: string;
+}
+export interface IMasterKpi {
+  kpiCriteria: ICriteria[];
+}
+
+export interface ICompetency {
+  _id: string;
+  title: string;
+  indicators: string[];
+  score: number;
+}
+
+export interface IMasterPerformance extends Document {
+  designation: Types.ObjectId;
+  kpis: IMasterKpi;
+  competencies: ICompetency[];
+  finalReview: IFinalReview;
+  stage:
+    | "kpi_acceptance"
+    | "self_review"
+    | "manager_review"
+    | "admin_review"
+    | "user_final_review";
+  interval: {
+    quarterly: "Q1" | "Q2" | "Q3" | "Q4";
+    year: number;
+  }; // e.g., "Q1 2024"
+  parentReviewer: Types.ObjectId;
+  adminReviewer?: Types.ObjectId;
+  appraiserReviewer?: Types.ObjectId;
+  isKpiLocked: boolean;
+}
+
+const MasterPerformanceSchema = new Schema<IMasterPerformance>(
   {
-    userId: { type: Types.ObjectId, ref: "User", required: true },
     designation: { type: Types.ObjectId, ref: "Designation", required: true },
     kpis: [
       {
@@ -66,7 +117,7 @@ const UserPerformanceSchema = new Schema<IUserPerformance>(
   },
   { timestamps: true }
 );
-export const UserPerformance = model<IUserPerformance>(
-  "UserPerformance",
-  UserPerformanceSchema
+export const MasterPerformance = model<IMasterPerformance>(
+  "MasterPerformance",
+  MasterPerformanceSchema
 );

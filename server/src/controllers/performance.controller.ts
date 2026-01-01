@@ -1,23 +1,23 @@
 import type { Request, Response } from "express";
-import { MasterKpi } from "../models/masterKpi.model.ts";
-import { Performance } from "../models/performance.model.ts";
+import { UserPerformance } from "../models/performance.model.ts";
 import asyncHandler from "../utils/asyncHandler.ts";
 import { ApiError } from "../utils/ApiError.ts";
 import { ApiResponse } from "../utils/ApiResponse.ts";
 import { User } from "../models/user.model.ts";
-import { UserKpi } from "../models/userKpi.model.ts";
 import {
-  appraiserPayloadSchema,
+  adminPayloadSchema,
   ManagerScorePayloadSchema,
   MasterPerformancePayload,
-  reviewerPayloadSchema,
   SelfCriteriaSchema,
   selfReviewPayloadSchema,
   type ManagerCriteria,
   type SelfCriteria,
 } from "../types/performance.ts";
-import MasterCompetency from "../models/masterCompetency.model.ts";
-import UserCompetency from "../models/userCompetency.model.ts";
+import {
+  MasterPerformance,
+  type ICriteria,
+} from "../models/masterPerformance.ts";
+import { Types } from "mongoose";
 
 const createPerformanceRecord = asyncHandler(
   async (req: Request, res: Response) => {
@@ -29,18 +29,18 @@ const createPerformanceRecord = asyncHandler(
       throw new ApiError(401, "Invalid Performance Payload");
     }
 
-    const isPerformanceExist = await MasterKpi.findOne({
-      designation: parsedPayload.data.designationId,
+    const { competencies, designationId, kpis } = parsedPayload.data;
+
+    const isMasterPerformanceExist = await MasterPerformance.findOne({
+      designation: designationId,
     });
 
-    if (isPerformanceExist) {
+    if (isMasterPerformanceExist) {
       throw new ApiError(
         400,
         "Performance Record for this designation already exists"
       );
     }
-
-    const { competencies, designationId, kpis } = parsedPayload.data;
 
     let totalWeight = 0;
 
@@ -52,23 +52,19 @@ const createPerformanceRecord = asyncHandler(
       throw new ApiError(400, "Sum of Kpi's Weight must be 100");
     }
 
-    const kpi = new MasterKpi({
+    const masterPerformance = new MasterPerformance({
       designation: designationId,
-      kpiCriteria: kpis,
+      competencies,
+      kpis,
       createdBy: createdById,
     });
-    await kpi.save();
-
-    const competency = new MasterCompetency({
-      designation: designationId,
-      competencies: competencies,
-    });
-
-    await competency.save();
+    await masterPerformance.save();
 
     return res
       .status(201)
-      .json(new ApiResponse(201, null, "KPI added successfully"));
+      .json(
+        new ApiResponse(201, null, "Performance record created successfully")
+      );
   }
 );
 
@@ -86,49 +82,25 @@ const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
   const userDesignation = user?.designation;
   const userParentReviewer = user?.parentReviewer;
 
-  const masterKpi = await MasterKpi.findOne({
+  const masterPerformance = await MasterPerformance.findOne({
     designation: userDesignation,
   });
 
-  const masterCompetency = await MasterCompetency.findOne({
-    designation: userDesignation,
-  });
-
-  if (!masterKpi || !masterCompetency) {
+  if (!masterPerformance || masterPerformance == null) {
     throw new ApiError(404, "Master Template not found for user's designation");
   }
 
-  const templateKpi = { ...JSON.parse(JSON.stringify(masterKpi)) };
+  const masterPerformanceTemplate = {
+    ...JSON.parse(JSON.stringify(masterPerformance)),
+  };
 
-  const templateCompetency = JSON.parse(
-    JSON.stringify(masterCompetency.competencies)
-  );
-
-  delete templateKpi._id;
-
-  const newUserCompetency = new UserCompetency({
-    competencies: templateCompetency,
-    user: userId,
-    designation: userDesignation,
-  });
-
-  const newUserKpi = new UserKpi({
-    ...templateKpi,
-    isKpiLocked: true,
-    user: userId,
-  });
-
-  await newUserKpi.save();
-  await newUserCompetency.save();
-
-  const performance = new Performance({
+  const userPerformance = new UserPerformance({
+    ...masterPerformanceTemplate,
     userId: userId,
-    kpis: newUserKpi._id,
-    competencies: newUserCompetency._id,
     stage: "kpi_acceptance",
     parentReviewer: userParentReviewer,
   });
-  await performance.save();
+  await userPerformance.save();
 
   return res
     .status(200)
@@ -148,30 +120,24 @@ const selfReviewKpi = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(400, "Invalid criteria format");
   }
 
-  const userKpi = await UserKpi.findOne({
-    isKpiLocked: true,
-    user: userId,
-  });
+  const { performanceId, criteria } = parsedCriteria.data;
 
-  if (!userKpi) {
-    throw new ApiError(404, "User KPI not found");
+  const userPerformance = await UserPerformance.findById(performanceId);
+
+  if (!userPerformance) {
+    throw new ApiError(404, "User Performance record not found");
   }
 
-  parsedCriteria.data.criteria.forEach((item: SelfCriteria) => {
-    const kpiCriterion = userKpi.kpiCriteria.find(
+  criteria.forEach((item: SelfCriteria) => {
+    const userKpi = (userPerformance.kpis as unknown as ICriteria[]).find(
       (c) => c._id.toString() === item._id
     );
-    if (kpiCriterion) {
-      kpiCriterion.selfScore = item.selfScore;
-      kpiCriterion.selfComments = item.selfComments;
+    if (userKpi) {
+      userKpi.selfScore = item.selfScore;
+      userKpi.selfComments = item.selfComments;
     }
   });
-  await userKpi.save();
-
-  await Performance.updateOne(
-    { userId: userId, kpis: userKpi._id },
-    { stage: "self_review" }
-  );
+  await userPerformance.save();
 
   return res
     .status(200)
@@ -179,7 +145,7 @@ const selfReviewKpi = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const managerReviewKpi = asyncHandler(async (req: Request, res: Response) => {
-  const managerId = req.user?.id;
+  const managerId = req.user?.id!;
   const parsedPayload = ManagerScorePayloadSchema.safeParse(req.body);
 
   if (!parsedPayload.success) {
@@ -190,26 +156,16 @@ const managerReviewKpi = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(401, "Unauthorized");
   }
 
-  const parsedCriteria = parsedPayload.data.criteria;
-  const employeeId = parsedPayload.data.employeeId;
+  const { competencies, userPerformanceId, criteria } = parsedPayload.data;
 
-  const userKpi = await UserKpi.findOne({
-    isKpiLocked: true,
-    user: employeeId,
-    managerId: managerId,
-  });
+  const userPerformance = await UserPerformance.findById(userPerformanceId);
 
-  if (!userKpi) {
+  if (!userPerformance) {
     throw new ApiError(404, "User KPI not found");
   }
 
-  const performance = await Performance.findOne({
-    userId: employeeId,
-    kpis: userKpi._id,
-  });
-
-  parsedCriteria.forEach((item: ManagerCriteria) => {
-    const kpiCriterion = userKpi.kpiCriteria.find(
+  criteria.forEach((item: ManagerCriteria) => {
+    const kpiCriterion = (userPerformance.kpis as unknown as ICriteria[]).find(
       (c) => c._id.toString() === item._id
     );
     if (kpiCriterion) {
@@ -218,86 +174,48 @@ const managerReviewKpi = asyncHandler(async (req: Request, res: Response) => {
     }
   });
 
-  if (!performance) {
-    throw new ApiError(404, "Performance record not found");
-  }
+  competencies.forEach((comp) => {
+    const userCompetency = userPerformance.competencies.find(
+      (c) => c._id.toString() === comp._id
+    );
+    if (userCompetency) {
+      userCompetency.score = comp.score;
+    }
+  });
 
-  performance.competencies = parsedPayload.data.competencies;
-  performance.stage = "manager_review";
+  userPerformance.stage = "manager_review";
 
-  await performance.save();
+  await userPerformance.save();
 
   return res
     .status(200)
     .json(new ApiResponse(200, null, "Manager review submitted successfully"));
 });
 
-const reviewerReviewKpi = asyncHandler(async (req: Request, res: Response) => {
-  const parsedPayload = reviewerPayloadSchema.safeParse(req.body);
+const adminReviewKpi = asyncHandler(async (req: Request, res: Response) => {
+  const parsedPayload = adminPayloadSchema.safeParse(req.body);
 
   if (!parsedPayload.success) {
     throw new ApiError(400, "Invalid payload format");
   }
-  const reviewerId = req.user?.id;
+  const reviewerId = req.user?.id!;
+  const { userPerformanceId, adminComments } =
+    parsedPayload.data;
 
-  if (!reviewerId) {
-    throw new ApiError(401, "Unauthorized");
-  }
-  const employeeId = parsedPayload.data.employeeId;
-  // have to check if reviewer is assigned to this employee or not ?
-  const performance = await Performance.findOne({
-    userId: employeeId,
-  });
+  const userPerformance = await UserPerformance.findById(userPerformanceId);
 
-  if (!performance) {
+  if (!userPerformance) {
     throw new ApiError(404, "Performance record not found");
   }
 
-  const reviewerComments = parsedPayload.data.reviewerComments;
+  userPerformance.finalReview.adminReview = adminComments;
+  userPerformance.stage = "admin_review";
 
-  performance.finalReview.reviewerComments = reviewerComments;
-  performance.stage = "reviewer_review";
-
-  await performance.save();
+  await userPerformance.save();
 
   return res
     .status(200)
-    .json(new ApiResponse(200, null, "Reviewer review submitted successfully"));
-});
-
-const appraiserReviewKpi = asyncHandler(async (req: Request, res: Response) => {
-  const parsedPayload = appraiserPayloadSchema.safeParse(req.body);
-
-  if (!parsedPayload.success) {
-    throw new ApiError(400, "Invalid payload format");
-  }
-  const appraiserId = req.user?.id;
-
-  if (!appraiserId) {
-    throw new ApiError(401, "Unauthorized");
-  }
-  const employeeId = parsedPayload.data.employeeId;
-  // have to check if appraiser is assigned to this employee or not ?
-  const performance = await Performance.findOne({
-    userId: employeeId,
-  });
-
-  if (!performance) {
-    throw new ApiError(404, "Performance record not found");
-  }
-
-  const appraiserComments = parsedPayload.data.appraiserComments;
-
-  performance.finalReview.appraiserComments = appraiserComments;
-  performance.stage = "appraiser_review";
-
-  await performance.save();
-
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(200, null, "Appraiser review submitted successfully")
-    );
+    .json(new ApiResponse(200, null, "Admin review submitted successfully"));
 });
 
 const userFinalReviewKpi = asyncHandler(async (req: Request, res: Response) => {
@@ -306,99 +224,128 @@ const userFinalReviewKpi = asyncHandler(async (req: Request, res: Response) => {
   if (!parsedPayload.success) {
     throw new ApiError(400, "Invalid payload format");
   }
-  const userId = req.user?.id;
+  const userId = req.user?.id!;
+  const { selfReview, userPerformanceId } = parsedPayload.data;
 
-  if (!userId) {
-    throw new ApiError(401, "Unauthorized");
-  }
+  const userPerformance = await UserPerformance.findById(userPerformanceId);
 
-  const performance = await Performance.findOne({
-    userId: userId,
-  });
-
-  if (!performance) {
+  if (!userPerformance) {
     throw new ApiError(404, "Performance record not found");
   }
 
-  const selfReviewerComments = parsedPayload.data.selfReview;
+  userPerformance.finalReview.selfReview = selfReview;
+  userPerformance.stage = "user_final_review";
 
-  performance.finalReview.selfReview = selfReviewerComments;
-  performance.stage = "user_final_review";
-
-  await performance.save();
+  await userPerformance.save();
 
   return res
     .status(200)
     .json(new ApiResponse(200, null, "Self review submitted successfully"));
 });
 
-const getAllUserKpiStatus = asyncHandler(
+const getAllUserPerformance = asyncHandler(
   async (req: Request, res: Response) => {
-    const performances = await Performance.find()
-      .populate("userId", "fullName email")
-      .select("stage createdAt updatedAt");
+    const performances = await UserPerformance.find()
+      .select("-kpis -competencies -finalReview")
+      .populate("userId", "fullName email");
 
     return res
       .status(200)
       .json(
-        new ApiResponse(200, { performances }, "Users fetched successfully")
+        new ApiResponse(
+          200,
+          { performances },
+          "Performance records fetched successfully"
+        )
       );
   }
 );
 
-const getAllPerformance = asyncHandler(async (req: Request, res: Response) => {
-  const performances = await MasterKpi.find()
-    .select("-kpiCriteria")
-    .populate("createdBy", "fullName email")
-    .populate("designation", "title");
-
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        { performances },
-        "Performance records fetched successfully"
-      )
-    );
-});
-
 const getUserKpiDetails = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id;
+  const userId = req.user?.id!;
 
-  if (!userId) {
-    throw new ApiError(401, "Unauthorized");
-  }
-
-  const designationId = await User.findById(userId).select("designation");
-
-  if (!designationId) {
-    throw new ApiError(404, "User or Designation not found");
-  }
-  const masterKpi = await MasterKpi.findOne({
-    designation: designationId.designation,
+  const userPerformance = await UserPerformance.findOne({
+    userId: userId,
   });
 
+  if (!userPerformance) {
+    throw new ApiError(404, "User Performance record not found");
+  }
+
+  const userKpi = userPerformance.kpis;
+
   return res
     .status(200)
     .json(
       new ApiResponse(
         200,
-        { criteria: masterKpi?.kpiCriteria || [] },
+        { criteria: userKpi },
         "User KPI details fetched successfully"
       )
     );
 });
 
+const getAllPerformanceTemplates = asyncHandler(
+  async (req: Request, res: Response) => {
+    const performanceTemplates = await MasterPerformance.find().select(
+      "-kpiCriteria -stage -competencies"
+    );
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { performanceTemplates },
+          "Performance templates fetched successfully"
+        )
+      );
+  }
+);
+
+const getUserPerformanceForm = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?.id!;
+
+    const user = await User.findById(userId);
+
+    const designationId = user?.designation;
+    if (!designationId) {
+      throw new ApiError(404, "Designation not found for the user");
+    }
+
+    const userPerformanceRecord = await UserPerformance.findOne({
+      userId: userId,
+      designation: designationId,
+    });
+
+    if (!userPerformanceRecord) {
+      throw new ApiError(
+        404,
+        "No KPIs or Competencies found for the user's designation"
+      );
+    }
+
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          userPerformanceRecord,
+        },
+        "User KPIs fetched successfully"
+      )
+    );
+  }
+);
 export {
   createPerformanceRecord,
   updateKpiStatus,
   selfReviewKpi,
   managerReviewKpi,
-  reviewerReviewKpi,
-  appraiserReviewKpi,
+  adminReviewKpi,
   userFinalReviewKpi,
-  getAllUserKpiStatus,
-  getAllPerformance,
+  getAllUserPerformance,
   getUserKpiDetails,
+  getAllPerformanceTemplates,
+  getUserPerformanceForm,
 };

@@ -48,9 +48,6 @@ export class API {
   fetchAllUser() {
     return this.request(this.instance.get("/user/all-user"));
   }
-  fetchAllUserKpiStatus() {
-    return this.request(this.instance.get("/performance/all-user-kpi-status"));
-  }
   fetchAllDesignations() {
     return this.request(this.instance.get("/user/designation/all"));
   }
@@ -84,8 +81,11 @@ export class API {
   addPerformanceRecord(data: PerformanceFormValue) {
     return this.request(this.instance.post("/performance/add", data));
   }
+  // Admin API to fetch all performance Templates
   fetchAllPerformanceRecords() {
-    return this.request(this.instance.get("/performance/all-performance"));
+    return this.request(
+      this.instance.get("/performance/all-performance-templates")
+    );
   }
   fetchAllUserCheckIns() {
     return this.request(this.instance.get("/check-ins/user-checkins"));

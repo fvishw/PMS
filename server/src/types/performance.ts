@@ -12,14 +12,12 @@ const managerCriteria = z.object({
   managerComments: z.string().max(500),
 });
 
-const CompetenciesSchema = z.object({
-  communication: z.number().min(1).max(5),
-  problemSolving: z.number().min(1).max(5),
-  leadership: z.number().min(1).max(5),
-  collaborationAndTeamwork: z.number().min(1).max(5),
-  employeeAreaOfStrength: z.string().max(1000),
-  opportunitiesForDevelopment: z.string().max(1000),
-});
+const CompetenciesSchema = z.array(
+  z.object({
+    _id: z.string(),
+    score: z.coerce.number().min(0).max(5),
+  })
+);
 
 const CommentSchema = z.object({
   remarks: z.string().max(50),
@@ -27,17 +25,13 @@ const CommentSchema = z.object({
   finalComments: z.string().max(2000),
 });
 
-const appraiserPayloadSchema = z.object({
-  appraiserComments: CommentSchema,
-  employeeId: z.string(),
-});
-
-const reviewerPayloadSchema = z.object({
-  reviewerComments: CommentSchema,
-  employeeId: z.string(),
+const adminPayloadSchema = z.object({
+  userPerformanceId: z.string(),
+  adminComments: CommentSchema,
 });
 
 const selfReviewPayloadSchema = z.object({
+  userPerformanceId: z.string(),
   selfReview: z.object({
     remarks: z.string().max(50),
     comments: z.string().max(2000),
@@ -45,13 +39,14 @@ const selfReviewPayloadSchema = z.object({
 });
 
 const SelfCriteriaSchema = z.object({
+  performanceId: z.string(),
   criteria: z.array(selfCriteria),
 });
 
 const ManagerScorePayloadSchema = z.object({
+  userPerformanceId: z.string(),
   criteria: z.array(managerCriteria),
   competencies: CompetenciesSchema,
-  employeeId: z.string(),
 });
 
 const KpiCriteria = z.object({
@@ -78,8 +73,7 @@ type Competencies = z.infer<typeof CompetenciesSchema>;
 export {
   SelfCriteriaSchema,
   ManagerScorePayloadSchema,
-  appraiserPayloadSchema,
-  reviewerPayloadSchema,
+  adminPayloadSchema,
   selfReviewPayloadSchema,
   MasterPerformancePayload,
   type SelfCriteria,

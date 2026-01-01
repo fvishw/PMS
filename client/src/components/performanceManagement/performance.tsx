@@ -20,11 +20,12 @@ function Performance() {
     );
   }
   const tableData = [];
+  console.log(data);
   if (data && data?.performances) {
     for (const performance of data.performances) {
       tableData.push({
         id: performance._id,
-        designation: performance.designation.title,
+        designation: performance.designation?.title || "N/A",
         createdBy: performance.createdBy
           ? performance.createdBy.fullName
           : "N/A",
