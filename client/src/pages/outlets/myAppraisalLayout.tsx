@@ -1,4 +1,5 @@
 import OutletWrapper from "@/components/mainLayout";
+import { PerformanceForm } from "@/components/performanceForm/performanceForm";
 import { SiteHeader } from "@/components/site-header";
 
 function MyAppraisalLayout() {
@@ -7,8 +8,7 @@ function MyAppraisalLayout() {
       <SiteHeader headerName="My Appraisal" />
       <OutletWrapper>
         <div>
-          {/* My Appraisal content goes here */}
-          This is the My Appraisal page.
+          <PerformanceForm />
         </div>
       </OutletWrapper>
     </>

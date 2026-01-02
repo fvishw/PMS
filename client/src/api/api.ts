@@ -41,7 +41,7 @@ export class API {
     return this.request(this.instance.get("/performance/performance-form"));
   }
   submitUserKpis() {
-    return this.request(this.instance.put("/kpis/accept-kpi"));
+    return this.request(this.instance.put("/performance/accept-kpi"));
   }
   addUser(data: IUserFormData) {
     return this.request(this.instance.post("/user/add", data));
@@ -145,6 +145,13 @@ export class API {
   fetchUsersByRole(role: string) {
     return this.request(
       this.instance.get("/user/users-by-role", { params: { role } })
+    );
+  }
+  fetchPerformanceById(performanceId: string) {
+    return this.request(
+      this.instance.get("/performance/performance-by-id", {
+        params: { performanceId },
+      })
     );
   }
 }

@@ -1,6 +1,5 @@
 import Kpis from "@/components/kpi/kpi";
 import OutletWrapper from "@/components/mainLayout";
-import { PerformanceForm } from "@/components/performanceForm/performanceForm";
 import { SiteHeader } from "@/components/site-header";
 
 function KpisLayout() {
@@ -8,8 +7,7 @@ function KpisLayout() {
     <>
       <SiteHeader headerName="Key Performance Indicators" />
       <OutletWrapper>
-        {/* <Kpis /> */}
-        <PerformanceForm />
+        <Kpis />
       </OutletWrapper>
     </>
   );

@@ -1,4 +1,5 @@
 import { type ColumnDef } from "@tanstack/react-table";
+import { PerformanceTableAction } from "./performanceTable.action";
 
 export type KPITableColumn = {
   srNo: string;
@@ -23,10 +24,17 @@ export const columns: ColumnDef<KPITableColumn>[] = [
     ),
   },
   {
+    accessorKey: "role",
+    header: () => <div className="text-center">Role</div>,
+    cell: ({ row }) => (
+      <div className="capitalize text-center">{row.getValue("role")}</div>
+    ),
+  },
+  {
     accessorKey: "createdBy",
     header: () => <div className="text-center ">Created By</div>,
     cell: ({ row }) => (
-      <div className="lowercase  text-center whitespace-normal break-after-all">
+      <div className="capitalize text-center whitespace-normal break-after-all">
         {row.getValue("createdBy")}
       </div>
     ),
@@ -36,6 +44,15 @@ export const columns: ColumnDef<KPITableColumn>[] = [
     header: () => <div className="text-center">Created At</div>,
     cell: ({ row }) => (
       <div className="font-medium text-center">{row.getValue("createdAt")}</div>
+    ),
+  },
+  {
+    accessorKey: "actions",
+    header: () => <div className="text-center">Actions</div>,
+    cell: ({ row }) => (
+      <div className="font-medium text-center">
+        <PerformanceTableAction performanceId={row.original.id} />
+      </div>
     ),
   },
 ];

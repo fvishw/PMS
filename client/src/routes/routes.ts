@@ -71,9 +71,18 @@ const router = createBrowserRouter([
       },
       {
         path: "manage-performance",
-        Component: lazy(
-          () => import("@/pages/outlets/performanceManagementLayout")
-        ),
+        children: [
+          {
+            index: true,
+            Component: lazy(
+              () => import("@/pages/outlets/performanceManagementLayout")
+            ),
+          },
+          {
+            path: ":performanceId",
+            Component: lazy(() => import("@/pages/performanceTemplateDetails")),
+          },
+        ],
       },
       {
         path: "manage-checkins",

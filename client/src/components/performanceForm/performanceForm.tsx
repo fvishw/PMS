@@ -4,17 +4,15 @@ import FinalReview from "./finalReview";
 import { KpiScoreTable } from "./kpiTableScore";
 import Api from "@/api/api";
 import { Spinner } from "../ui/spinner";
+import { useAuth } from "@/hooks/useAuthContext";
+import Error from "../Error";
 
 export const PerformanceForm = () => {
+  const { user } = useAuth();
   const { isLoading, error, data } = useQuery({
-    queryKey: ["performanceForm"],
+    queryKey: ["performanceForm", user?.id],
     queryFn: () => Api.fetchUserPerformanceForm(),
   });
-  let performanceFormData;
-
-  if (data) {
-    performanceFormData = data?.userPerformanceRecord;
-  }
   if (isLoading) {
     return (
       <div className="w-full h-full flex justify-center items-center">
@@ -22,11 +20,29 @@ export const PerformanceForm = () => {
       </div>
     );
   }
-  return (
-    <>
-      <KpiScoreTable data={performanceFormData?.kpis || []} />
-      <Competencies data={performanceFormData?.competencies || []} />
-      <FinalReview />
-    </>
-  );
+
+  if (error) {
+    return <Error message={error.message} />;
+  }
+
+  if (data) {
+    const { hasUserAcceptedKpi, userPerformanceRecord } = data;
+    if (hasUserAcceptedKpi && userPerformanceRecord) {
+      return (
+        <>
+          <KpiScoreTable data={userPerformanceRecord?.kpis || []} />
+          <Competencies data={userPerformanceRecord?.competencies || []} />
+          <FinalReview />
+        </>
+      );
+    } else {
+      return (
+        <div>
+          <p className="text-center  text-muted-foreground">
+            You have not accepted the KPI yet. Please contact your manager.
+          </p>
+        </div>
+      );
+    }
+  }
 };
