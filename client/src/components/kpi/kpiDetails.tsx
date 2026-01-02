@@ -27,7 +27,7 @@ const KpiDetails = ({ criteria }: { criteria: KpiCriteria[] }) => {
   }
   return (
     <>
-      <div className="border p-4 rounded-md mb-4 flex justify-between items-center">
+      <div className="border p-4 rounded-md flex justify-between items-center">
         <h2 className="">Performance Indicators</h2>
         <p className="md:pr-4 sm:">Weights</p>
       </div>

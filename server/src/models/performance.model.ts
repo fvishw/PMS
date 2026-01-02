@@ -2,7 +2,7 @@ import { Schema, model, Document, Types } from "mongoose";
 import type { IFinalReview, IMasterPerformance } from "./masterPerformance.ts";
 
 interface IUserPerformance extends IMasterPerformance {
-  userId: Types.ObjectId;
+  user: Types.ObjectId;
   parentReviewer: Types.ObjectId;
   adminReviewer?: Types.ObjectId;
   isKpiLocked: boolean;
@@ -16,7 +16,7 @@ interface IUserPerformance extends IMasterPerformance {
 
 const UserPerformanceSchema = new Schema<IUserPerformance>(
   {
-    userId: { type: Types.ObjectId, ref: "User", required: true },
+    user: { type: Types.ObjectId, ref: "User", required: true },
     designation: { type: Types.ObjectId, ref: "Designation", required: true },
     kpis: [
       {

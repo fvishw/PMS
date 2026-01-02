@@ -3,8 +3,14 @@ import { Badge } from "@/components/ui/badge";
 import { ReviewTableAction } from "./reviewTableAction";
 
 export type ReviewTableColumn = {
-  fullName: string;
+  user: {
+    fullName: string;
+    role: string;
+  };
   stage: string;
+  designation: {
+    title: string;
+  };
 };
 
 export const columns: ColumnDef<ReviewTableColumn>[] = [
@@ -19,7 +25,31 @@ export const columns: ColumnDef<ReviewTableColumn>[] = [
     accessorKey: "fullName",
     header: () => <div className="text-center">Name</div>,
     cell: ({ row }) => {
-      return <div className="text-center">{row.getValue("fullName")}</div>;
+      return (
+        <div className="text-center">
+          {row.original.user?.fullName || "Unknown"}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "role",
+    header: () => <div className="text-center">Role</div>,
+    cell: ({ row }) => {
+      return (
+        <div className="text-center capitalize">
+          {row.original.user?.role || "Unknown"}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "designation",
+    header: () => <div className="text-center">Designation</div>,
+    cell: ({ row }) => {
+      return (
+        <div className="text-center">{row.original.designation.title}</div>
+      );
     },
   },
   {
@@ -27,9 +57,10 @@ export const columns: ColumnDef<ReviewTableColumn>[] = [
     header: () => <div className="text-center">Status</div>,
     cell: ({ row }) => {
       const status = row.getValue("stage") as string;
+      const mappedStatus = stageMapper[status];
       return (
         <div className="text-center">
-          <Badge variant="default">{status || "Unknown"}</Badge>
+          <Badge variant="default">{mappedStatus || "Unknown"}</Badge>
         </div>
       );
     },
@@ -41,17 +72,10 @@ export const columns: ColumnDef<ReviewTableColumn>[] = [
   },
 ];
 
-export const data = [
-  {
-    fullName: "John Doe",
-    stage: "In Progress",
-  },
-  {
-    fullName: "Jane Smith",
-    stage: "Completed",
-  },
-  {
-    fullName: "Alice Johnson",
-    stage: "Pending",
-  },
-];
+const stageMapper: Record<string, string> = {
+  kpi_acceptance: "KPI Acceptance",
+  self_review: "Self Review",
+  manager_review: "Manager Review",
+  admin_review: "Admin Review",
+  user_final_review: "Final Review",
+};

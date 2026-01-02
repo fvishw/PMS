@@ -13,7 +13,7 @@ const Criteria: React.FC<ICriteria> = ({
 }) => {
   return (
     <div
-      className="border p-4 rounded-md mb-4 flex justify-between items-center"
+      className="border p-4 rounded-md flex justify-between items-center"
       key={id}
     >
       <div>

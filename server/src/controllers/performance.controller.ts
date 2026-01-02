@@ -97,7 +97,7 @@ const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
 
   const userPerformance = new UserPerformance({
     ...masterPerformanceTemplate,
-    userId: userId,
+    user: userId,
     stage: "kpi_acceptance",
     parentReviewer: userParentReviewer,
   });
@@ -243,11 +243,12 @@ const userFinalReviewKpi = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, null, "Self review submitted successfully"));
 });
 
-const getAllUserPerformance = asyncHandler(
+const getReviewAppraisalData = asyncHandler(
   async (req: Request, res: Response) => {
     const performances = await UserPerformance.find()
       .select("-kpis -competencies -finalReview")
-      .populate("userId", "fullName email");
+      .populate("user", "fullName email role")
+      .populate("designation", "title");
 
     return res
       .status(200)
@@ -264,7 +265,7 @@ const getAllUserPerformance = asyncHandler(
 const getUserKpiDetails = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id!;
 
-  const userPerformance = await UserPerformance.findOne({ userId: userId });
+  const userPerformance = await UserPerformance.findOne({ user: userId });
 
   if (userPerformance) {
     return res
@@ -339,7 +340,7 @@ const getUserPerformanceForm = asyncHandler(
     const userId = req.user?.id!;
 
     const userPerformanceRecord = await UserPerformance.findOne({
-      userId: userId,
+      user: userId,
     });
 
     if (!userPerformanceRecord) {
@@ -401,7 +402,7 @@ export {
   managerReviewKpi,
   adminReviewKpi,
   userFinalReviewKpi,
-  getAllUserPerformance,
+  getReviewAppraisalData,
   getUserKpiDetails,
   getAllPerformanceTemplates,
   getUserPerformanceForm,

@@ -154,6 +154,11 @@ export class API {
       })
     );
   }
+  getReviewAppraisalData() {
+    return this.request(
+      this.instance.get("/performance/review-appraisal-data")
+    );
+  }
 }
 
 const Api = new API();

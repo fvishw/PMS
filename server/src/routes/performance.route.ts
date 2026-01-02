@@ -8,9 +8,9 @@ import {
   getUserKpiDetails,
   getAllPerformanceTemplates,
   adminReviewKpi,
-  getAllUserPerformance,
   getUserPerformanceForm,
   getPerformanceTemplateById,
+  getReviewAppraisalData,
 } from "../controllers/performance.controller.ts";
 import authMiddleware from "../middlewares/auth.middleware.ts";
 
@@ -28,13 +28,6 @@ router.put("/manager-review", authMiddleware(["manager"]), managerReviewKpi);
 router.put("/admin-review", authMiddleware(["admin"]), adminReviewKpi);
 
 router.put("/user-review", authMiddleware(["employee"]), userFinalReviewKpi);
-
-// for admin to view all performance records(not user specific)
-router.get(
-  "/all-performance",
-  authMiddleware(["admin"]),
-  getAllUserPerformance
-);
 
 router.get(
   "/user-kpi-details",
@@ -58,6 +51,12 @@ router.get(
   "/performance-by-id",
   authMiddleware(["admin"]),
   getPerformanceTemplateById
+);
+
+router.get(
+  "/review-appraisal-data",
+  authMiddleware(["manager", "admin"]),
+  getReviewAppraisalData
 );
 
 export default router;
