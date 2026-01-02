@@ -5,9 +5,7 @@ import {
   DialogHeader,
   DialogContent,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { IconEye } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import CheckInQuestionAns from "@/components/checkIns/checkInQuestionAns";
 import { useEffect } from "react";
