@@ -2,4 +2,13 @@ interface IDesignationOption {
   _id: string;
   title: string;
 }
-export type { IDesignationOption };
+interface IUserFormData {
+  fullName: string;
+  email: string;
+  role: string;
+  designationId: string;
+  parentReviewerId?: string;
+  adminReviewerId?: string;
+}
+
+export type { IDesignationOption, IUserFormData };
