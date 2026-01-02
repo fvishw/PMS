@@ -38,7 +38,9 @@ export function LoginForm({
       navigate("/dashboard");
     },
     onError: (error) => {
-      console.log("error", error);
+      toast.error(error.message || "Login failed. Please try again.", {
+        position: "top-right",
+      });
     },
   });
 

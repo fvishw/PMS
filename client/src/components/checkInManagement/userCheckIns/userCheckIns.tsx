@@ -21,7 +21,6 @@ export const UserCheckIns = () => {
       </div>
     );
   }
-  console.log(userData?.checkIns);
   return (
     <div className="w-full py-4">
       <CustomDataTable data={userData?.checkIns || []} columns={columns} />

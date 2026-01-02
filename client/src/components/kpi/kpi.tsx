@@ -23,7 +23,6 @@ function Kpis() {
   const { mutate, isPending } = useMutation({
     mutationFn: () => Api.submitUserKpis(),
   });
-  console.log(data);
   if (isLoading) {
     return (
       <div className="w-full ">

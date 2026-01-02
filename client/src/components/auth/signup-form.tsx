@@ -34,7 +34,6 @@ export function SignupForm({
       // Handle successful signup (e.g., redirect to login or dashboard)
     },
     onError: (error) => {
-      console.log("error", error.message);
       toast.error(error.message, {
         position: "top-right",
       });

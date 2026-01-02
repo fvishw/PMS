@@ -39,7 +39,6 @@ function NewCheckIn() {
 
   const onSubmit = (data: CheckInPayload) => {
     const ansPayload = [];
-    console.log(data);
     for (const [_, value] of Object.entries(data)) {
       ansPayload.push(value);
     }

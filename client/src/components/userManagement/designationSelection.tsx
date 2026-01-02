@@ -27,7 +27,6 @@ export const DesignationSelection = ({
   control: any;
   setValue: UseFormSetValue<AddUserModalProps>;
 }) => {
-  console.log("role", role);
   const { data: designationsData, isLoading } = useQuery({
     queryKey: ["designations", role],
     queryFn: ({ queryKey }) => Api.fetchAllDesignations(queryKey[1]),

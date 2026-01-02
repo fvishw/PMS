@@ -20,7 +20,6 @@ function Performance() {
     );
   }
   const tableData = [];
-  console.log(data);
   if (data && data?.performances) {
     for (const performance of data.performances) {
       tableData.push({

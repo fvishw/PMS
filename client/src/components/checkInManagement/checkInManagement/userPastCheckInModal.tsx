@@ -29,7 +29,6 @@ export const UserPastCheckInModal = ({
     queryFn: () => Api.fetchCheckIn(checkInId),
     enabled: !!checkInId,
   });
-  console.log(isLoading);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

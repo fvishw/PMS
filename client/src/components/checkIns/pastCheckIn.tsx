@@ -31,7 +31,6 @@ function PastCheckIn() {
       </div>
     );
   }
-  console.log("data", data);
   const PastCheckIns =
     data && data?.answers?.length === 0 ? (
       <div className="text-center text-gray-500">

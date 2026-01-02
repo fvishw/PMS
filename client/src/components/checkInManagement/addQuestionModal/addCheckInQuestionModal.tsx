@@ -52,7 +52,6 @@ export function AddCheckInQuestionModal() {
   });
 
   const onSubmit = (data: QuestionFormPayload) => {
-    console.log(data)
     mutate(data);
   };
 
