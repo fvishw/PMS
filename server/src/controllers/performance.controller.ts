@@ -93,6 +93,7 @@ const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
   const masterPerformanceTemplate = {
     ...JSON.parse(JSON.stringify(masterPerformance)),
   };
+  delete masterPerformanceTemplate._id;
 
   const userPerformance = new UserPerformance({
     ...masterPerformanceTemplate,
@@ -199,8 +200,7 @@ const adminReviewKpi = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(400, "Invalid payload format");
   }
   const reviewerId = req.user?.id!;
-  const { userPerformanceId, adminComments } =
-    parsedPayload.data;
+  const { userPerformanceId, adminComments } = parsedPayload.data;
 
   const userPerformance = await UserPerformance.findById(userPerformanceId);
 
@@ -264,32 +264,63 @@ const getAllUserPerformance = asyncHandler(
 const getUserKpiDetails = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id!;
 
-  const userPerformance = await UserPerformance.findOne({
-    userId: userId,
-  });
+  const userPerformance = await UserPerformance.findOne({ userId: userId });
 
-  if (!userPerformance) {
-    throw new ApiError(404, "User Performance record not found");
+  if (userPerformance) {
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { hasKpiTemplate: true, hasUserAccepted: true, criteria: [] },
+          "User KPI details fetched successfully"
+        )
+      );
   }
 
-  const userKpi = userPerformance.kpis;
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
 
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        { criteria: userKpi },
-        "User KPI details fetched successfully"
-      )
-    );
+  const designationId = user.designation;
+  const masterPerformance = await MasterPerformance.findOne({
+    designation: new Types.ObjectId(designationId),
+  });
+
+  if (!masterPerformance) {
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { hasKpiTemplate: false, hasUserAccepted: false, criteria: [] },
+          "User KPI details fetched successfully"
+        )
+      );
+  }
+
+  const userKpis = masterPerformance.kpis;
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        hasKpiTemplate: true,
+        hasUserAccepted: false,
+        criteria: userKpis,
+      },
+      "User KPI details fetched successfully"
+    )
+  );
 });
 
 const getAllPerformanceTemplates = asyncHandler(
   async (req: Request, res: Response) => {
-    const performanceTemplates = await MasterPerformance.find().select(
-      "-kpiCriteria -stage -competencies"
-    );
+    const performanceTemplates = await MasterPerformance.find()
+      .select("-kpis -stage -competencies ")
+      .populate("designation", "title role")
+      .populate("createdBy", "fullName");
 
     return res
       .status(200)
@@ -307,34 +338,60 @@ const getUserPerformanceForm = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.id!;
 
-    const user = await User.findById(userId);
-
-    const designationId = user?.designation;
-    if (!designationId) {
-      throw new ApiError(404, "Designation not found for the user");
-    }
-
     const userPerformanceRecord = await UserPerformance.findOne({
       userId: userId,
-      designation: designationId,
     });
 
     if (!userPerformanceRecord) {
-      throw new ApiError(
-        404,
-        "No KPIs or Competencies found for the user's designation"
-      );
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            { hasUserAcceptedKpi: false, performanceForm: null },
+            "User has not accepted KPI yet"
+          )
+        );
     }
 
     return res.status(200).json(
       new ApiResponse(
         200,
         {
+          hasUserAcceptedKpi: true,
           userPerformanceRecord,
         },
         "User KPIs fetched successfully"
       )
     );
+  }
+);
+
+const getPerformanceTemplateById = asyncHandler(
+  async (req: Request, res: Response) => {
+    const performanceId = req.query.performanceId as string;
+
+    if (!performanceId || !Types.ObjectId.isValid(performanceId)) {
+      throw new ApiError(400, "Invalid performance ID");
+    }
+
+    const performanceTemplate = await MasterPerformance.findById(performanceId)
+      .populate("designation", "title role")
+      .populate("createdBy", "fullName");
+
+    if (!performanceTemplate) {
+      throw new ApiError(404, "Performance template not found");
+    }
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { performanceTemplate },
+          "Performance template fetched successfully"
+        )
+      );
   }
 );
 export {
@@ -348,4 +405,5 @@ export {
   getUserKpiDetails,
   getAllPerformanceTemplates,
   getUserPerformanceForm,
+  getPerformanceTemplateById,
 };

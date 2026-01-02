@@ -41,20 +41,12 @@ export interface IMasterPerformance extends Document {
   kpis: IMasterKpi;
   competencies: ICompetency[];
   finalReview: IFinalReview;
-  stage:
-    | "kpi_acceptance"
-    | "self_review"
-    | "manager_review"
-    | "admin_review"
-    | "user_final_review";
   interval: {
     quarterly: "Q1" | "Q2" | "Q3" | "Q4";
     year: number;
-  }; // e.g., "Q1 2024"
-  parentReviewer: Types.ObjectId;
-  adminReviewer?: Types.ObjectId;
-  appraiserReviewer?: Types.ObjectId;
-  isKpiLocked: boolean;
+  };
+  createdAt: Date;
+  createdBy: Types.ObjectId;
 }
 
 const MasterPerformanceSchema = new Schema<IMasterPerformance>(
@@ -89,18 +81,6 @@ const MasterPerformanceSchema = new Schema<IMasterPerformance>(
         comments: { type: String },
       },
     },
-    stage: {
-      type: String,
-      required: true,
-      default: "kpi_acceptance",
-      enum: [
-        "kpi_acceptance",
-        "self_review",
-        "manager_review",
-        "admin_review",
-        "user_final_review",
-      ],
-    },
     interval: {
       quarterly: {
         type: String,
@@ -113,7 +93,7 @@ const MasterPerformanceSchema = new Schema<IMasterPerformance>(
         // required: true
       },
     },
-    isKpiLocked: { type: Boolean, default: false },
+    createdBy: { type: Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true }
 );

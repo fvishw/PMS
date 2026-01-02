@@ -5,9 +5,11 @@ import { AddPerformanceFormModal } from "./addPerformanceFormModal";
 import { columns } from "./kpiTable.config";
 import { Spinner } from "../ui/spinner";
 import { useQuery } from "@tanstack/react-query";
+import dayjs from "dayjs";
+import Error from "../Error";
 
 function Performance() {
-  const { isLoading, isError, data } = useQuery({
+  const { isLoading, error, data } = useQuery({
     queryKey: ["performanceList"],
     queryFn: () => Api.fetchAllPerformanceRecords(),
   });
@@ -19,17 +21,21 @@ function Performance() {
       </div>
     );
   }
-  console.log(data?.designations);
+  if (error) {
+    return <Error message={error.message} />;
+  }
   const tableData = [];
-  if (data && data?.performances) {
-    for (const performance of data.performances) {
+  if (data && data?.performanceTemplates) {
+    for (const performance of data.performanceTemplates) {
+      const formattedDate = dayjs(performance.createdAt).format("D MMM YY");
       tableData.push({
         id: performance._id,
         designation: performance.designation?.title || "N/A",
+        role: performance.designation?.role || "N/A",
         createdBy: performance.createdBy
           ? performance.createdBy.fullName
           : "N/A",
-        createdAt: new Date(performance.createdAt).toLocaleDateString(),
+        createdAt: formattedDate,
       });
     }
   }

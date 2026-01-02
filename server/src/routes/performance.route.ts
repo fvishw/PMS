@@ -10,6 +10,7 @@ import {
   adminReviewKpi,
   getAllUserPerformance,
   getUserPerformanceForm,
+  getPerformanceTemplateById,
 } from "../controllers/performance.controller.ts";
 import authMiddleware from "../middlewares/auth.middleware.ts";
 
@@ -51,6 +52,12 @@ router.get(
   "/performance-form",
   authMiddleware(["employee"]),
   getUserPerformanceForm
+);
+
+router.get(
+  "/performance-by-id",
+  authMiddleware(["admin"]),
+  getPerformanceTemplateById
 );
 
 export default router;

@@ -3,6 +3,15 @@ import type { IFinalReview, IMasterPerformance } from "./masterPerformance.ts";
 
 interface IUserPerformance extends IMasterPerformance {
   userId: Types.ObjectId;
+  parentReviewer: Types.ObjectId;
+  adminReviewer?: Types.ObjectId;
+  isKpiLocked: boolean;
+  stage:
+    | "kpi_acceptance"
+    | "self_review"
+    | "manager_review"
+    | "admin_review"
+    | "user_final_review";
 }
 
 const UserPerformanceSchema = new Schema<IUserPerformance>(
@@ -63,6 +72,8 @@ const UserPerformanceSchema = new Schema<IUserPerformance>(
       },
     },
     isKpiLocked: { type: Boolean, default: false },
+    parentReviewer: { type: Types.ObjectId, ref: "User", required: true },
+    adminReviewer: { type: Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );

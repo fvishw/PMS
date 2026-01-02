@@ -7,9 +7,7 @@ function MyAppraisalLayout() {
     <>
       <SiteHeader headerName="My Appraisal" />
       <OutletWrapper>
-        <div>
-          <PerformanceForm />
-        </div>
+        <PerformanceForm />
       </OutletWrapper>
     </>
   );
