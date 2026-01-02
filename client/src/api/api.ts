@@ -1,17 +1,15 @@
 import { PerformanceFormValue } from "@/components/performanceManagement/addKpiTable.config";
 import { CheckInPayload, ICheckInPayload } from "@/types/chekin";
 import { PastCheckIns } from "@/types/response";
+import { IUserFormData } from "@/types/user";
 import { getDynamicApiUrl } from "@/utils/url";
 import axios, { AxiosError, AxiosInstance } from "axios";
 
 export class API {
   instance: AxiosInstance;
-  constructor(token?: string) {
+  constructor() {
     this.instance = axios.create({
       baseURL: getDynamicApiUrl(),
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     });
     this.setInterceptor();
   }
@@ -45,11 +43,20 @@ export class API {
   submitUserKpis() {
     return this.request(this.instance.put("/kpis/accept-kpi"));
   }
+  addUser(data: IUserFormData) {
+    return this.request(this.instance.post("/user/add", data));
+  }
+
   fetchAllUser() {
     return this.request(this.instance.get("/user/all-user"));
   }
-  fetchAllDesignations() {
-    return this.request(this.instance.get("/user/designation/all"));
+  fetchAllUserKpiStatus() {
+    return this.request(this.instance.get("/kpis/all-user-kpi-status"));
+  }
+  fetchAllDesignations(role?: string) {
+    return this.request(
+      this.instance.get("/user/all-designations", { params: { role } })
+    );
   }
   addCheckIns(data: CheckInPayload) {
     return this.request(
@@ -129,6 +136,15 @@ export class API {
           version,
         },
       })
+    );
+  }
+
+  addDesignation(data: { title: string; role: string }) {
+    return this.request(this.instance.post("/user/add-designation", data));
+  }
+  fetchUsersByRole(role: string) {
+    return this.request(
+      this.instance.get("/user/users-by-role", { params: { role } })
     );
   }
 }

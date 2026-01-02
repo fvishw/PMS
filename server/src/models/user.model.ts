@@ -34,7 +34,6 @@ const UserSchema = new Schema<IUser>(
     designation: {
       type: Schema.Types.ObjectId,
       ref: "Designation",
-      required: true,
     },
     parentReviewer: { type: Schema.Types.ObjectId, ref: "User" },
     isSignUpComplete: { type: Boolean, default: false },

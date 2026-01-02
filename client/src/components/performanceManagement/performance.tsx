@@ -19,6 +19,7 @@ function Performance() {
       </div>
     );
   }
+  console.log(data?.designations);
   const tableData = [];
   if (data && data?.performances) {
     for (const performance of data.performances) {

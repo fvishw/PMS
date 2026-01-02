@@ -1,8 +1,6 @@
-import Api from "@/api/api";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -20,48 +18,55 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { DesignationSelection } from "./designationSelection";
+import { roles } from "./options";
+import { ParentSelection } from "./parentSelection";
+import { AdminReviewerSelection } from "./adminReviewerSelection";
+import { Controller, useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import Api from "@/api/api";
 import { Spinner } from "../ui/spinner";
-import { IDesignationOption } from "@/types/user";
 
-const roles = [
-  {
-    value: "admin",
-    label: "Admin",
-  },
-  {
-    value: "manager",
-    label: "Manager",
-  },
-  {
-    value: "employee",
-    label: "Employee",
-  },
-];
-
+export interface AddUserModalProps {
+  fullName: string;
+  email: string;
+  role: string;
+  designationId: string;
+  parentReviewerId?: string;
+  adminReviewerId?: string;
+}
 export function AddUserModal() {
-  const { data: designationsData, isPending: designationLoader } = useQuery({
-    queryKey: ["designations"],
-    queryFn: () => Api.fetchAllDesignations(),
+  const [selectedRole, setSelectedRole] = useState<string>("");
+
+  const { register, handleSubmit, reset, control, setValue } =
+    useForm<AddUserModalProps>({
+      defaultValues: {
+        fullName: "",
+        email: "",
+        role: "",
+        designationId: "",
+        parentReviewerId: "",
+        adminReviewerId: "",
+      },
+    });
+
+  const { mutate, isLoading, error } = useMutation({
+    mutationFn: (data: AddUserModalProps) => Api.addUser(data),
   });
-
-  if (designationLoader) {
-    return (
-      <div className="w-full ">
-        <Spinner className="size-8 text-primary" />
-      </div>
-    );
-  }
-
-  const designationOptions = designationsData?.designations || [];
 
   return (
     <Dialog>
-      <form>
-        <DialogTrigger asChild>
-          <Button>Add User</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+      <DialogTrigger asChild>
+        <Button>Add User</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <form
+          onSubmit={handleSubmit((data) => {
+            mutate(data);
+            reset();
+          })}
+        >
           <DialogHeader>
             <DialogTitle>Add User</DialogTitle>
             <DialogDescription>
@@ -72,95 +77,74 @@ export function AddUserModal() {
           <div className="grid gap-4">
             <div className="grid gap-3">
               <Label htmlFor="fullName">Full Name</Label>
-              <Input id="fullName" name="fullName" placeholder="John Doe" />
+              <Input
+                id="fullName"
+                placeholder="John Doe"
+                {...register("fullName")}
+              />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
-                name="email"
                 placeholder="john.doe@nexforge.com"
+                {...register("email")}
               />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="role">Role</Label>
-              <Select>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Select role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {roles.map((role) => (
-                      <SelectItem key={role.value} value={role.value}>
-                        {role.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor="designation">Designation</Label>
-              <Select>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Select a designation" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {designationOptions.map(
-                      (designation: IDesignationOption) => (
-                        <SelectItem
-                          key={designation._id}
-                          value={designation._id}
-                        >
-                          {designation.title}
+              <Controller
+                control={control}
+                name="role"
+                render={({ field }) => (
+                  <Select
+                    onValueChange={(value) => {
+                      setSelectedRole(value);
+                      field.onChange(value);
+                    }}
+                    value={field.value}
+                  >
+                    <SelectTrigger className="w-[200px]">
+                      <SelectValue placeholder="Select a role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {roles.map((role) => (
+                        <SelectItem key={role.value} value={role.value}>
+                          {role.label}
                         </SelectItem>
-                      )
-                    )}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="parentReviewer">Parent Reviewer</Label>
-              <Select>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Select a parent reviewer" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {designationOptions.map((designation: any) => (
-                      <SelectItem key={designation._id} value={designation._id}>
-                        {designation.title}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+              <DesignationSelection
+                role={selectedRole}
+                control={control}
+                setValue={setValue}
+              />
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="adminReviewer">Admin Reviewer</Label>
-              <Select>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Select an admin reviewer" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {designationOptions.map((designation: any) => (
-                      <SelectItem key={designation._id} value={designation._id}>
-                        {designation.title}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+              <ParentSelection
+                control={control}
+                setValue={setValue}
+                selectedRole={selectedRole}
+              />
             </div>
+            {selectedRole === "employee" && (
+              <div className="grid gap-3">
+                <AdminReviewerSelection control={control} setValue={setValue} />
+              </div>
+            )}
           </div>
           <DialogFooter>
-            <Button type="submit">Add User</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? <Spinner /> : "Add User"}
+            </Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 }

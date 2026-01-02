@@ -1,14 +1,18 @@
 import { Schema, model, Document } from "mongoose";
 
 interface IDesignation extends Document {
+  role: "employee" | "manager" | "admin";
   title: string;
-  description: string;
 }
 
 const DesignationSchema = new Schema<IDesignation>(
   {
-    title: { type: String, required: true, unique: true },
-    description: { type: String },
+    role: {
+      type: String,
+      enum: ["employee", "manager", "admin"],
+      required: true,
+    },
+    title: { type: String, required: true },
   },
   { timestamps: true }
 );

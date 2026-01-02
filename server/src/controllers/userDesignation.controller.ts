@@ -5,7 +5,14 @@ import { ApiResponse } from "../utils/ApiResponse.ts";
 import asyncHandler from "../utils/asyncHandler.ts";
 
 const getAllDesignations = asyncHandler(async (req: Request, res: Response) => {
-  const designations = await Designation.find();
+  const { role } = req.query;
+
+  const designationQuery: Record<string, string> = {};
+  if (role) {
+    designationQuery["role"] = role as string;
+  }
+
+  const designations = await Designation.find(designationQuery);
   res
     .status(200)
     .json(
@@ -18,13 +25,13 @@ const getAllDesignations = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const addDesignation = asyncHandler(async (req: Request, res: Response) => {
-  const { title, description } = req.body;
-  if (!title) {
+  const { title, role } = req.body;
+  if (!title || ["employee", "manager", "admin"].includes(role) === false) {
     return res.status(400).json(new ApiResponse(400, null, "Name is required"));
   }
   const designation = new Designation({
     title,
-    description,
+    role,
   });
   await designation.save();
   res

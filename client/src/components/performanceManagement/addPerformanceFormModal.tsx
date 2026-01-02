@@ -113,14 +113,14 @@ export function AddPerformanceFormModal() {
                 name="designationId"
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="w-[200px]">
+                    <SelectTrigger className="w-[250px]">
                       <SelectValue placeholder="Select a designation" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
                         {designationOptions.map((d: IDesignationOption) => (
                           <SelectItem key={d._id} value={d._id}>
-                            {d.title}
+                            {d.title} - {d.role}
                           </SelectItem>
                         ))}
                       </SelectGroup>

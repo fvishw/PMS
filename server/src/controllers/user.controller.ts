@@ -4,18 +4,30 @@ import { ApiError } from "../utils/ApiError.ts";
 import asyncHandler from "../utils/asyncHandler.ts";
 import { ApiResponse } from "../utils/ApiResponse.ts";
 import { UserPerformance } from "../models/performance.model.ts";
+import { userAddPayloadSchema } from "../types/user.ts";
 
 const addUser = asyncHandler(async (req: Request, res: Response) => {
-  const { fullName, email, role, designationId } = req.body;
-
-  if (!fullName || !email || !role || !designationId) {
-    throw new ApiError(400, "All fields are required");
+  const parsedPayload = userAddPayloadSchema.safeParse(req.body);
+  if (!parsedPayload.success) {
+    throw new ApiError(400, "Invalid request payload");
   }
+
+  const {
+    fullName,
+    email,
+    role,
+    designationId,
+    parentReviewerId,
+    adminReviewerId,
+  } = parsedPayload.data;
+
   const user = new User({
     fullName,
     email,
     role,
     designation: designationId,
+    parentReviewer: parentReviewerId,
+    adminReviewer: adminReviewerId,
   });
   await user.save();
 
@@ -52,4 +64,20 @@ const getAllManagers = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, managers, "Managers fetched successfully"));
 });
 
-export { addUser, getAllUsers, getAllManagers };
+const fetchUsersByRole = asyncHandler(async (req: Request, res: Response) => {
+  const { role } = req.query;
+
+  if (!role) {
+    throw new ApiError(400, "Role query parameter is required");
+  }
+
+  const users = await User.find({ role })
+    .select("-password -refreshToken -passwordResetToken -email")
+    .populate({ path: "designation", select: "title" });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { users }, "Users fetched successfully"));
+});
+
+export { addUser, getAllUsers, getAllManagers, fetchUsersByRole };
