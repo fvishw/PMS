@@ -40,7 +40,7 @@ export class API {
   }
 
   fetchUserPerformanceForm() {
-    return this.request(this.instance.get("/user/performance-form"));
+    return this.request(this.instance.get("/performance/performance-form"));
   }
   submitUserKpis() {
     return this.request(this.instance.put("/kpis/accept-kpi"));

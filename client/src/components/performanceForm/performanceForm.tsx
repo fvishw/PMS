@@ -6,14 +6,15 @@ import Api from "@/api/api";
 import { Spinner } from "../ui/spinner";
 
 export const PerformanceForm = () => {
-  const {
-    isLoading,
-    error,
-    data: performanceFormData,
-  } = useQuery({
+  const { isLoading, error, data } = useQuery({
     queryKey: ["performanceForm"],
     queryFn: () => Api.fetchUserPerformanceForm(),
   });
+  let performanceFormData;
+
+  if (data) {
+    performanceFormData = data?.userPerformanceRecord;
+  }
   if (isLoading) {
     return (
       <div className="w-full h-full flex justify-center items-center">

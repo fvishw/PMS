@@ -25,7 +25,7 @@ function Competencies({ data }: { data: CompetenciesData }) {
                   <li key={idx}>{criteria}</li>
                 ))}
               </p>
-              <RadioGroup className="flex justify-center items-center mt-4 space-x-4">
+              <RadioGroup className="flex justify-center items-center mt-4 space-x-4 flex-wrap">
                 {ratings.map((rating) => (
                   <div
                     key={rating.value}
