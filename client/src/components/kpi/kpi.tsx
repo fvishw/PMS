@@ -2,7 +2,7 @@ import Api from "@/api/api";
 import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "../ui/spinner";
 
-import Error from "../Error";
+import ErrorMessage from "../errorMessage";
 import KpiDetails from "./kpiDetails";
 
 function Kpis() {
@@ -19,7 +19,7 @@ function Kpis() {
     );
   }
   if (error) {
-    return <Error message={error.message} />;
+    return <ErrorMessage message={error.message} />;
   }
 
   if (data) {

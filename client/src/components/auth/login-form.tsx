@@ -60,7 +60,6 @@ export function LoginForm({
       });
     },
   });
-  console.log(errors);
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

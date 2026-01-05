@@ -18,13 +18,16 @@ function Competencies({ data }: { data: CompetenciesData }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ">
         {data?.map((competency: Competency) => {
           return (
-            <div className="p-4 border rounded w-full flex flex-col justify-between">
+            <div
+              className="p-4 border rounded w-full flex flex-col justify-between"
+              key={competency.title}
+            >
               <h3 className="font-semibold mb-2">{competency.title}</h3>
-              <p className="text-sm text-muted-foreground pl-3 flex flex-col space-y-2">
+              <ul className="text-sm text-muted-foreground pl-3 flex flex-col space-y-2">
                 {competency.indicators.map((criteria, idx) => (
                   <li key={idx}>{criteria}</li>
                 ))}
-              </p>
+              </ul>
               <RadioGroup className="flex justify-center items-center mt-4 space-x-4 flex-wrap">
                 {ratings.map((rating) => (
                   <div

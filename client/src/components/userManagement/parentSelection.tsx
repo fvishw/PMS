@@ -55,7 +55,7 @@ export const ParentSelection = ({
             <SelectContent>
               <SelectGroup>
                 {data?.users?.map((user: any) => (
-                  <SelectItem key={user.id} value={user._id}>
+                  <SelectItem key={user._id} value={user._id}>
                     {user.fullName} ({user.role})
                   </SelectItem>
                 ))}

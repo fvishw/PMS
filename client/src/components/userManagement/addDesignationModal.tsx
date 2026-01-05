@@ -22,7 +22,7 @@ import Api from "@/api/api";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import toasterPosition from "@/utils/toaster";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { roles } from "./options";
 
 interface AddDesignationModalProps {
@@ -38,7 +38,7 @@ export const AddDesignationModal = ({
   isOpen,
   onClose,
 }: AddDesignationModalProps) => {
-  const { register, handleSubmit, reset } = useForm<AddDesignationForm>({
+  const { register, handleSubmit, reset, control } = useForm<AddDesignationForm>({
     defaultValues: {
       title: "",
       role: "employee",
@@ -68,19 +68,22 @@ export const AddDesignationModal = ({
           <DialogHeader>
             <DialogTitle>Add Designation</DialogTitle>
             <DialogDescription>
-              Make changes to your profile here. Click save when you&apos;re
-              done.
+              Add a new designation by selecting a role and entering a title.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4">
             <div className="grid gap-3">
               <Label htmlFor="role">Role</Label>
-              <Select>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Select role" />
-                </SelectTrigger>
-                <SelectContent onChange={() => {}}>
-                  <SelectGroup>
+              <Controller
+                control={control}
+                name="role"
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-[200px]">
+                      <SelectValue placeholder="Select role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
                     {roles.map((role) => (
                       <SelectItem key={role.value} value={role.value}>
                         {role.label}

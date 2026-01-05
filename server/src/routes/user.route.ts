@@ -14,7 +14,7 @@ import {
 
 const userRouter = Router();
 
-userRouter.post("/add", addUser);
+userRouter.post("/add", authMiddleware(["admin"]), addUser);
 
 userRouter.get("/all-user", authMiddleware(["admin"]), getAllUsers);
 
@@ -23,7 +23,15 @@ userRouter.get("/all-managers", authMiddleware(["admin"]), getAllManagers);
 userRouter.get("/users-by-role", authMiddleware(["admin"]), fetchUsersByRole);
 
 userRouter.post("/add-designation", authMiddleware(["admin"]), addDesignation);
-userRouter.delete("/delete-designation/:id", authMiddleware(["admin"]), deleteDesignation);
-userRouter.get("/all-designations", authMiddleware(["admin"]), getAllDesignations);
+userRouter.delete(
+  "/delete-designation/:id",
+  authMiddleware(["admin"]),
+  deleteDesignation
+);
+userRouter.get(
+  "/all-designations",
+  authMiddleware(["admin"]),
+  getAllDesignations
+);
 
 export default userRouter;

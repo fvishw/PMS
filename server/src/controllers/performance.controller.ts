@@ -45,7 +45,7 @@ const createPerformanceRecord = asyncHandler(
     let totalWeight = 0;
 
     kpis.forEach((c) => {
-      totalWeight += c.weight;
+      totalWeight = c.weight;
     });
 
     if (totalWeight !== 100) {
@@ -81,6 +81,13 @@ const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
 
   const userDesignation = user?.designation;
   const userParentReviewer = user?.parentReviewer;
+
+  if (!userParentReviewer) {
+    throw new ApiError(
+      400,
+      "User must have a parent reviewer assigned before accepting KPIs"
+    );
+  }
 
   const masterPerformance = await MasterPerformance.findOne({
     designation: userDesignation,
@@ -224,7 +231,7 @@ const userFinalReviewKpi = asyncHandler(async (req: Request, res: Response) => {
   if (!parsedPayload.success) {
     throw new ApiError(400, "Invalid payload format");
   }
-  const userId = req.user?.id!;
+
   const { selfReview, userPerformanceId } = parsedPayload.data;
 
   const userPerformance = await UserPerformance.findById(userPerformanceId);

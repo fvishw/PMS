@@ -67,8 +67,12 @@ const getAllManagers = asyncHandler(async (req: Request, res: Response) => {
 const fetchUsersByRole = asyncHandler(async (req: Request, res: Response) => {
   const { role } = req.query;
 
-  if (!role) {
-    throw new ApiError(400, "Role query parameter is required");
+  const allowedRoles = ["admin", "manager", "user"];
+  if (!role || !allowedRoles.includes(role as string)) {
+    throw new ApiError(
+      400,
+      `Invalid role. Allowed values: ${allowedRoles.join(", ")}`
+    );
   }
 
   const users = await User.find({ role })

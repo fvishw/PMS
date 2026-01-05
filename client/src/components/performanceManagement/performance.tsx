@@ -6,7 +6,7 @@ import { columns } from "./kpiTable.config";
 import { Spinner } from "../ui/spinner";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import Error from "../Error";
+import ErrorMessage from "../errorMessage";
 
 function Performance() {
   const { isLoading, error, data } = useQuery({
@@ -22,7 +22,7 @@ function Performance() {
     );
   }
   if (error) {
-    return <Error message={error.message} />;
+    return <ErrorMessage message={error.message} />;
   }
   const tableData = [];
   if (data && data?.performanceTemplates) {

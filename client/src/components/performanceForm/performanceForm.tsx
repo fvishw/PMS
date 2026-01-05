@@ -5,7 +5,7 @@ import { KpiScoreTable } from "./kpiTableScore";
 import Api from "@/api/api";
 import { Spinner } from "../ui/spinner";
 import { useAuth } from "@/hooks/useAuthContext";
-import Error from "../Error";
+import ErrorMessage from "../errorMessage";
 
 export const PerformanceForm = () => {
   const { user } = useAuth();
@@ -22,7 +22,7 @@ export const PerformanceForm = () => {
   }
 
   if (error) {
-    return <Error message={error.message} />;
+    return <ErrorMessage message={error.message} />;
   }
 
   if (data) {

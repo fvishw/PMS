@@ -32,7 +32,6 @@ export const AdminReviewerSelection = ({
       </div>
     );
   }
-  console.log(data);
   return (
     <>
       <Label htmlFor="adminReviewer">Admin Reviewer</Label>
@@ -54,7 +53,7 @@ export const AdminReviewerSelection = ({
                 {data &&
                   data?.users?.length > 0 &&
                   data?.users?.map((user: any) => (
-                    <SelectItem key={user.id} value={user._id}>
+                    <SelectItem key={user._id} value={user._id}>
                       {user.fullName} ({user.role})
                     </SelectItem>
                   ))}

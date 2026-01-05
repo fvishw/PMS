@@ -31,6 +31,7 @@ import { useFieldArray, useForm, Controller } from "react-hook-form";
 import { CustomDataTable } from "../customTable";
 import CompetencyItem from "./copetencyItem";
 import { toast } from "sonner";
+import { queryClient } from "@/utils/queryClient";
 
 export function AddPerformanceFormModal() {
   const { control, handleSubmit } = useForm<PerformanceFormValue>({
@@ -69,8 +70,9 @@ export function AddPerformanceFormModal() {
       toast.success("Performance Record Added Successfully", {
         position: "top-right",
       });
+      queryClient.invalidateQueries({ queryKey: ["performanceList"] });
     },
-    onError: (error: any) => {
+    onError: (error) => {
       toast.error(error.message || "Failed to add Performance Record", {
         position: "top-right",
       });
@@ -168,9 +170,9 @@ export function AddPerformanceFormModal() {
               Add Competency
             </Button>
 
-            {competencyFields.map((_, index) => (
+            {competencyFields.map((field, index) => (
               <CompetencyItem
-                key={index}
+                key={field.id}
                 control={control}
                 index={index}
                 removeCompetency={removeCompetency}
