@@ -29,11 +29,13 @@ export const CheckInTableAction = ({ checkInId }: { checkInId: string }) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <UserPastCheckInModal
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        checkInId={checkInId}
-      />
+      {isOpen && (
+        <UserPastCheckInModal
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          checkInId={checkInId}
+        />
+      )}
     </>
   );
 };

@@ -2,7 +2,7 @@ import { Schema, model, Document, Types } from "mongoose";
 import bcrypt from "bcrypt";
 import AuthService from "../utils/AuthService.ts";
 
-export interface IUser extends Document {
+interface IUser extends Document {
   fullName: string;
   email: string;
   password: string;
@@ -62,3 +62,4 @@ UserSchema.method("postPasswordResetCleanup", function () {
 });
 
 export const User = model<IUser>("User", UserSchema);
+export { type IUser };

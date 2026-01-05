@@ -16,12 +16,11 @@ function FinalReview() {
   return (
     <SectionWrapper title="Section C: Final Comments">
       <div>
-        {/* appraiser & reviewer comments */}
         <div className="grid grid-cols-1  space-x-4">
           <FinalDecisionAndRemark name="Admin" />
         </div>
         <div className="w-full rounded border p-4 mt-4 ">
-          <Label className="pb-4 font-semibold">Appraiser's Comment</Label>
+          <Label className="pb-4 font-semibold">Employee's Comment</Label>
           <div className="space-y-4 grid md:grid-cols-2 grid-cols-1">
             <div>
               <Label className="pb-2">Employee Remark</Label>

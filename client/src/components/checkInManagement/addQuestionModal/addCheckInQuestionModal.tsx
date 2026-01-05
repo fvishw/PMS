@@ -6,7 +6,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { ColumnDef } from "@tanstack/react-table";
 import {
@@ -21,14 +20,22 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import Api from "@/api/api";
 import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/utils/queryClient";
 
-export function AddCheckInQuestionModal() {
-  const { control, handleSubmit, register } = useForm<QuestionFormPayload>({
-    defaultValues: {
-      questions: [{ question: "", type: "" }],
-      version: "",
-    },
-  });
+export function AddCheckInQuestionModal({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
+  const { control, handleSubmit, register, reset } =
+    useForm<QuestionFormPayload>({
+      defaultValues: {
+        questions: [{ question: "", type: "text" }],
+        version: "",
+      },
+    });
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -38,11 +45,16 @@ export function AddCheckInQuestionModal() {
   const columns: ColumnDef<QuestionRow>[] = getColumns(control, remove);
 
   const { mutate } = useMutation({
-    mutationFn: (data: QuestionFormPayload) => Api.addCheckInsQuestions(data),
+    mutationFn: (data: QuestionFormPayload) => Api.addCheckInQuestions(data),
     onSuccess: () => {
       toast.success("Questions added successfully", {
         position: "top-right",
       });
+      reset();
+      queryClient.invalidateQueries({
+        queryKey: ["checkInQuestionsByVersion"],
+      });
+      onClose();
     },
     onError: (error) => {
       toast.error(error.message || "Failed to add questions", {
@@ -55,11 +67,12 @@ export function AddCheckInQuestionModal() {
     mutate(data);
   };
 
+  if (!isOpen) {
+    return null;
+  }
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button>Add Question set</Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[900px]">
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
@@ -81,7 +94,7 @@ export function AddCheckInQuestionModal() {
             <div className="ml-auto">
               <Button
                 type="button"
-                onClick={() => append({ question: "", type: "" })}
+                onClick={() => append({ question: "", type: "text" })}
               >
                 Add Question
               </Button>

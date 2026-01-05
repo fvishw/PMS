@@ -16,6 +16,13 @@ import { Spinner } from "@/components/ui/spinner";
 import { useState } from "react";
 import { IconEye, IconEyeClosed } from "@tabler/icons-react";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { ErrorMessage } from "@hookform/error-message";
+
+interface LoginFormValues {
+  email: string;
+  password: string;
+}
 
 export function LoginForm({
   className,
@@ -24,8 +31,18 @@ export function LoginForm({
   const { login } = useAuth();
   const navigate = useNavigate();
   const [isPasswordShow, setIsPasswordShow] = useState<boolean>(false);
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<LoginFormValues>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
   const { mutate, isPending } = useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) =>
+    mutationFn: ({ email, password }: LoginFormValues) =>
       publicApi.signInUser(email, password),
     onSuccess: (data) => {
       toast.success("Login successful!", {
@@ -43,20 +60,16 @@ export function LoginForm({
       });
     },
   });
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    mutate({ email, password });
-  };
+  console.log(errors);
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8" onSubmit={handleSubmit}>
+          <form
+            className="p-6 md:p-8"
+            onSubmit={handleSubmit((data) => mutate(data))}
+          >
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
@@ -68,11 +81,10 @@ export function LoginForm({
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
                   id="email"
-                  type="email"
                   placeholder="v@nexforge.tech"
-                  name="email"
-                  required
+                  {...register("email", { required: "Email is required" })}
                 />
+                <ErrorMessage errors={errors} name="email" as="p" />
               </Field>
               <Field>
                 <div className="flex items-center">
@@ -88,8 +100,9 @@ export function LoginForm({
                   <Input
                     id="password"
                     type={isPasswordShow ? "text" : "password"}
-                    required
-                    name="password"
+                    {...register("password", {
+                      required: "Password is required",
+                    })}
                   />
                   <span
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -101,6 +114,7 @@ export function LoginForm({
                       <IconEyeClosed size={18} />
                     )}
                   </span>
+                  <ErrorMessage errors={errors} name="password" as="p" />
                 </div>
               </Field>
               <Field>

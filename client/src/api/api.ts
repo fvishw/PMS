@@ -3,7 +3,7 @@ import { CheckInPayload, ICheckInPayload } from "@/types/chekin";
 import { PastCheckIns } from "@/types/response";
 import { IUserFormData } from "@/types/user";
 import { getDynamicApiUrl } from "@/utils/url";
-import axios, { AxiosError, AxiosInstance } from "axios";
+import axios, { AxiosInstance } from "axios";
 
 export class API {
   instance: AxiosInstance;
@@ -18,7 +18,7 @@ export class API {
     try {
       const response = await promise;
       return response.data;
-    } catch (error: AxiosError | any) {
+    } catch (error: any) {
       const message = error?.response?.data?.message || "Something went wrong";
       throw new Error(message);
     }
@@ -65,17 +65,17 @@ export class API {
       })
     );
   }
-  addCheckInsQuestions(CheckInPayload: ICheckInPayload) {
+  addCheckInQuestions(CheckInPayload: ICheckInPayload) {
     return this.request(
       this.instance.post("/check-ins/add-questions", {
-        checkInsQuestions: CheckInPayload,
+        checkInQuestions: CheckInPayload,
       })
     );
   }
   getCheckIns() {
     return this.request(this.instance.get("/check-ins/"));
   }
-  getPastCheckIns(year: number, month: number): Promise<PastCheckIns> {
+  getPastCheckIns(year: string, month: string): Promise<PastCheckIns> {
     return this.request(
       this.instance.get("/check-ins/past-checkins", {
         params: {
@@ -100,23 +100,10 @@ export class API {
   fetchUserKpiDetails() {
     return this.request(this.instance.get("/performance/user-kpi-details"));
   }
-  fetchUserPastCheckIns(employeeId: string): Promise<PastCheckIns> {
-    return this.request(
-      this.instance.get("/check-ins/user-past-checkins", {
-        params: {
-          employeeId,
-        },
-      })
-    );
-  }
 
   fetchCheckIn(checkInId: string): Promise<PastCheckIns> {
     return this.request(
-      this.instance.get("/check-ins/user-past-checkins", {
-        params: {
-          checkInId,
-        },
-      })
+      this.instance.get(`/check-ins/user-past-checkins/${checkInId}`)
     );
   }
   getAllQuestionByVersion() {

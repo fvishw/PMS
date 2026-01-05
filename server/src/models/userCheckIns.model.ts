@@ -7,7 +7,7 @@ interface IAnswer {
 
 interface IUserCheckIns {
   user: Types.ObjectId;
-  version: number;
+  version: string;
   answers: IAnswer[];
   createdAt?: Date;
 }
@@ -19,7 +19,7 @@ const UserCheckInsSchema = new Schema<IUserCheckIns>({
     required: true,
   },
   version: {
-    type: Number,
+    type: String,
     required: true,
   },
   answers: [

@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { UserPerformance } from "../models/performance.model.ts";
+import { UserPerformance } from "../models/userPerformance.model.ts";
 import asyncHandler from "../utils/asyncHandler.ts";
 import { ApiError } from "../utils/ApiError.ts";
 import { ApiResponse } from "../utils/ApiResponse.ts";
@@ -121,9 +121,9 @@ const selfReviewKpi = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(400, "Invalid criteria format");
   }
 
-  const { performanceId, criteria } = parsedCriteria.data;
+  const { userPerformanceId, criteria } = parsedCriteria.data;
 
-  const userPerformance = await UserPerformance.findById(performanceId);
+  const userPerformance = await UserPerformance.findById(userPerformanceId);
 
   if (!userPerformance) {
     throw new ApiError(404, "User Performance record not found");

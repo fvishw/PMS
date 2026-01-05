@@ -21,7 +21,7 @@ import { queryClient } from "@/utils/queryClient";
 import Api from "@/api/api";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import position from "@/utils/toaster";
+import toasterPosition from "@/utils/toaster";
 import { useForm } from "react-hook-form";
 import { roles } from "./options";
 
@@ -48,13 +48,13 @@ export const AddDesignationModal = ({
   const { mutate: addDesignation } = useMutation({
     mutationFn: (data: AddDesignationForm) => Api.addDesignation(data),
     onSuccess: () => {
-      toast.success("Designation added successfully", position);
+      toast.success("Designation added successfully", toasterPosition);
       reset();
       queryClient.invalidateQueries({ queryKey: ["designations"] });
       onClose();
     },
     onError: () => {
-      toast.error("Failed to add designation", position);
+      toast.error("Failed to add designation", toasterPosition);
     },
   });
 

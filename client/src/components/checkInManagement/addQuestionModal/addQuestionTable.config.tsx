@@ -14,8 +14,7 @@ import { Textarea } from "../../ui/textarea";
 
 type QuestionRow = {
   question: string;
-  type: string;
-  accessorFn?: () => any;
+  type: "rating" | "text";
 };
 
 type QuestionForm = {
@@ -27,11 +26,6 @@ type QuestionFormPayload = {
   questions: QuestionRow[];
   version: string;
 };
-
-interface IColumnsProps {
-  control: Control<QuestionForm>;
-  remove: (index: number) => void;
-}
 
 export const getColumns = (
   control: Control<QuestionFormPayload>,
@@ -56,7 +50,6 @@ export const getColumns = (
   {
     header: "Type",
     cell: ({ row }) => (
-      // need dropdown
       <Controller
         control={control}
         name={`questions.${row.index}.type`}
@@ -94,4 +87,4 @@ export const getColumns = (
   },
 ];
 
-export { QuestionFormPayload, IColumnsProps, QuestionForm, QuestionRow };
+export { QuestionFormPayload, QuestionForm, QuestionRow };

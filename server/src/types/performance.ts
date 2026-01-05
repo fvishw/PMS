@@ -39,7 +39,7 @@ const selfReviewPayloadSchema = z.object({
 });
 
 const SelfCriteriaSchema = z.object({
-  performanceId: z.string(),
+  userPerformanceId: z.string(),
   criteria: z.array(selfCriteria),
 });
 

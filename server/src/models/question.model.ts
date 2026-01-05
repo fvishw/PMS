@@ -14,12 +14,14 @@ const CheckInQuestionSchema = new Schema<ICheckInQuestion>({
     type: String,
     enum: ["rating", "text"],
   },
-  version: { type: String },
-  isActive: { type: Boolean, default: false },
+  version: { type: String, required: true },
+  isActive: { type: Boolean, default: false, required: true },
   createdAt: { type: Date, default: Date.now },
 });
 
-export const CheckInsQuestions = model<ICheckInQuestion>(
+export const CheckInQuestions = model<ICheckInQuestion>(
   "CheckInQuestion",
   CheckInQuestionSchema
 );
+
+export type { ICheckInQuestion };

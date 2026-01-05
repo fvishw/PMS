@@ -1,4 +1,4 @@
-import z, { number } from "zod";
+import z from "zod";
 
 const Question = z.object({
   type: z.enum(["rating", "text"]),

@@ -11,6 +11,7 @@ import { QuestionsModal } from "./QuestionsModal";
 import { toast } from "sonner";
 import Api from "@/api/api";
 import { useMutation } from "@tanstack/react-query";
+import toasterPosition from "@/utils/toaster";
 
 export const QuestionTableAction = ({ version }: { version: string }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,6 +21,9 @@ export const QuestionTableAction = ({ version }: { version: string }) => {
       toast.error(error.message || "Failed to set active question set", {
         position: "top-right",
       });
+    },
+    onSuccess: () => {
+      toast.success("Active question set updated", toasterPosition);
     },
   });
   return (
@@ -42,11 +46,13 @@ export const QuestionTableAction = ({ version }: { version: string }) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <QuestionsModal
-        version={version}
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-      />
+      {isOpen && (
+        <QuestionsModal
+          version={version}
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+        />
+      )}
     </>
   );
 };

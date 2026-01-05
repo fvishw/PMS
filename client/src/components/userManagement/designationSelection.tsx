@@ -83,7 +83,9 @@ export const DesignationSelection = ({
           <span>Add</span>
         </Button>
       </div>
-      <AddDesignationModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      {isOpen && (
+        <AddDesignationModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      )}
     </>
   );
 };

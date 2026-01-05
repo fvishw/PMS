@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {
   addCheckIns,
-  addCheckInsQuestions,
+  addCheckInQuestions,
   getCheckIns,
   getPastCheckIns,
   getAllUserCheckIns,
@@ -18,7 +18,7 @@ const router = Router();
 router.post("/add", authMiddleware(["employee"]), addCheckIns);
 
 //for admin only
-router.post("/add-questions", authMiddleware(["admin"]), addCheckInsQuestions);
+router.post("/add-questions", authMiddleware(["admin"]), addCheckInQuestions);
 
 router.get("/", authMiddleware(["employee", "admin"]), getCheckIns);
 
@@ -31,7 +31,7 @@ router.get(
 router.get("/user-checkins", authMiddleware(["admin"]), getAllUserCheckIns);
 
 router.get(
-  "/user-past-checkins",
+  "/user-past-checkins/:checkInId",
   authMiddleware(["admin"]),
   getUserCheckInById
 );

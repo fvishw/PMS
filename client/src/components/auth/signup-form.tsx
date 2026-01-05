@@ -14,6 +14,14 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { IconEye, IconEyeClosed } from "@tabler/icons-react";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import Logo from "@/assets/nf-logo.svg";
+import { ErrorMessage } from "@hookform/error-message";
+interface SignupFormValues {
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
 
 export function SignupForm({
   className,
@@ -22,7 +30,19 @@ export function SignupForm({
   const [isPasswordShow, setIsPasswordShow] = useState<boolean>(false);
   const [isConfirmPasswordShow, setIsConfirmPasswordShow] =
     useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    handleSubmit,
+    reset,
+    register,
+    formState: { errors },
+  } = useForm<SignupFormValues>({
+    defaultValues: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
   const { mutate, isPending } = useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       publicApi.signUpUser(email, password),
@@ -40,25 +60,16 @@ export function SignupForm({
     },
   });
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const confirmPassword = formData.get("confirmPassword") as string;
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-    mutate({ email, password });
+  const onSubmit = (data: SignupFormValues) => {
+    mutate({ email: data.email, password: data.password });
+    reset();
   };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8" onSubmit={handleSubmit}>
+          <form className="p-6 md:p-8" onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup className="">
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">Create your account</h1>
@@ -70,11 +81,11 @@ export function SignupForm({
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
                   id="email"
-                  type="email"
-                  placeholder="v@nexforge.tech"
-                  required
-                  name="email"
+                  {...register("email", {
+                    required: "Email is required",
+                  })}
                 />
+                <ErrorMessage errors={errors} name="email" />
               </Field>
               <Field>
                 <Field className="grid grid-cols-1 gap-4">
@@ -84,8 +95,14 @@ export function SignupForm({
                       <Input
                         id="password"
                         type={isPasswordShow ? "text" : "password"}
-                        required
-                        name="password"
+                        {...register("password", {
+                          required: "Password is required",
+                          minLength: {
+                            value: 8,
+                            message:
+                              "Password must be at least 8 characters long",
+                          },
+                        })}
                       />
                       <span
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -97,18 +114,29 @@ export function SignupForm({
                           <IconEyeClosed size={18} />
                         )}
                       </span>
+                      <ErrorMessage errors={errors} name="password" as="p" />
                     </div>
                   </Field>
                   <Field>
                     <FieldLabel htmlFor="confirm-password">
                       Confirm Password
                     </FieldLabel>
-                    <div className="relative">
+                    <div className="relative ">
                       <Input
                         id="confirm-password"
                         type={isConfirmPasswordShow ? "text" : "password"}
-                        required
+                        {...register("confirmPassword", {
+                          required: true,
+                          minLength: 8,
+                          validate: (value, formValues) =>
+                            value === formValues.password ||
+                            "Passwords do not match",
+                        })}
+                      />
+                      <ErrorMessage
+                        errors={errors}
                         name="confirmPassword"
+                        as="p"
                       />
                       <span
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -125,9 +153,6 @@ export function SignupForm({
                     </div>
                   </Field>
                 </Field>
-                <FieldDescription>
-                  Must be at least 8 characters long.
-                </FieldDescription>
               </Field>
               <Field>
                 <Button type="submit">Create Account</Button>
@@ -139,9 +164,9 @@ export function SignupForm({
           </form>
           <div className="bg-muted relative hidden md:block">
             <img
-              src="/placeholder.svg"
+              src={Logo}
               alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+              className="absolute inset-0 h-full w-full object-contains  "
             />
           </div>
         </CardContent>

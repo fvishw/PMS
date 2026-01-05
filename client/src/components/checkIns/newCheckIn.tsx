@@ -1,4 +1,4 @@
-import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
 import Api from "@/api/api";
@@ -23,7 +23,7 @@ function NewCheckIn() {
       queryClient.invalidateQueries({ queryKey: ["getCheckIns"] });
     },
     onError: (error) => {
-      toast.error(`Error submitting Check-In: ${error}`, {
+      toast.error(`Error submitting Check-In: ${error.message}`, {
         position: "top-right",
       });
     },
@@ -33,15 +33,13 @@ function NewCheckIn() {
     queryKey: ["getCheckIns"],
     queryFn: () => Api.getCheckIns(),
   });
-  const { register, handleSubmit, setValue } = useForm<CheckInFormValue[]>();
+  const { register, handleSubmit, setValue } =
+    useForm<Record<string, CheckInFormValue>>();
 
   const version = data?.questions[0]?.version || "";
 
   const onSubmit = (data: CheckInPayload) => {
-    const ansPayload = [];
-    for (const [_, value] of Object.entries(data)) {
-      ansPayload.push(value);
-    }
+    const ansPayload = Object.values(data);
     const payload = {
       version: version,
       answers: ansPayload,

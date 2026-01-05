@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { useQuery } from "@tanstack/react-query";
 import CheckInQuestionAns from "@/components/checkIns/checkInQuestionAns";
-import { useEffect } from "react";
+import { Spinner } from "@/components/ui/spinner";
 
 export const UserPastCheckInModal = ({
   checkInId,
@@ -19,14 +19,27 @@ export const UserPastCheckInModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  useEffect(() => {
-    if (!isOpen) return;
-  }, [isOpen]);
   const { isLoading, data, error } = useQuery({
     queryKey: ["employeePastCheckIns", checkInId],
     queryFn: () => Api.fetchCheckIn(checkInId),
     enabled: !!checkInId,
   });
+  let dataToRender;
+
+  if (isLoading) {
+    dataToRender = (
+      <div className="w-full flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (data && Array.isArray(data.answers)) {
+    const answers = data.answers;
+    dataToRender = (
+      <CheckInQuestionAns questions={answers} isPastCheckIn={true} />
+    );
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -34,13 +47,10 @@ export const UserPastCheckInModal = ({
         <DialogHeader>
           <DialogTitle>Past Check-In for</DialogTitle>
           <DialogDescription>
-            Fill the form below to add new questions.
+            View the submitted check-in responses below.
           </DialogDescription>
         </DialogHeader>
-        <CheckInQuestionAns
-          questions={data?.answers || null}
-          isPastCheckIn={true}
-        />
+        {dataToRender}
       </DialogContent>
     </Dialog>
   );

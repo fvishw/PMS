@@ -1,5 +1,5 @@
-const position = {
+const toasterPosition = {
   position: "top-right" as const,
 };
 
-export default position;
+export default toasterPosition;

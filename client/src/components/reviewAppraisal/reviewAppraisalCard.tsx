@@ -7,7 +7,12 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { IconTargetArrow, IconUser } from "@tabler/icons-react";
+import {
+  IconChecklist,
+  IconClockHour4,
+  IconTargetArrow,
+  IconUser,
+} from "@tabler/icons-react";
 
 const reviewGoalsCard = [
   {
@@ -22,14 +27,14 @@ const reviewGoalsCard = [
     value: 11,
     description: "KPIs updated this month",
     footer: "Total active KPIs assigned",
-    icon: <IconUser className="stroke-primary" />,
+    icon: <IconChecklist className="stroke-primary" />,
   },
   {
     title: "Pending Reviews",
     value: 4,
     description: "Awaiting manager approval",
     footer: "Pending reviews in current cycle",
-    icon: <IconUser className="stroke-primary" />,
+    icon: <IconClockHour4 className="stroke-primary" />,
   },
   {
     title: "Completed Reviews",

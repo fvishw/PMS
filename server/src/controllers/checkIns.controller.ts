@@ -1,11 +1,14 @@
 import type { Request, Response } from "express";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { QuestionsPayload, AnswerPayload } from "../types/checkIns.ts";
 import { ApiError } from "../utils/ApiError.ts";
 import asyncHandler from "../utils/asyncHandler.ts";
-import { CheckInsQuestions } from "../models/question.model.ts";
+import {
+  CheckInQuestions,
+  type ICheckInQuestion,
+} from "../models/question.model.ts";
 import { ApiResponse } from "../utils/ApiResponse.ts";
-import { User } from "../models/user.model.ts";
+import type { IUser } from "../models/user.model.ts";
 import UserCheckIns from "../models/userCheckIns.model.ts";
 
 const addCheckIns = asyncHandler(async (req: Request, res: Response) => {
@@ -17,16 +20,16 @@ const addCheckIns = asyncHandler(async (req: Request, res: Response) => {
   if (parsedCheckIns.success === false) {
     throw new ApiError(400, "Invalid checkIns payload");
   }
-  const validCheckIns = parsedCheckIns.data.answers;
+  const { answers, version } = parsedCheckIns.data;
 
-  const convertedAnswers = validCheckIns.map((answer) => ({
+  const convertedAnswers = answers.map((answer) => ({
     questionId: new Types.ObjectId(answer.questionId),
     answer: answer.answer,
   }));
 
-  const userCheckIn = await UserCheckIns.insertOne({
+  await UserCheckIns.create({
     user: userId,
-    version: checkIns.version,
+    version: version,
     answers: convertedAnswers,
   });
   return res
@@ -34,19 +37,18 @@ const addCheckIns = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(201, null, "Check-ins added successfully"));
 });
 
-const addCheckInsQuestions = asyncHandler(
+const addCheckInQuestions = asyncHandler(
   async (req: Request, res: Response) => {
-    const { checkInsQuestions } = req.body;
+    const { checkInQuestions } = req.body;
 
-    const parsedCheckInsQuestions =
-      QuestionsPayload.safeParse(checkInsQuestions);
+    const parsedCheckInQuestions = QuestionsPayload.safeParse(checkInQuestions);
 
-    if (parsedCheckInsQuestions.success === false) {
-      throw new ApiError(400, "Invalid checkInsQuestions payload");
+    if (parsedCheckInQuestions.success === false) {
+      throw new ApiError(400, "Invalid checkInQuestions payload");
     }
-    const { questions, version } = parsedCheckInsQuestions.data;
+    const { questions, version } = parsedCheckInQuestions.data;
 
-    const isVersionExists = await CheckInsQuestions.findOne({
+    const isVersionExists = await CheckInQuestions.findOne({
       version: version,
     });
 
@@ -58,12 +60,10 @@ const addCheckInsQuestions = asyncHandler(
       question: question.question,
       type: question.type,
       version: version,
-      isActive: true,
+      isActive: false,
     }));
 
-    const employeeCheckInsQuestions = await CheckInsQuestions.insertMany(
-      questionsToInsert
-    );
+    await CheckInQuestions.insertMany(questionsToInsert);
 
     return res
       .status(201)
@@ -95,7 +95,7 @@ const getCheckIns = asyncHandler(async (req: Request, res: Response) => {
       );
   }
 
-  const checkInQuestion = await CheckInsQuestions.find({
+  const checkInQuestion = await CheckInQuestions.find({
     isActive: true,
   }).select("-isActive -__v -createdAt ");
 
@@ -153,8 +153,8 @@ const getAllUserCheckIns = asyncHandler(async (req: Request, res: Response) => {
     user: checkIn.user._id,
     version: checkIn.version,
     createdAt: checkIn.createdAt,
-    name: (checkIn.user as typeof User).fullName,
-    email: (checkIn.user as typeof User).email,
+    name: (checkIn.user as unknown as IUser).fullName,
+    email: (checkIn.user as unknown as IUser).email,
   }));
 
   return res
@@ -169,7 +169,7 @@ const getAllUserCheckIns = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const getUserCheckInById = asyncHandler(async (req: Request, res: Response) => {
-  const { checkInId } = req.query;
+  const { checkInId } = req.params;
 
   if (!checkInId || typeof checkInId !== "string") {
     throw new ApiError(400, "Invalid or missing checkInId parameter");
@@ -201,7 +201,7 @@ const getUserCheckInById = asyncHandler(async (req: Request, res: Response) => {
 
 const getAllCheckInQuestions = asyncHandler(
   async (req: Request, res: Response) => {
-    const checkInQuestions = await CheckInsQuestions.aggregate([
+    const checkInQuestions = await CheckInQuestions.aggregate([
       {
         $group: {
           _id: "$version",
@@ -224,7 +224,7 @@ const getAllCheckInQuestions = asyncHandler(
       .json(
         new ApiResponse(
           200,
-          { question_set: checkInQuestions },
+          { questionSet: checkInQuestions },
           "Check-in questions fetched"
         )
       );
@@ -237,21 +237,29 @@ const activateQuestionSet = asyncHandler(
     if (!version || typeof version !== "string") {
       throw new ApiError(400, "Invalid or missing version parameter");
     }
-    // await CheckInsQuestions.updateMany({ version: 1 }, { version: "1" });
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      await CheckInQuestions.updateMany(
+        { isActive: true },
+        { $set: { isActive: false } }
+      );
 
-    await CheckInsQuestions.updateMany(
-      { isActive: true },
-      { $set: { isActive: false } }
-    );
-
-    const result = await CheckInsQuestions.updateMany(
-      { version: version },
-      { $set: { isActive: true } }
-    );
+      await CheckInQuestions.updateMany(
+        { version: version },
+        { $set: { isActive: true } }
+      );
+      await session.commitTransaction();
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
+    }
 
     return res
       .status(200)
-      .json(new ApiResponse(200, result, "Question set activated"));
+      .json(new ApiResponse(200, null, "Question set activated"));
   }
 );
 
@@ -263,12 +271,12 @@ const getAllCheckInQuestionsByVersion = asyncHandler(
       throw new ApiError(400, "Invalid or missing version parameter");
     }
 
-    const checkInQuestions = await CheckInsQuestions.aggregate([
+    const checkInQuestions = await CheckInQuestions.aggregate([
       { $match: { version: version } },
       {
         $group: {
           _id: "$version",
-          question_set: {
+          questionSet: {
             $push: { question: "$question", type: "$type", _id: "$_id" },
           },
           createdAt: { $first: "$createdAt" },
@@ -279,7 +287,7 @@ const getAllCheckInQuestionsByVersion = asyncHandler(
         $project: {
           _id: 0,
           version: "$_id",
-          question_set: 1,
+          questionSet: 1,
           createdAt: 1,
           isActive: 1,
         },
@@ -296,7 +304,7 @@ const getAllCheckInQuestionsByVersion = asyncHandler(
 
 export {
   addCheckIns,
-  addCheckInsQuestions,
+  addCheckInQuestions,
   getCheckIns,
   getPastCheckIns,
   getAllUserCheckIns,

@@ -15,10 +15,7 @@ type KpiForm = {
   kpis: KpiFormRow[];
 };
 
-interface IColumnsProps {
-  control: Control<PerformanceFormValue>;
-  remove: (index: number) => void;
-}
+
 type Indicator = string;
 type Competency = {
   title: string;
@@ -83,4 +80,4 @@ export const getColumns = (
   },
 ];
 
-export { KpiFormRow, IColumnsProps, KpiForm, PerformanceFormValue };
+export { KpiFormRow, KpiForm, PerformanceFormValue };
