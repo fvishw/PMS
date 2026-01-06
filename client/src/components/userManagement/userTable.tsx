@@ -27,7 +27,7 @@ export function UserTable() {
         <AddUserModal />
       </div>
       <div className="w-full ">
-        <CustomDataTable data={users} columns={columns} />
+        <CustomDataTable data={users || []} columns={columns} />
       </div>
     </>
   );

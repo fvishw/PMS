@@ -15,7 +15,7 @@ export interface IFinalReview {
   adminReview: IDecisionAndRemarks;
   selfReview: ISelfReview;
 }
-export interface ICriteria {
+export interface IKpis {
   _id: string;
   indicator: string;
   description: string;
@@ -24,9 +24,6 @@ export interface ICriteria {
   selfComments: string;
   managerScore: number;
   managerComments: string;
-}
-export interface IMasterKpi {
-  kpiCriteria: ICriteria[];
 }
 
 export interface ICompetency {
@@ -38,7 +35,7 @@ export interface ICompetency {
 
 export interface IMasterPerformance extends Document {
   designation: Types.ObjectId;
-  kpis: IMasterKpi;
+  kpis: IKpis[];
   competencies: ICompetency[];
   finalReview: IFinalReview;
   interval: {

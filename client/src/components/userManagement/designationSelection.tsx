@@ -17,15 +17,18 @@ import { useState } from "react";
 import { AddDesignationModal } from "./addDesignationModal";
 import { Controller, UseFormSetValue } from "react-hook-form";
 import { AddUserModalProps } from "./addUserModal";
+import { ErrorMessage } from "@hookform/error-message";
 
 export const DesignationSelection = ({
   role,
   control,
   setValue,
+  errors,
 }: {
   role: string;
   control: any;
   setValue: UseFormSetValue<AddUserModalProps>;
+  errors: any;
 }) => {
   const { data: designationsData, isLoading } = useQuery({
     queryKey: ["designations", role],
@@ -48,6 +51,9 @@ export const DesignationSelection = ({
       <Label htmlFor="designation">Designation</Label>
       <div className="flex gap-3">
         <Controller
+          rules={{
+            required: "Designation is Required",
+          }}
           name="designationId"
           control={control}
           render={({ field }) => (
@@ -72,6 +78,7 @@ export const DesignationSelection = ({
             </Select>
           )}
         />
+
         <Button
           className="flex items-center"
           variant="outline"
@@ -83,6 +90,12 @@ export const DesignationSelection = ({
           <span>Add</span>
         </Button>
       </div>
+      <ErrorMessage
+        errors={errors}
+        name="fullName"
+        as="p"
+        className="text-red-500 text-sm"
+      />
       {isOpen && (
         <AddDesignationModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
       )}

@@ -26,6 +26,9 @@ import { Controller, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import Api from "@/api/api";
 import { Spinner } from "../ui/spinner";
+import { ErrorMessage } from "@hookform/error-message";
+import { toast } from "sonner";
+import toasterPosition from "@/utils/toaster";
 
 export interface AddUserModalProps {
   fullName: string;
@@ -38,20 +41,32 @@ export interface AddUserModalProps {
 export function AddUserModal() {
   const [selectedRole, setSelectedRole] = useState<string>("");
 
-  const { register, handleSubmit, reset, control, setValue } =
-    useForm<AddUserModalProps>({
-      defaultValues: {
-        fullName: "",
-        email: "",
-        role: "",
-        designationId: "",
-        parentReviewerId: "",
-        adminReviewerId: "",
-      },
-    });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm<AddUserModalProps>({
+    defaultValues: {
+      fullName: "",
+      email: "",
+      role: "",
+      designationId: "",
+      parentReviewerId: "",
+      adminReviewerId: "",
+    },
+  });
 
-  const { mutate, isLoading, error } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: (data: AddUserModalProps) => Api.addUser(data),
+    onSuccess: () => {
+      toast.success("User added successfully", toasterPosition);
+    },
+    onError: (error) => {
+      toast.error(`Error adding user: ${error}`, toasterPosition);
+    },
   });
 
   return (
@@ -69,17 +84,24 @@ export function AddUserModal() {
           <DialogHeader>
             <DialogTitle>Add User</DialogTitle>
             <DialogDescription>
-              Make changes to your profile here. Click save when you&apos;re
-              done.
+              Fill the form below to add a new user to the system.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4">
+          <div className="grid  space-y-4 mt-4">
             <div className="grid gap-3">
               <Label htmlFor="fullName">Full Name</Label>
               <Input
                 id="fullName"
                 placeholder="John Doe"
-                {...register("fullName")}
+                {...register("fullName", {
+                  required: "Full Name is required",
+                })}
+              />
+              <ErrorMessage
+                errors={errors}
+                name="fullName"
+                as="p"
+                className="text-red-500 text-sm"
               />
             </div>
             <div className="grid gap-3">
@@ -87,12 +109,23 @@ export function AddUserModal() {
               <Input
                 id="email"
                 placeholder="john.doe@nexforge.com"
-                {...register("email")}
+                {...register("email", {
+                  required: "Email is required",
+                })}
+              />
+              <ErrorMessage
+                errors={errors}
+                name="email"
+                as="p"
+                className="text-red-500 text-sm"
               />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="role">Role</Label>
               <Controller
+                rules={{
+                  required: "Role is Required",
+                }}
                 control={control}
                 name="role"
                 render={({ field }) => (
@@ -116,12 +149,19 @@ export function AddUserModal() {
                   </Select>
                 )}
               />
+              <ErrorMessage
+                errors={errors}
+                name="role"
+                as="p"
+                className="text-red-500 text-sm"
+              />
             </div>
             <div className="grid gap-3">
               <DesignationSelection
                 role={selectedRole}
                 control={control}
                 setValue={setValue}
+                errors={errors}
               />
             </div>
             <div className="grid gap-3">
@@ -129,6 +169,7 @@ export function AddUserModal() {
                 control={control}
                 setValue={setValue}
                 selectedRole={selectedRole}
+                errors={errors}
               />
             </div>
             {selectedRole === "employee" && (
@@ -137,7 +178,7 @@ export function AddUserModal() {
               </div>
             )}
           </div>
-          <DialogFooter>
+          <DialogFooter className="mt-4">
             <Button type="submit" disabled={isLoading}>
               {isLoading ? <Spinner /> : "Add User"}
             </Button>

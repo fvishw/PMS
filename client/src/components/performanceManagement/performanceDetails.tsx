@@ -23,6 +23,9 @@ function PerformanceDetails() {
       </div>
     );
   }
+  if (!data?.performanceTemplate) {
+    return <ErrorMessage message="Performance template data is missing." />;
+  }
   if (error) {
     return <ErrorMessage message={error.message} />;
   }
@@ -36,8 +39,8 @@ function PerformanceDetails() {
         </Button>
       </div>
       <div>
-        <KpiScoreTable data={data?.performanceTemplate?.kpis} />
-        <Competencies data={data?.performanceTemplate?.competencies} />
+        <KpiScoreTable data={data?.performanceTemplate?.kpis || []} />
+        <Competencies data={data?.performanceTemplate?.competencies || []} />
       </div>
     </div>
   );
