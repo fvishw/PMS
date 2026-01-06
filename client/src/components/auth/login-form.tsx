@@ -103,16 +103,20 @@ export function LoginForm({
                       required: "Password is required",
                     })}
                   />
-                  <span
+                  <button
+                    type="button"
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                     onClick={() => setIsPasswordShow((prev) => !prev)}
+                    aria-label={
+                      isPasswordShow ? "Hide password" : "Show password"
+                    }
                   >
                     {isPasswordShow ? (
                       <IconEye size={18} />
                     ) : (
                       <IconEyeClosed size={18} />
                     )}
-                  </span>
+                  </button>
                   <ErrorMessage errors={errors} name="password" as="p" />
                 </div>
               </Field>

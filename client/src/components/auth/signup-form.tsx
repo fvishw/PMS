@@ -104,16 +104,20 @@ export function SignupForm({
                           },
                         })}
                       />
-                      <span
+                      <button
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                         onClick={() => setIsPasswordShow((prev) => !prev)}
+                        type="button"
+                        aria-label={
+                          isPasswordShow ? "Hide password" : "Show password"
+                        }
                       >
                         {isPasswordShow ? (
                           <IconEye size={18} />
                         ) : (
                           <IconEyeClosed size={18} />
                         )}
-                      </span>
+                      </button>
                       <ErrorMessage errors={errors} name="password" as="p" />
                     </div>
                   </Field>
@@ -138,10 +142,16 @@ export function SignupForm({
                         name="confirmPassword"
                         as="p"
                       />
-                      <span
+                      <button
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                         onClick={() =>
                           setIsConfirmPasswordShow((prev) => !prev)
+                        }
+                        type="button"
+                        aria-label={
+                          isConfirmPasswordShow
+                            ? "Hide password"
+                            : "Show password"
                         }
                       >
                         {isConfirmPasswordShow ? (
@@ -149,7 +159,7 @@ export function SignupForm({
                         ) : (
                           <IconEyeClosed size={18} />
                         )}
-                      </span>
+                      </button>
                     </div>
                   </Field>
                 </Field>

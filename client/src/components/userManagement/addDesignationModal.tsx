@@ -38,12 +38,13 @@ export const AddDesignationModal = ({
   isOpen,
   onClose,
 }: AddDesignationModalProps) => {
-  const { register, handleSubmit, reset, control } = useForm<AddDesignationForm>({
-    defaultValues: {
-      title: "",
-      role: "employee",
-    },
-  });
+  const { register, handleSubmit, reset, control } =
+    useForm<AddDesignationForm>({
+      defaultValues: {
+        title: "",
+        role: "employee",
+      },
+    });
 
   const { mutate: addDesignation } = useMutation({
     mutationFn: (data: AddDesignationForm) => Api.addDesignation(data),
@@ -84,14 +85,16 @@ export const AddDesignationModal = ({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                    {roles.map((role) => (
-                      <SelectItem key={role.value} value={role.value}>
-                        {role.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+                        {roles.map((role) => (
+                          <SelectItem key={role.value} value={role.value}>
+                            {role.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="title">Title</Label>
