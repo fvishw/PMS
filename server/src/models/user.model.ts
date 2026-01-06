@@ -2,12 +2,13 @@ import { Schema, model, Document, Types } from "mongoose";
 import bcrypt from "bcrypt";
 import AuthService from "../utils/AuthService.ts";
 
-export interface IUser extends Document {
+interface IUser extends Document {
   fullName: string;
   email: string;
   password: string;
-  role: "admin" | "user" | "manager";
+  role: "admin" | "employee" | "manager";
   designation: Types.ObjectId;
+  parentReviewer?: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
   isSignUpComplete?: boolean;
@@ -26,15 +27,15 @@ const UserSchema = new Schema<IUser>(
     password: { type: String },
     role: {
       type: String,
-      enum: ["admin", "user", "manager"],
-      default: "user",
+      enum: ["admin", "employee", "manager"],
+      default: "employee",
       required: true,
     },
     designation: {
       type: Schema.Types.ObjectId,
       ref: "Designation",
-      required: true,
     },
+    parentReviewer: { type: Schema.Types.ObjectId, ref: "User" },
     isSignUpComplete: { type: Boolean, default: false },
     refreshToken: { type: String, default: "" },
     passwordResetToken: { type: String, default: null },
@@ -61,3 +62,4 @@ UserSchema.method("postPasswordResetCleanup", function () {
 });
 
 export const User = model<IUser>("User", UserSchema);
+export { type IUser };

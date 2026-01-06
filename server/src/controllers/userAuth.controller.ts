@@ -57,10 +57,18 @@ const login = asyncHandler(async (req: Request, res: Response) => {
   user.refreshToken = refreshToken;
   await user.save();
 
+  const savedUser = await User.findById(user._id)
+    .select("-password -refreshToken -passwordResetToken")
+    .populate("designation");
+
   return res
     .status(200)
     .json(
-      new ApiResponse(200, { accessToken, refreshToken }, "Login successful")
+      new ApiResponse(
+        200,
+        { accessToken, refreshToken, user: savedUser },
+        "Login successful"
+      )
     );
 });
 
