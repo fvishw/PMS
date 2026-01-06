@@ -13,10 +13,7 @@ import {
   type ManagerCriteria,
   type SelfCriteria,
 } from "../types/performance.ts";
-import {
-  MasterPerformance,
-  type ICriteria,
-} from "../models/masterPerformance.ts";
+import { MasterPerformance, type IKpis } from "../models/masterPerformance.ts";
 import { Types } from "mongoose";
 
 const createPerformanceRecord = asyncHandler(
@@ -137,7 +134,7 @@ const selfReviewKpi = asyncHandler(async (req: Request, res: Response) => {
   }
 
   criteria.forEach((item: SelfCriteria) => {
-    const userKpi = (userPerformance.kpis as unknown as ICriteria[]).find(
+    const userKpi = (userPerformance.kpis as unknown as IKpis[]).find(
       (c) => c._id.toString() === item._id
     );
     if (userKpi) {
@@ -173,7 +170,7 @@ const managerReviewKpi = asyncHandler(async (req: Request, res: Response) => {
   }
 
   criteria.forEach((item: ManagerCriteria) => {
-    const kpiCriterion = (userPerformance.kpis as unknown as ICriteria[]).find(
+    const kpiCriterion = (userPerformance.kpis as unknown as IKpis[]).find(
       (c) => c._id.toString() === item._id
     );
     if (kpiCriterion) {
@@ -326,7 +323,7 @@ const getUserKpiDetails = asyncHandler(async (req: Request, res: Response) => {
 const getAllPerformanceTemplates = asyncHandler(
   async (req: Request, res: Response) => {
     const performanceTemplates = await MasterPerformance.find()
-      .select("-kpis -competencies ")
+      .select("-kpis -competencies")
       .populate("designation", "title role")
       .populate("createdBy", "fullName");
 

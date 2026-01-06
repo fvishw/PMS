@@ -34,7 +34,7 @@ function PastCheckIn() {
   if (error) {
     return <ErrorMessage message={error.message} />;
   }
-  const PastCheckIns =
+  const pastCheckIns =
     data && data?.answers?.length === 0 ? (
       <div className="text-center text-gray-500">
         No check-in data available for the selected month and year.
@@ -78,7 +78,7 @@ function PastCheckIn() {
           </SelectContent>
         </Select>
       </div>
-      {PastCheckIns}
+      {pastCheckIns}
     </div>
   );
 }

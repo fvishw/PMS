@@ -1,36 +1,36 @@
 import { Schema, model, Document, Types } from "mongoose";
 
 export interface IDecisionAndRemarks {
-  remarks: string;
-  recommendation: string;
-  finalComments: string;
+  remarks?: string;
+  recommendation?: string;
+  finalComments?: string;
 }
 
 export interface ISelfReview {
-  remarks: string;
-  comments: string;
+  remarks?: string;
+  comments?: string;
 }
 
 export interface IFinalReview {
-  adminReview: IDecisionAndRemarks;
-  selfReview: ISelfReview;
+  adminReview?: IDecisionAndRemarks;
+  selfReview?: ISelfReview;
 }
 export interface IKpis {
   _id: string;
   indicator: string;
   objective: string;
   weight: number;
-  selfScore: number;
-  selfComments: string;
-  managerScore: number;
-  managerComments: string;
+  selfScore?: number;
+  selfComments?: string;
+  managerScore?: number;
+  managerComments?: string;
 }
 
 export interface ICompetency {
   _id: string;
   title: string;
   indicators: string[];
-  score: number;
+  score?: number;
 }
 
 export interface IMasterPerformance extends Document {

@@ -76,6 +76,7 @@ export function AddPerformanceFormModal({
         position: "top-right",
       });
       queryClient.invalidateQueries({ queryKey: ["performanceList"] });
+      onClose();
     },
     onError: (error) => {
       toast.error(error.message || "Failed to add Performance Record", {
@@ -90,24 +91,25 @@ export function AddPerformanceFormModal({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto overflow-x-hidden">
-        {designationLoader ? (
-          <div className="w-full h-full flex justify-center items-center ">
-            <Spinner className="size-8 text-primary" />
-          </div>
-        ) : (
-          <form
-            onSubmit={handleSubmit((data) => addPerformanceRecord(data))}
-            className="max-h-[80vh]"
-          >
-            <DialogHeader>
-              <DialogTitle>Create Performance Record</DialogTitle>
-              <DialogDescription>
-                Fill the form below to add a new Performance record.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid space-y-4">
-              <div className="grid gap-3">
-                <Label>Designation</Label>
+        <form
+          onSubmit={handleSubmit((data) => addPerformanceRecord(data))}
+          className="max-h-[80vh]"
+        >
+          <DialogHeader>
+            <DialogTitle>Create Performance Record</DialogTitle>
+            <DialogDescription>
+              Fill the form below to add a new Performance record.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid space-y-4">
+            <div className="grid gap-3">
+              <Label>Designation</Label>
+
+              {designationLoader ? (
+                <div className="w-full h-full flex justify-center items-center ">
+                  <Spinner className="size-8 text-primary" />
+                </div>
+              ) : (
                 <Controller
                   control={control}
                   name="designationId"
@@ -132,62 +134,60 @@ export function AddPerformanceFormModal({
                     </Select>
                   )}
                 />
-              </div>
-
-              <h1 className="font-bold text-lg dark:text-white text-black">
-                Key Performance Indicators
-              </h1>
-              <div className="ml-auto">
-                <Button
-                  type="button"
-                  onClick={() =>
-                    append({ objective: "", indicator: "", weight: "" })
-                  }
-                >
-                  Add Row
-                </Button>
-              </div>
-              <CustomDataTable columns={columns} data={fields} />
+              )}
             </div>
 
-            {/* competencies */}
-            <div className="space-y-4 ">
-              <div className="flex items-center gap-1">
-                <h1 className="font-bold text-lg dark:text-white text-black ">
-                  Competencies
-                </h1>
-                <span className="text-gray-400 font-normal text-sm">
-                  (max 4)
-                </span>
-              </div>
-
+            <h1 className="font-bold text-lg dark:text-white text-black">
+              Key Performance Indicators
+            </h1>
+            <div className="ml-auto">
               <Button
                 type="button"
-                className="ml-auto block"
-                disabled={competencyFields.length >= 4}
-                onClick={() => {
-                  if (competencyFields.length < 4) {
-                    appendCompetency({ title: "", indicators: [""] });
-                  }
-                }}
+                onClick={() =>
+                  append({ objective: "", indicator: "", weight: "" })
+                }
               >
-                Add Competency
+                Add Row
               </Button>
-
-              {competencyFields.map((field, index) => (
-                <CompetencyItem
-                  key={field.id}
-                  control={control}
-                  index={index}
-                  removeCompetency={removeCompetency}
-                />
-              ))}
             </div>
-            <DialogFooter className=" p-4">
-              <Button type="submit">Create Record</Button>
-            </DialogFooter>
-          </form>
-        )}
+            <CustomDataTable columns={columns} data={fields} />
+          </div>
+
+          {/* competencies */}
+          <div className="space-y-4 ">
+            <div className="flex items-center gap-1">
+              <h1 className="font-bold text-lg dark:text-white text-black ">
+                Competencies
+              </h1>
+              <span className="text-gray-400 font-normal text-sm">(max 4)</span>
+            </div>
+
+            <Button
+              type="button"
+              className="ml-auto block"
+              disabled={competencyFields.length >= 4}
+              onClick={() => {
+                if (competencyFields.length < 4) {
+                  appendCompetency({ title: "", indicators: [""] });
+                }
+              }}
+            >
+              Add Competency
+            </Button>
+
+            {competencyFields.map((field, index) => (
+              <CompetencyItem
+                key={field.id}
+                control={control}
+                index={index}
+                removeCompetency={removeCompetency}
+              />
+            ))}
+          </div>
+          <DialogFooter className=" p-4">
+            <Button type="submit">Create Record</Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

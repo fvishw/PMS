@@ -9,6 +9,19 @@ import ErrorMessage from "../errorMessage";
 import { useState } from "react";
 import { Button } from "../ui/button";
 
+type PerformanceTableRow = {
+  _id: string;
+  designation: {
+    title: string;
+    role: string;
+  };
+  role: string;
+  createdBy: {
+    fullName: string;
+  };
+  createdAt: string;
+};
+
 function Performance() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -27,31 +40,23 @@ function Performance() {
   if (error) {
     return <ErrorMessage message={error.message} />;
   }
-  const tableData = [];
-  if (data && data?.performanceTemplates) {
-    for (const performance of data.performanceTemplates) {
-      const formattedDate = dayjs(performance.createdAt).format("D MMM YY");
-      tableData.push({
-        id: performance._id,
-        designation: performance.designation?.title || "N/A",
-        role: performance.designation?.role || "N/A",
-        createdBy: performance.createdBy
-          ? performance.createdBy.fullName
-          : "N/A",
-        createdAt: formattedDate,
-      });
-    }
-  }
+  const tableData: PerformanceTableRow[] = (
+    data?.performanceTemplates || []
+  ).map((performance: PerformanceTableRow) => ({
+    _id: performance._id,
+    designation: performance.designation?.title || "N/A",
+    role: performance.designation?.role || "N/A",
+    createdBy: performance.createdBy?.fullName || "N/A",
+    createdAt: dayjs(performance.createdAt).format("D MMM YY"),
+  }));
 
   return (
     <>
       <div className="flex justify-end">
-        {isOpen && (
-          <AddPerformanceFormModal
-            isOpen={isOpen}
-            onClose={() => setIsOpen(false)}
-          />
-        )}
+        <AddPerformanceFormModal
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+        />
         <Button onClick={() => setIsOpen(true)}>Add Master Performance</Button>
       </div>
       <CustomDataTable columns={columns} data={tableData} />
