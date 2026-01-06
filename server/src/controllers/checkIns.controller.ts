@@ -123,10 +123,10 @@ const getPastCheckIns = asyncHandler(async (req: Request, res: Response) => {
   const flattenedCheckIns = pastCheckIns.map((checkIn) => ({
     ...checkIn,
     answers: checkIn.answers.map((item) => ({
-      _id: item.questionId._id,
-      question: item.questionId?.question,
+      _id: (item.questionId as any)._id,
+      question: (item.questionId as any)?.question as string,
       answer: item.answer,
-      type: item.questionId?.type,
+      type: (item.questionId as any)?.type as string,
     })),
   }));
 
@@ -188,9 +188,9 @@ const getUserCheckInById = asyncHandler(async (req: Request, res: Response) => {
     ...checkIn,
     answers: checkIn.answers.map((item) => ({
       _id: item.questionId._id,
-      question: item.questionId?.question,
+      question: (item.questionId as any)?.question as string,
       answer: item.answer,
-      type: item.questionId?.type,
+      type: (item.questionId as any)?.type as string,
     })),
   };
 

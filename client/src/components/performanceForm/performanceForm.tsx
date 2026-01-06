@@ -6,6 +6,7 @@ import Api from "@/api/api";
 import { Spinner } from "../ui/spinner";
 import { useAuth } from "@/hooks/useAuthContext";
 import ErrorMessage from "../errorMessage";
+import { Button } from "../ui/button";
 
 export const PerformanceForm = () => {
   const { user } = useAuth();
@@ -33,6 +34,9 @@ export const PerformanceForm = () => {
           <KpiScoreTable data={userPerformanceRecord?.kpis || []} />
           <Competencies data={userPerformanceRecord?.competencies || []} />
           <FinalReview />
+          <div className="flex justify-end my-4">
+            <Button>Submit Review</Button>
+          </div>
         </>
       );
     } else {
