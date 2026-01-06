@@ -3,7 +3,6 @@ import { User } from "../models/user.model.ts";
 import { ApiError } from "../utils/ApiError.ts";
 import asyncHandler from "../utils/asyncHandler.ts";
 import { ApiResponse } from "../utils/ApiResponse.ts";
-import { UserPerformance } from "../models/userPerformance.model.ts";
 import { userAddPayloadSchema } from "../types/user.ts";
 
 const addUser = asyncHandler(async (req: Request, res: Response) => {
@@ -67,7 +66,7 @@ const getAllManagers = asyncHandler(async (req: Request, res: Response) => {
 const fetchUsersByRole = asyncHandler(async (req: Request, res: Response) => {
   const { role } = req.query;
 
-  const allowedRoles = ["admin", "manager", "user"];
+  const allowedRoles = ["admin", "manager", "employee"];
   if (!role || !allowedRoles.includes(role as string)) {
     throw new ApiError(
       400,

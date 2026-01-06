@@ -1,5 +1,5 @@
 interface KpiCriteria {
-  id: string;
+  _id: string;
   objective: string;
   indicator: string;
   weight: number;

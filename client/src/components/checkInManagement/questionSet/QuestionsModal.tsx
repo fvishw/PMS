@@ -8,6 +8,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import CheckInQuestionAns from "@/components/checkIns/checkInQuestionAns";
 import { Spinner } from "@/components/ui/spinner";
+import ErrorMessage from "@/components/errorMessage";
 
 export const QuestionsModal = ({
   version,
@@ -31,13 +32,22 @@ export const QuestionsModal = ({
       </div>
     );
   }
-  if (data && Array.isArray(data.questionSet)) {
-    const questionSet = data.questionSet;
-    dataToRender = (
-      <>
-        <CheckInQuestionAns questions={questionSet} isPastCheckIn={true} />
-      </>
-    );
+  if (error) {
+    dataToRender = <ErrorMessage message={error.message} />;
+  }
+  if (data) {
+    if (Array.isArray(data.questionSet) && data.questionSet.length > 0) {
+      const questionSet = data.questionSet;
+      dataToRender = (
+        <>
+          <CheckInQuestionAns questions={questionSet} isPastCheckIn={true} />
+        </>
+      );
+    } else {
+      dataToRender = (
+        <ErrorMessage message="No questions found for this version." />
+      );
+    }
   }
 
   return (

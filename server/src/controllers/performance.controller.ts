@@ -26,7 +26,7 @@ const createPerformanceRecord = asyncHandler(
     const parsedPayload = MasterPerformancePayload.safeParse(payload);
 
     if (!parsedPayload.success) {
-      throw new ApiError(401, "Invalid Performance Payload");
+      throw new ApiError(400, "Invalid Performance Payload");
     }
 
     const { competencies, designationId, kpis } = parsedPayload.data;
@@ -45,7 +45,7 @@ const createPerformanceRecord = asyncHandler(
     let totalWeight = 0;
 
     kpis.forEach((c) => {
-      totalWeight = c.weight;
+      totalWeight += c.weight;
     });
 
     if (totalWeight !== 100) {

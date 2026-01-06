@@ -63,6 +63,7 @@ export function AddUserModal() {
     mutationFn: (data: AddUserModalProps) => Api.addUser(data),
     onSuccess: () => {
       toast.success("User added successfully", toasterPosition);
+      reset();
     },
     onError: (error) => {
       toast.error(`Error adding user: ${error}`, toasterPosition);
@@ -78,7 +79,6 @@ export function AddUserModal() {
         <form
           onSubmit={handleSubmit((data) => {
             mutate(data);
-            reset();
           })}
         >
           <DialogHeader>

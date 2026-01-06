@@ -109,7 +109,7 @@ export function AddPerformanceFormModal() {
           </DialogHeader>
           <div className="grid space-y-4">
             <div className="grid gap-3">
-              <Label htmlFor="designation">Designation</Label>
+              <Label>Designation</Label>
               <Controller
                 control={control}
                 name="designationId"

@@ -38,10 +38,6 @@ export interface IMasterPerformance extends Document {
   kpis: IKpis[];
   competencies: ICompetency[];
   finalReview: IFinalReview;
-  interval: {
-    quarterly: "Q1" | "Q2" | "Q3" | "Q4";
-    year: number;
-  };
   createdAt: Date;
   createdBy: Types.ObjectId;
 }
@@ -76,18 +72,6 @@ const MasterPerformanceSchema = new Schema<IMasterPerformance>(
       selfReview: {
         remarks: { type: String },
         comments: { type: String },
-      },
-    },
-    interval: {
-      quarterly: {
-        type: String,
-        enum: ["Q1", "Q2", "Q3", "Q4"],
-        set: (v: String) => v?.toUpperCase(),
-        // required: true,
-      },
-      year: {
-        type: Number,
-        // required: true
       },
     },
     createdBy: { type: Types.ObjectId, ref: "User", required: true },

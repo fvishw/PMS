@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { monthOptions, yearOptions } from "@/types/option";
 import { useState } from "react";
+import ErrorMessage from "../errorMessage";
 
 function PastCheckIn() {
   const [year, setYear] = useState(new Date().getFullYear().toString());
@@ -29,6 +30,9 @@ function PastCheckIn() {
         <Spinner />
       </div>
     );
+  }
+  if (error) {
+    return <ErrorMessage message={error.message} />;
   }
   const PastCheckIns =
     data && data?.answers?.length === 0 ? (

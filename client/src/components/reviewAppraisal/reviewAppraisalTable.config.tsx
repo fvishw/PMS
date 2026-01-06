@@ -48,7 +48,7 @@ export const columns: ColumnDef<ReviewTableColumn>[] = [
     header: () => <div className="text-center">Designation</div>,
     cell: ({ row }) => {
       return (
-        <div className="text-center">{row.original.designation.title}</div>
+        <div className="text-center">{row.original.designation?.title || "Unknown"}</div>
       );
     },
   },

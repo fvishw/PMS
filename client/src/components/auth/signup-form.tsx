@@ -8,7 +8,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { publicApi } from "@/api/publicApi";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
@@ -30,6 +30,7 @@ export function SignupForm({
   const [isPasswordShow, setIsPasswordShow] = useState<boolean>(false);
   const [isConfirmPasswordShow, setIsConfirmPasswordShow] =
     useState<boolean>(false);
+  const navigate = useNavigate();
   const {
     handleSubmit,
     reset,
@@ -47,11 +48,11 @@ export function SignupForm({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       publicApi.signUpUser(email, password),
     onSuccess: (data) => {
-      console.log(data);
       toast.success("Signup successful! Please log in.", {
         position: "top-right",
       });
-      // Handle successful signup (e.g., redirect to login or dashboard)
+      reset();
+      navigate("/");
     },
     onError: (error) => {
       toast.error(error.message, {
@@ -62,7 +63,6 @@ export function SignupForm({
 
   const onSubmit = (data: SignupFormValues) => {
     mutate({ email: data.email, password: data.password });
-    reset();
   };
 
   return (

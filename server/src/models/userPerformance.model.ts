@@ -12,6 +12,10 @@ interface IUserPerformance extends IMasterPerformance {
     | "manager_review"
     | "admin_review"
     | "user_final_review";
+  interval: {
+    quarterly: "Q1" | "Q2" | "Q3" | "Q4";
+    year: number;
+  };
 }
 
 const UserPerformanceSchema = new Schema<IUserPerformance>(
@@ -59,6 +63,7 @@ const UserPerformanceSchema = new Schema<IUserPerformance>(
         "user_final_review",
       ],
     },
+    // this need to added for tracking performance by interval like quarterly and yearly
     interval: {
       quarterly: {
         type: String,

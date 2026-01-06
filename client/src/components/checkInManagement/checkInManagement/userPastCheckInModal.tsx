@@ -9,6 +9,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import CheckInQuestionAns from "@/components/checkIns/checkInQuestionAns";
 import { Spinner } from "@/components/ui/spinner";
+import ErrorMessage from "@/components/errorMessage";
 
 export const UserPastCheckInModal = ({
   checkInId,
@@ -26,19 +27,23 @@ export const UserPastCheckInModal = ({
   });
   let dataToRender;
 
+  if (error) {
+    return <ErrorMessage message={error.message} />;
+  }
+
   if (isLoading) {
     dataToRender = (
       <div className="w-full flex items-center justify-center">
         <Spinner />
       </div>
     );
-  }
-
-  if (data && Array.isArray(data.answers)) {
+  } else if (data && Array.isArray(data.answers) && data.answers.length > 0) {
     const answers = data.answers;
     dataToRender = (
       <CheckInQuestionAns questions={answers} isPastCheckIn={true} />
     );
+  } else {
+    dataToRender = <ErrorMessage message="No check-in answers found." />;
   }
 
   return (
