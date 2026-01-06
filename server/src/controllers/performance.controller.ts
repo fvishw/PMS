@@ -154,14 +154,14 @@ const selfReviewKpi = asyncHandler(async (req: Request, res: Response) => {
 
 const managerReviewKpi = asyncHandler(async (req: Request, res: Response) => {
   const managerId = req.user?.id!;
+  if (!managerId) {
+    throw new ApiError(401, "Unauthorized");
+  }
+
   const parsedPayload = ManagerScorePayloadSchema.safeParse(req.body);
 
   if (!parsedPayload.success) {
     throw new ApiError(400, "Invalid payload format");
-  }
-
-  if (!managerId) {
-    throw new ApiError(401, "Unauthorized");
   }
 
   const { competencies, userPerformanceId, criteria } = parsedPayload.data;
@@ -201,12 +201,12 @@ const managerReviewKpi = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const adminReviewKpi = asyncHandler(async (req: Request, res: Response) => {
+  const reviewerId = req.user?.id!;
   const parsedPayload = adminPayloadSchema.safeParse(req.body);
 
   if (!parsedPayload.success) {
     throw new ApiError(400, "Invalid payload format");
   }
-  const reviewerId = req.user?.id!;
   const { userPerformanceId, adminComments } = parsedPayload.data;
 
   const userPerformance = await UserPerformance.findById(userPerformanceId);
@@ -326,7 +326,7 @@ const getUserKpiDetails = asyncHandler(async (req: Request, res: Response) => {
 const getAllPerformanceTemplates = asyncHandler(
   async (req: Request, res: Response) => {
     const performanceTemplates = await MasterPerformance.find()
-      .select("-kpis -stage -competencies ")
+      .select("-kpis -competencies ")
       .populate("designation", "title role")
       .populate("createdBy", "fullName");
 

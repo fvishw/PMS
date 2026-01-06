@@ -18,7 +18,7 @@ export interface IFinalReview {
 export interface IKpis {
   _id: string;
   indicator: string;
-  description: string;
+  objective: string;
   weight: number;
   selfScore: number;
   selfComments: string;

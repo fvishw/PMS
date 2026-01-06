@@ -92,7 +92,7 @@ export const DesignationSelection = ({
       </div>
       <ErrorMessage
         errors={errors}
-        name="fullName"
+        name="designationId"
         as="p"
         className="text-red-500 text-sm"
       />

@@ -55,9 +55,9 @@ function PastCheckIn() {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {monthOptions.map((month) => (
-                <SelectItem key={month.value} value={month.value}>
-                  {month.label}
+              {monthOptions.map((monthOption) => (
+                <SelectItem key={monthOption.value} value={monthOption.value}>
+                  {monthOption.label}
                 </SelectItem>
               ))}
             </SelectGroup>
@@ -69,9 +69,9 @@ function PastCheckIn() {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {yearOptions.map((year) => (
-                <SelectItem key={year.value} value={year.value}>
-                  {year.label}
+              {yearOptions.map((yearOption) => (
+                <SelectItem key={yearOption.value} value={yearOption.value}>
+                  {yearOption.label}
                 </SelectItem>
               ))}
             </SelectGroup>
