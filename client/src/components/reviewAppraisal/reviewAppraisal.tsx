@@ -4,7 +4,7 @@ import Api from "@/api/api";
 import { Spinner } from "../ui/spinner";
 import { CustomDataTable } from "../customTable";
 import { columns } from "./reviewAppraisalTable.config";
-import ErrorMessage from "../errorMessage";
+import ApiError from "../errorMessage";
 
 export const ReviewAppraisal = () => {
   const { data, isLoading, error } = useQuery({
@@ -20,7 +20,7 @@ export const ReviewAppraisal = () => {
     );
   }
   if (error) {
-    return <ErrorMessage message={error.message} />;
+    return <ApiError message={error.message} />;
   }
   if (data) {
     const { performances } = data;

@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { MoreVertical } from "lucide-react";
-export const ReviewTableAction = () => {
+export const ReviewTableAction = ({ row }: { row: any }) => {
   return (
     <>
       <div className="text-center">

@@ -2,7 +2,6 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { PerformanceTableAction } from "./performanceTable.action";
 
 export type KPITableColumn = {
-  srNo: string;
   designation: string;
   createdBy: string;
   createdAt: Date | string;
@@ -12,7 +11,9 @@ export const columns: ColumnDef<KPITableColumn>[] = [
   {
     id: "sr.no",
     header: () => <div className="text-center">Sr.No</div>,
-    cell: ({ row }) => <div className="capitalize text-center">{row.id}</div>,
+    cell: ({ row }) => (
+      <div className="capitalize text-center">{row.index + 1}</div>
+    ),
   },
   {
     accessorKey: "designation",
@@ -59,13 +60,11 @@ export const columns: ColumnDef<KPITableColumn>[] = [
 
 export const data: KPITableColumn[] = [
   {
-    srNo: "1",
     designation: "Software Developer",
     createdBy: "John Doe",
     createdAt: "2024-01-01",
   },
   {
-    srNo: "2",
     designation: "Product Manager",
     createdBy: "Jane Smith",
     createdAt: "2024-01-02",

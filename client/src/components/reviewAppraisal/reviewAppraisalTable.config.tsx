@@ -68,7 +68,7 @@ export const columns: ColumnDef<ReviewTableColumn>[] = [
   {
     accessorKey: "actions",
     header: () => <div className="text-center">Actions</div>,
-    cell: ({ row }) => <ReviewTableAction />,
+    cell: ({ row }) => <ReviewTableAction row={row} />,
   },
 ];
 

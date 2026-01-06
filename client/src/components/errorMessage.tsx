@@ -1,4 +1,4 @@
-function ErrorMessage({ message }: { message?: string }) {
+function ApiError({ message }: { message?: string }) {
   return (
     <p className="text-center text-red-500">
       {message || "Failed to load data. Please try again later."}
@@ -6,4 +6,4 @@ function ErrorMessage({ message }: { message?: string }) {
   );
 }
 
-export default ErrorMessage;
+export default ApiError;

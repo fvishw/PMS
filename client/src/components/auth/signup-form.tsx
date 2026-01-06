@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import Logo from "@/assets/nf-logo.svg";
 import { ErrorMessage } from "@hookform/error-message";
+import { Spinner } from "../ui/spinner";
 interface SignupFormValues {
   email: string;
   password: string;
@@ -47,7 +48,7 @@ export function SignupForm({
   const { mutate, isPending } = useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       publicApi.signUpUser(email, password),
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success("Signup successful! Please log in.", {
         position: "top-right",
       });
@@ -165,7 +166,9 @@ export function SignupForm({
                 </Field>
               </Field>
               <Field>
-                <Button type="submit">Create Account</Button>
+                <Button type="submit">
+                  {isPending ? <Spinner /> : "Create Account"}
+                </Button>
               </Field>
               <FieldDescription className="text-center">
                 Already have an account? <Link to="/">Sign in</Link>

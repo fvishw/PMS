@@ -1,4 +1,4 @@
-import { CheckInFormValue } from "@/components/checkins/newCheckIn";
+import { CheckInFormValue } from "@/components/checkIns/newCheckIn";
 
 interface CheckInPayload {
   [key: number]: CheckInFormValue;

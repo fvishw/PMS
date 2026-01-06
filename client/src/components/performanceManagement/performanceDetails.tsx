@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import { IconChevronLeft } from "@tabler/icons-react";
 import { KpiScoreTable } from "../performanceForm/kpiTableScore";
 import Competencies from "../performanceForm/competency";
-import ErrorMessage from "../errorMessage";
+import ApiError from "../errorMessage";
 import { Spinner } from "../ui/spinner";
 
 function PerformanceDetails() {
@@ -13,7 +13,8 @@ function PerformanceDetails() {
   const navigate = useNavigate();
   const { data, isLoading, error } = useQuery({
     queryKey: ["performanceDetails", performanceId],
-    queryFn: () => Api.fetchPerformanceById(performanceId),
+    queryFn: (performanceId) =>
+      Api.fetchPerformanceById(performanceId.queryKey[1] as string),
     enabled: !!performanceId,
   });
   if (isLoading) {
@@ -24,10 +25,10 @@ function PerformanceDetails() {
     );
   }
   if (!data?.performanceTemplate) {
-    return <ErrorMessage message="Performance template data is missing." />;
+    return <ApiError message="Performance template data is missing." />;
   }
   if (error) {
-    return <ErrorMessage message={error.message} />;
+    return <ApiError message={error.message} />;
   }
 
   return (

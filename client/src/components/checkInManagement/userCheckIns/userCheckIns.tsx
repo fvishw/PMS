@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { columns } from "../checkInManagement/checkInTable.config";
 import { Spinner } from "../../ui/spinner";
 import { CustomDataTable } from "../../customTable";
+import ApiError from "@/components/errorMessage";
 
 export const UserCheckIns = () => {
   const {
@@ -20,6 +21,9 @@ export const UserCheckIns = () => {
         <Spinner className="size-8 text-primary" />
       </div>
     );
+  }
+  if (error) {
+    return <ApiError message={error.message} />;
   }
   return (
     <div className="w-full py-4">

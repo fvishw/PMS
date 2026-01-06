@@ -5,7 +5,7 @@ import { columns } from "./kpiTable.config";
 import { Spinner } from "../ui/spinner";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import ErrorMessage from "../errorMessage";
+import ApiError from "../errorMessage";
 import { useState } from "react";
 import { Button } from "../ui/button";
 
@@ -38,7 +38,7 @@ function Performance() {
     );
   }
   if (error) {
-    return <ErrorMessage message={error.message} />;
+    return <ApiError message={error.message} />;
   }
   const tableData: PerformanceTableRow[] = (
     data?.performanceTemplates || []
