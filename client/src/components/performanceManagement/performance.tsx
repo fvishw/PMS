@@ -43,7 +43,7 @@ function Performance() {
   const tableData: PerformanceTableRow[] = (
     data?.performanceTemplates || []
   ).map((performance: PerformanceTableRow) => ({
-    _id: performance._id,
+    id: performance._id,
     designation: performance.designation?.title || "N/A",
     role: performance.designation?.role || "N/A",
     createdBy: performance.createdBy?.fullName || "N/A",
