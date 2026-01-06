@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import AuthService from "../utils/AuthService.ts";
+import AuthService from "@/utils/AuthService.js";
 
 const authMiddleware = (allowedRoles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {

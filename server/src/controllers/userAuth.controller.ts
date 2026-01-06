@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
-import asyncHandler from "../utils/asyncHandler.ts";
-import { ApiError } from "../utils/ApiError.ts";
-import { User } from "../models/user.model.ts";
-import { ApiResponse } from "../utils/ApiResponse.ts";
-import AuthService from "../utils/AuthService.ts";
+import asyncHandler from "@/utils/asyncHandler.js";
+import { ApiError } from "@/utils/ApiError.js";
+import { User } from "@/models/user.model.js";
+import { ApiResponse } from "@/utils/ApiResponse.js";
+import AuthService from "@/utils/AuthService.js";
 
 const signUp = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;

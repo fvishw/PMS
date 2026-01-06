@@ -11,8 +11,8 @@ import {
   getUserPerformanceForm,
   getPerformanceTemplateById,
   getReviewAppraisalData,
-} from "../controllers/performance.controller.ts";
-import authMiddleware from "../middlewares/auth.middleware.ts";
+} from "@/controllers/performance.controller.js";
+import authMiddleware from "@/middlewares/auth.middleware.js";
 
 const router = Router();
 

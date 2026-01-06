@@ -1,15 +1,15 @@
 import type { Request, Response } from "express";
 import mongoose, { Types } from "mongoose";
-import { QuestionsPayload, AnswerPayload } from "../types/checkIns.ts";
-import { ApiError } from "../utils/ApiError.ts";
-import asyncHandler from "../utils/asyncHandler.ts";
+import { QuestionsPayload, AnswerPayload } from "@/types/checkIns.js";
+import { ApiError } from "@/utils/ApiError.js";
+import asyncHandler from "@/utils/asyncHandler.js";
 import {
   CheckInQuestions,
   type ICheckInQuestion,
-} from "../models/question.model.ts";
-import { ApiResponse } from "../utils/ApiResponse.ts";
-import type { IUser } from "../models/user.model.ts";
-import UserCheckIns from "../models/userCheckIns.model.ts";
+} from "../models/question.model.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import type { IUser } from "../models/user.model.js";
+import UserCheckIns from "../models/userCheckIns.model.js";
 
 const addCheckIns = asyncHandler(async (req: Request, res: Response) => {
   const { checkIns } = req.body;

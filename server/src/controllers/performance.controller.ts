@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
-import { UserPerformance } from "../models/userPerformance.model.ts";
-import asyncHandler from "../utils/asyncHandler.ts";
-import { ApiError } from "../utils/ApiError.ts";
-import { ApiResponse } from "../utils/ApiResponse.ts";
-import { User } from "../models/user.model.ts";
+import { UserPerformance } from "@/models/userPerformance.model.js";
+import asyncHandler from "@/utils/asyncHandler.js";
+import { ApiError } from "@/utils/ApiError.js";
+import { ApiResponse } from "@/utils/ApiResponse.js";
+import { User } from "@/models/user.model.js";
 import {
   adminPayloadSchema,
   ManagerScorePayloadSchema,
@@ -12,8 +12,8 @@ import {
   selfReviewPayloadSchema,
   type ManagerCriteria,
   type SelfCriteria,
-} from "../types/performance.ts";
-import { MasterPerformance, type IKpis } from "../models/masterPerformance.ts";
+} from "@/types/performance.js";
+import { MasterPerformance, type IKpis } from "@/models/masterPerformance.js";
 import { Types } from "mongoose";
 
 const createPerformanceRecord = asyncHandler(

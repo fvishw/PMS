@@ -1,9 +1,9 @@
 import { type Request, type Response } from "express";
-import { User } from "../models/user.model.ts";
-import { ApiError } from "../utils/ApiError.ts";
-import asyncHandler from "../utils/asyncHandler.ts";
-import { ApiResponse } from "../utils/ApiResponse.ts";
-import { userAddPayloadSchema } from "../types/user.ts";
+import { User } from "@/models/user.model.js";
+import { ApiError } from "@/utils/ApiError.js";
+import asyncHandler from "@/utils/asyncHandler.js";
+import { ApiResponse } from "@/utils/ApiResponse.js";
+import { userAddPayloadSchema } from "@/types/user.js";
 
 const addUser = asyncHandler(async (req: Request, res: Response) => {
   const parsedPayload = userAddPayloadSchema.safeParse(req.body);

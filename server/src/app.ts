@@ -2,7 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
-import type { ApiError } from "./utils/ApiError.ts";
+import type { ApiError } from "./utils/ApiError.js";
 
 dotenv.config();
 
@@ -16,10 +16,10 @@ app.use((req, res, next) => {
   next();
 });
 
-import userAuth from "./routes/userAuth.routes.ts";
-import userRouter from "./routes/user.route.ts";
-import performanceRouter from "./routes/performance.route.ts";
-import CheckInsRouter from "./routes/checkIns.routes.ts";
+import userAuth from "./routes/userAuth.routes.js";
+import userRouter from "./routes/user.route.js";
+import performanceRouter from "./routes/performance.route.js";
+import CheckInsRouter from "./routes/checkIns.routes.js";
 
 app.use("/api/user", userRouter);
 app.use("/api/user/auth", userAuth);

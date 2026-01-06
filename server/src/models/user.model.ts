@@ -1,6 +1,6 @@
 import { Schema, model, Document, Types } from "mongoose";
 import bcrypt from "bcrypt";
-import AuthService from "../utils/AuthService.ts";
+import AuthService from "@/utils/AuthService.js";
 
 interface IUser extends Document {
   fullName: string;

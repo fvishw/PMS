@@ -1,5 +1,5 @@
-import { Schema, model, Document, Types } from "mongoose";
-import type { IFinalReview, IMasterPerformance } from "./masterPerformance.ts";
+import { Schema, model, Types } from "mongoose";
+import type {  IMasterPerformance } from "./masterPerformance.js";
 
 interface IUserPerformance extends IMasterPerformance {
   user: Types.ObjectId;
