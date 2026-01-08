@@ -1,8 +1,7 @@
 import { getColumns, KPI } from "./kpiTableConfig";
 import SectionWrapper from "./sectionWrapper";
 import { CustomDataTable } from "../customTable";
-import { KpiData } from "@/types/performance";
-import { EditPermissions } from "./performanceForm";
+import { EditPermissions, KpiData } from "@/types/performance";
 import { ColumnDef } from "@tanstack/react-table";
 
 interface KpiTableProps {

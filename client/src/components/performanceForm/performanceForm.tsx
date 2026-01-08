@@ -106,7 +106,9 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
             control={control}
           />
           <div className="flex justify-end my-4">
-            <Button type="submit">Submit Review</Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Submitting..." : "Submit Review"}
+            </Button>
           </div>
         </form>
       );

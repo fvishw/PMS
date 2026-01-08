@@ -3,7 +3,6 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { EditPermissions } from "@/types/performance";
-import { validators } from "tailwind-merge";
 
 export type KPI = {
   _id: string;
