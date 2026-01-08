@@ -1,5 +1,5 @@
 import { Schema, model, Types } from "mongoose";
-import type {  IMasterPerformance } from "./masterPerformance.js";
+import type { IMasterPerformance } from "./masterPerformance.js";
 
 interface IUserPerformance extends IMasterPerformance {
   user: Types.ObjectId;
@@ -11,7 +11,8 @@ interface IUserPerformance extends IMasterPerformance {
     | "self_review"
     | "manager_review"
     | "admin_review"
-    | "user_final_review";
+    | "user_final_review"
+    | "completed";
   interval: {
     quarterly: "Q1" | "Q2" | "Q3" | "Q4";
     year: number;
@@ -61,6 +62,7 @@ const UserPerformanceSchema = new Schema<IUserPerformance>(
         "manager_review",
         "admin_review",
         "user_final_review",
+        "completed",
       ],
     },
     // this need to added for tracking performance by interval like quarterly and yearly

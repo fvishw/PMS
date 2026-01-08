@@ -3,10 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
 import { Button } from "../ui/button";
 import { IconChevronLeft } from "@tabler/icons-react";
-import { KpiScoreTable } from "../performanceForm/kpiTableScore";
-import Competencies from "../performanceForm/competency";
 import ApiError from "../errorMessage";
 import { Spinner } from "../ui/spinner";
+import { KpiScoreViewTable } from "../performanceFormView/kpiTableViewScore";
+import CompetenciesView from "../performanceFormView/competencyView";
 
 function PerformanceDetails() {
   const { performanceId } = useParams();
@@ -14,7 +14,7 @@ function PerformanceDetails() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["performanceDetails", performanceId],
     queryFn: (performanceId) =>
-      Api.fetchPerformanceById(performanceId.queryKey[1] as string),
+      Api.fetchMasterPerformanceById(performanceId.queryKey[1] as string),
     enabled: !!performanceId,
   });
   if (isLoading) {
@@ -40,8 +40,10 @@ function PerformanceDetails() {
         </Button>
       </div>
       <div>
-        <KpiScoreTable data={data?.performanceTemplate?.kpis || []} />
-        <Competencies data={data?.performanceTemplate?.competencies || []} />
+        <KpiScoreViewTable data={data?.performanceTemplate?.kpis || []} />
+        <CompetenciesView
+          data={data?.performanceTemplate?.competencies || []}
+        />
       </div>
     </div>
   );

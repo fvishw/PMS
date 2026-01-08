@@ -10,11 +10,6 @@ import { defineStepper } from "@/components/ui/stepper";
 
 const { Stepper } = defineStepper(
   {
-    id: "kpi_acceptance",
-    title: "KPI Acceptance",
-    icon: <BadgeCheck className="h-5 w-5" />,
-  },
-  {
     id: "self_review",
     title: "Self Assessment",
     icon: <ClipboardCheck className="h-5 w-5" />,
@@ -32,6 +27,11 @@ const { Stepper } = defineStepper(
   {
     id: "user_final_review",
     title: "User Final Acknowledgement",
+    icon: <UserCheck className="h-5 w-5" />,
+  },
+  {
+    id: "completed",
+    title: "Completed",
     icon: <BadgeCheck className="h-5 w-5" />,
   }
 );

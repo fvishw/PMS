@@ -1,67 +1,21 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import Competencies from "./competency";
-import FinalReview from "./finalReview";
+import { useQuery } from "@tanstack/react-query";
+import Competencies from "./competencyView";
 import { KpiScoreTable } from "./kpiTableScore";
 import Api from "@/api/api";
 import { Spinner } from "../ui/spinner";
 import { useAuth } from "@/hooks/useAuthContext";
 import ApiError from "../errorMessage";
 import { Button } from "../ui/button";
-import getPerformancePermission from "./performancePermission";
-import { useForm } from "react-hook-form";
-import { EditPermissions, PerformanceFormValue } from "@/types/performance";
-import { toast } from "sonner";
-import {
-  getPerformanceApi,
-  getPostPerformanceApi,
-} from "./performanceApiMapper";
-import { queryClient } from "@/utils/queryClient";
-interface PerformanceFormProps {
-  performanceId?: string;
-}
-export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
+
+export const PerformanceForm = () => {
   const { user } = useAuth();
-
   const { isLoading, error, data } = useQuery({
-    queryKey: ["performanceForm"],
-    queryFn: getPerformanceApi(performanceId),
+    queryKey: ["performanceForm", user?.id],
+    queryFn: () => Api.fetchUserPerformanceForm(),
   });
-  const { control, handleSubmit, reset, register, setValue, formState } =
-    useForm<PerformanceFormValue>({
-      defaultValues: {
-        userPerformanceId: "",
-        criteria: [],
-        competencies: [],
-        finalComments: {},
-      },
-    });
+  const { control, handleSubmit, reset, register, setValue } =
+ 
   const { user: currentUser } = useAuth();
-  console.log(formState);
-  const stage = data?.userPerformanceRecord?.stage || "";
-
-  const { mutate: addPerformance, isPending } = useMutation({
-    mutationFn: (data) => getPostPerformanceApi(stage, data),
-    onSuccess: () => {
-      reset();
-      toast.success("Performance review submitted successfully", {
-        position: "top-right",
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["performanceForm", user?.id],
-      });
-    },
-    onError: (error) => {
-      toast.error(error.message, {
-        position: "top-right",
-      });
-    },
-  });
-
-  const onsubmit = (formData: PerformanceFormValue) => {
-    console.log(formData);
-    addPerformance(formData);
-  };
-
   if (isLoading) {
     return (
       <div className="w-full h-full flex justify-center items-center">
@@ -76,19 +30,21 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
 
   if (data) {
     const { hasUserAcceptedKpi, userPerformanceRecord, user } = data;
-
+    // console.log("currentUser", currentUser);
+    // console.log("performanceUser", user);
     const permissions: EditPermissions = getPerformancePermission({
       stage: userPerformanceRecord?.stage || "",
       currentUser: currentUser,
       employee: user,
     });
+    // console.log("permissions", permissions);
 
     const performanceId = userPerformanceRecord._id;
 
     if (hasUserAcceptedKpi && userPerformanceRecord && performanceId !== "") {
       setValue("userPerformanceId", performanceId);
       return (
-        <form className="space-y-4" onSubmit={handleSubmit(onsubmit)}>
+        <form onSubmit={handleSubmit(console.log)}>
           <KpiScoreTable
             data={userPerformanceRecord?.kpis || []}
             permissions={permissions}
@@ -98,7 +54,6 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
             data={userPerformanceRecord?.competencies || []}
             permissions={permissions}
             register={register}
-            control={control}
           />
           <FinalReview
             permissions={permissions}

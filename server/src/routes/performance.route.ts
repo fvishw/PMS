@@ -11,6 +11,7 @@ import {
   getUserPerformanceForm,
   getPerformanceTemplateById,
   getReviewAppraisalData,
+  getUserPerformanceFormById,
 } from "@/controllers/performance.controller.js";
 import authMiddleware from "@/middlewares/auth.middleware.js";
 
@@ -40,13 +41,14 @@ router.get(
   authMiddleware(["admin"]),
   getAllPerformanceTemplates
 );
-
+//for employee to get their performance form
 router.get(
   "/performance-form",
   authMiddleware(["employee"]),
   getUserPerformanceForm
 );
 
+//for admin to get performance template by id
 router.get(
   "/performance-by-id",
   authMiddleware(["admin"]),
@@ -57,6 +59,13 @@ router.get(
   "/review-appraisal-data",
   authMiddleware(["manager", "admin"]),
   getReviewAppraisalData
+);
+
+// for employee/manager/admin to get user performance form by performanceId
+router.get(
+  "/user-performance/by-id",
+  authMiddleware(["employee", "manager", "admin"]),
+  getUserPerformanceFormById
 );
 
 export default router;

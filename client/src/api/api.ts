@@ -134,7 +134,7 @@ export class API {
       this.instance.get("/user/users-by-role", { params: { role } })
     );
   }
-  fetchPerformanceById(performanceId: string) {
+  fetchMasterPerformanceById(performanceId: string) {
     return this.request(
       this.instance.get("/performance/performance-by-id", {
         params: { performanceId },
@@ -144,6 +144,29 @@ export class API {
   getReviewAppraisalData() {
     return this.request(
       this.instance.get("/performance/review-appraisal-data")
+    );
+  }
+  addSelfPerformanceForm(data: PerformanceFormValue) {
+    return this.request(
+      this.instance.put("/performance/self-review", {
+        ...data,
+      })
+    );
+  }
+  addManagerPerformanceForm(data: PerformanceFormValue) {
+    return this.request(this.instance.put("/performance/manager-review", data));
+  }
+  addAdminPerformanceForm(data: PerformanceFormValue) {
+    return this.request(this.instance.put("/performance/admin-review", data));
+  }
+  addFinalPerformanceForm(data: PerformanceFormValue) {
+    return this.request(this.instance.put("/performance/final-review", data));
+  }
+  getPerformanceFormById(performanceId: string) {
+    return this.request(
+      this.instance.get(`/performance/user-performance/by-id`, {
+        params: { performanceId },
+      })
     );
   }
 }

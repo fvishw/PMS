@@ -1,12 +1,8 @@
 import { type ColumnDef } from "@tanstack/react-table";
-
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-import { EditPermissions } from "@/types/performance";
-import { validators } from "tailwind-merge";
 
 export type KPI = {
-  _id: string;
   objective: string;
   indicator: string;
   weight: number;
@@ -16,23 +12,11 @@ export type KPI = {
   managerComments?: string;
 };
 
-const getColumns = (
-  permissions: EditPermissions,
-  register: any
-): ColumnDef<KPI>[] => [
+const getColumns = (): ColumnDef<KPI>[] => [
   {
     id: "sr.no",
     header: () => <div className="text-center">Sr.No</div>,
-    cell: ({ row }) => (
-      <div className="capitalize text-center">
-        {row.id}
-        <Input
-          type="hidden"
-          value={row.original._id}
-          {...register(`criteria.${row.id}._id`)}
-        />
-      </div>
-    ),
+    cell: ({ row }) => <div className="capitalize text-center">{row.id}</div>,
   },
   {
     accessorKey: "objective",
@@ -64,14 +48,8 @@ const getColumns = (
       return (
         <span>
           <Input
-            type="number"
-            min={0}
-            max={row.original.weight}
-            defaultValue={row.original.selfScore || ""}
-            step={1}
-            className="w-18 text-center"
-            disabled={!permissions.canEditSelf}
-            {...register(`criteria.${row.id}.selfScore`)}
+            className="w-13 text-center"
+            defaultValue={row.getValue("selfScore") || ""}
           />
         </span>
       );
@@ -87,9 +65,6 @@ const getColumns = (
             className="h-5 w-[200px]"
             rows={1}
             defaultValue={row.getValue("selfComments") || ""}
-            value={row.original.selfComments || ""}
-            disabled={!permissions.canEditSelf}
-            {...register(`criteria.${row.id}.selfComments`)}
           />
         </span>
       );
@@ -104,8 +79,6 @@ const getColumns = (
           <Input
             className="w-13"
             defaultValue={row.getValue("managerScore") || ""}
-            disabled={!permissions.canEditManager}
-            {...register(`criteria.${row.id}.managerScore`)}
           />
         </span>
       );
@@ -120,9 +93,7 @@ const getColumns = (
           <Textarea
             className="h-5 w-[200px]"
             rows={1}
-            disabled={!permissions.canEditManager}
             defaultValue={row.getValue("managerComments") || ""}
-            {...register(`criteria.${row.id}.managerComments`)}
           />
         </span>
       );

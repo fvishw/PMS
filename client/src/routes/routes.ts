@@ -59,7 +59,18 @@ const router = createBrowserRouter([
       },
       {
         path: "review-appraisals",
-        Component: lazy(() => import("@/pages/outlets/reviewAppraisalLayout")),
+        children: [
+          {
+            index: true,
+            Component: lazy(
+              () => import("@/pages/outlets/reviewAppraisalLayout")
+            ),
+          },
+          {
+            path: ":performanceId",
+            Component: lazy(() => import("@/pages/outlets/reviewPerformanceLayout")),
+          },
+        ],
       },
       {
         path: "review-goals",

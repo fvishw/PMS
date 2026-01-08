@@ -1,8 +1,14 @@
-import { CompetenciesData, Competency } from "@/types/performance";
+import {
+  CompetenciesData,
+  Competency,
+  EditPermissions,
+} from "@/types/performance";
 import { Label } from "../ui/label";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Textarea } from "../ui/textarea";
 import SectionWrapper from "./sectionWrapper";
+import { Controller } from "react-hook-form";
+import { Input } from "../ui/input";
 
 const ratings = [
   { label: "1", value: "1" },
@@ -12,11 +18,23 @@ const ratings = [
   { label: "5", value: "5" },
 ];
 
-function Competencies({ data }: { data: CompetenciesData }) {
+interface CompetenciesProps {
+  data: CompetenciesData;
+  permissions: EditPermissions;
+  register: any;
+  control: any;
+}
+
+function Competencies({
+  data,
+  permissions,
+  register,
+  control,
+}: CompetenciesProps) {
   return (
     <SectionWrapper title="Section B: Competency Ratings">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ">
-        {data?.map((competency: Competency) => {
+        {data?.map((competency: Competency, index: number) => {
           return (
             <div
               className="p-4 border rounded w-full flex flex-col justify-between"
@@ -28,25 +46,44 @@ function Competencies({ data }: { data: CompetenciesData }) {
                   <li key={idx}>{criteria}</li>
                 ))}
               </ul>
-              <RadioGroup className="flex justify-center items-center mt-4 space-x-4 flex-wrap">
-                {ratings.map((rating) => (
-                  <div
-                    key={rating.value}
-                    className="flex flex-col items-center space-y-1"
-                  >
-                    <RadioGroupItem
-                      value={rating.value}
-                      id={`${competency.title}-${rating.value}`}
-                    />
-                    <Label
-                      htmlFor={`${competency.title}-${rating.value}`}
-                      className="mt-1 text-sm"
-                    >
-                      {rating.label}
-                    </Label>
-                  </div>
-                ))}
-              </RadioGroup>
+              {
+                <Controller
+                  control={control}
+                  name={`competencies.${index}.score`}
+                  render={({ field }) => {
+                    return (
+                      <RadioGroup
+                        disabled={!permissions.canEditManager}
+                        className="flex justify-center items-center mt-4 space-x-4 flex-wrap"
+                        onValueChange={field.onChange}
+                      >
+                        <Input
+                          type="hidden"
+                          {...register(`competencies.${index}._id`)}
+                          value={competency._id}
+                        />
+                        {ratings.map((rating) => (
+                          <div
+                            key={rating.value}
+                            className="flex flex-col items-center space-y-1"
+                          >
+                            <RadioGroupItem
+                              value={rating.value}
+                              id={`${competency.title}-${rating.value}`}
+                            />
+                            <Label
+                              htmlFor={`${competency.title}-${rating.value}`}
+                              className="mt-1 text-sm"
+                            >
+                              {rating.label}
+                            </Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    );
+                  }}
+                />
+              }
             </div>
           );
         })}
@@ -59,13 +96,19 @@ function Competencies({ data }: { data: CompetenciesData }) {
             Employee Area of strength
           </Label>
           <div>
-            <Textarea placeholder="Describe the employee's strengths..." />
+            <Textarea
+              placeholder="Describe the employee's strengths..."
+              disabled={!permissions.canEditManager}
+            />
           </div>
         </div>
         <div className="rounded border p-4">
           <Label className="pb-4 font-semibold">Areas for Improvement</Label>
           <div>
-            <Textarea placeholder="Describe areas where the employee can improve..." />
+            <Textarea
+              placeholder="Describe areas where the employee can improve..."
+              disabled={!permissions.canEditManager}
+            />
           </div>
         </div>
       </div>

@@ -6,7 +6,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { MoreVertical } from "lucide-react";
+import { useNavigate } from "react-router";
 export const ReviewTableAction = ({ row }: { row: any }) => {
+  const performanceId = row.original._id;
+  const navigate = useNavigate();
   return (
     <>
       <div className="text-center">
@@ -18,7 +21,11 @@ export const ReviewTableAction = ({ row }: { row: any }) => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="center">
-            <DropdownMenuItem>View Appraisal</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => navigate(`/review-appraisals/${performanceId}`)}
+            >
+              View Appraisal
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
