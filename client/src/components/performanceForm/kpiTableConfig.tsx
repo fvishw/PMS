@@ -101,8 +101,11 @@ const getColumns = (
       return (
         <span className="text-center">
           <Input
-            className="w-13"
-            defaultValue={row.getValue("managerScore") || ""}
+            type="number"
+            min={0}
+            max={row.original.weight}
+            className="w-18 text-center"
+            defaultValue={row.original.managerScore || ""}
             disabled={!permissions.canEditManager}
             {...register(`criteria.${row.id}.managerScore`)}
           />
@@ -120,7 +123,7 @@ const getColumns = (
             className="h-5 w-[200px]"
             rows={1}
             disabled={!permissions.canEditManager}
-            defaultValue={row.getValue("managerComments") || ""}
+            defaultValue={row.original.managerComments || ""}
             {...register(`criteria.${row.id}.managerComments`)}
           />
         </span>

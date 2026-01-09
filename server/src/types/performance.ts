@@ -8,7 +8,7 @@ const selfCriteria = z.object({
 
 const managerCriteria = z.object({
   _id: z.string(),
-  managerScore: z.number().min(0).max(5),
+  managerScore: z.number().min(0),
   managerComments: z.string().max(500),
 });
 

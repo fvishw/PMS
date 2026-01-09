@@ -204,9 +204,13 @@ const managerReviewKpi = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, null, "Manager review submitted successfully"));
 });
 
-const adminReviewKpi = asyncHandler(async (req: Request, res: Response) => {
+const adminReview = asyncHandler(async (req: Request, res: Response) => {
   const reviewerId = req.user?.id!;
-  const parsedPayload = adminPayloadSchema.safeParse(req.body);
+  const payload = req.body;
+  const parsedPayload = adminPayloadSchema.safeParse({
+    userPerformanceId: payload.userPerformanceId,
+    adminComments: payload.finalComments.adminReview,
+  });
 
   if (!parsedPayload.success) {
     throw new ApiError(400, "Invalid payload format");
@@ -229,8 +233,11 @@ const adminReviewKpi = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, null, "Admin review submitted successfully"));
 });
 
-const userFinalReviewKpi = asyncHandler(async (req: Request, res: Response) => {
-  const parsedPayload = selfReviewPayloadSchema.safeParse(req.body);
+const userFinalReview = asyncHandler(async (req: Request, res: Response) => {
+  const parsedPayload = selfReviewPayloadSchema.safeParse({
+    selfReview: req.body.finalComments.selfReview,
+    userPerformanceId: req.body.userPerformanceId,
+  });
 
   if (!parsedPayload.success) {
     throw new ApiError(400, "Invalid payload format");
@@ -448,17 +455,41 @@ const getUserPerformanceFormById = asyncHandler(
   }
 );
 
+const getManagerReviewAppraisalData = asyncHandler(
+  async (req: Request, res: Response) => {
+    const managerId = req.user?.id!;
+
+    const performances = await UserPerformance.find({
+      parentReviewer: managerId,
+    })
+      .select("-kpis -competencies -finalReview")
+      .populate("user", "fullName email role")
+      .populate("designation", "title");
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { performances },
+          "Performance records fetched successfully"
+        )
+      );
+  }
+);
+
 export {
   createPerformanceRecord,
   updateKpiStatus,
   selfReviewKpi,
   managerReviewKpi,
-  adminReviewKpi,
-  userFinalReviewKpi,
+  adminReview,
+  userFinalReview,
   getReviewAppraisalData,
   getUserKpiDetails,
   getAllPerformanceTemplates,
   getUserPerformanceForm,
   getPerformanceTemplateById,
   getUserPerformanceFormById,
+  getManagerReviewAppraisalData,
 };

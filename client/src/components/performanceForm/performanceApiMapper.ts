@@ -30,8 +30,8 @@ const getPostPerformanceApi = (
       Api.addManagerPerformanceForm(parsedData),
     admin_review: (parsedData: PerformanceFormValue) =>
       Api.addAdminPerformanceForm(parsedData),
-    final_review: (parsedData: PerformanceFormValue) =>
-      Api.addFinalPerformanceForm(parsedData),
+    user_final_review: (parsedData: PerformanceFormValue) =>
+      Api.addFinalUserPerformanceForm(parsedData),
   };
   return stageApiMap[stage](parsedData);
 };

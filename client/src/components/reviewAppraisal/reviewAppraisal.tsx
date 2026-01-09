@@ -5,12 +5,18 @@ import { Spinner } from "../ui/spinner";
 import { CustomDataTable } from "../customTable";
 import { columns } from "./reviewAppraisalTable.config";
 import ApiError from "../errorMessage";
+import { useAuth } from "@/hooks/useAuthContext";
+import { getReviewAppraisalApi } from "./reviewAppraisalApiMapper";
 
 export const ReviewAppraisal = () => {
+  const { user } = useAuth();
+  const role = user?.role || "";
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["reviewAppraisalData"],
-    queryFn: () => Api.getReviewAppraisalData(),
+    queryFn: getReviewAppraisalApi(role),
   });
+  console.log(data);
 
   if (isLoading) {
     return (

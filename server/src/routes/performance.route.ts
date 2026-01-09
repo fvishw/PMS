@@ -4,14 +4,15 @@ import {
   managerReviewKpi,
   selfReviewKpi,
   updateKpiStatus,
-  userFinalReviewKpi,
+  userFinalReview,
   getUserKpiDetails,
   getAllPerformanceTemplates,
-  adminReviewKpi,
+  adminReview,
   getUserPerformanceForm,
   getPerformanceTemplateById,
   getReviewAppraisalData,
   getUserPerformanceFormById,
+  getManagerReviewAppraisalData,
 } from "@/controllers/performance.controller.js";
 import authMiddleware from "@/middlewares/auth.middleware.js";
 
@@ -26,9 +27,9 @@ router.put("/self-review", authMiddleware(["employee"]), selfReviewKpi);
 
 router.put("/manager-review", authMiddleware(["manager"]), managerReviewKpi);
 
-router.put("/admin-review", authMiddleware(["admin"]), adminReviewKpi);
+router.put("/admin-review", authMiddleware(["admin"]), adminReview);
 
-router.put("/user-review", authMiddleware(["employee"]), userFinalReviewKpi);
+router.put("/user-final-review", authMiddleware(["employee"]), userFinalReview);
 
 router.get(
   "/user-kpi-details",
@@ -59,6 +60,12 @@ router.get(
   "/review-appraisal-data",
   authMiddleware(["manager", "admin"]),
   getReviewAppraisalData
+);
+
+router.get(
+  "/manager-review-appraisal-data",
+  authMiddleware(["manager"]),
+  getManagerReviewAppraisalData
 );
 
 // for employee/manager/admin to get user performance form by performanceId

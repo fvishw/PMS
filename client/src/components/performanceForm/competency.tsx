@@ -56,6 +56,7 @@ function Competencies({
                         disabled={!permissions.canEditManager}
                         className="flex justify-center items-center mt-4 space-x-4 flex-wrap"
                         onValueChange={field.onChange}
+                        defaultValue={competency.score?.toString()}
                       >
                         <Input
                           type="hidden"

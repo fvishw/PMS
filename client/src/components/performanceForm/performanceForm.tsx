@@ -2,7 +2,6 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import Competencies from "./competency";
 import FinalReview from "./finalReview";
 import { KpiScoreTable } from "./kpiTableScore";
-import Api from "@/api/api";
 import { Spinner } from "../ui/spinner";
 import { useAuth } from "@/hooks/useAuthContext";
 import ApiError from "../errorMessage";
@@ -23,7 +22,7 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
   const { user } = useAuth();
 
   const { isLoading, error, data } = useQuery({
-    queryKey: ["performanceForm"],
+    queryKey: ["performanceForm", performanceId || user?.id],
     queryFn: getPerformanceApi(performanceId),
   });
   const { control, handleSubmit, reset, register, setValue, formState } =
@@ -36,7 +35,6 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
       },
     });
   const { user: currentUser } = useAuth();
-  console.log(formState);
   const stage = data?.userPerformanceRecord?.stage || "";
 
   const { mutate: addPerformance, isPending } = useMutation({
@@ -58,7 +56,6 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
   });
 
   const onsubmit = (formData: PerformanceFormValue) => {
-    console.log(formData);
     addPerformance(formData);
   };
 
@@ -101,6 +98,7 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
             control={control}
           />
           <FinalReview
+            data={userPerformanceRecord?.finalReview || {}}
             permissions={permissions}
             register={register}
             control={control}

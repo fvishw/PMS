@@ -1,11 +1,10 @@
 import { EditPermissions } from "@/types/performance";
 
-
 interface IUser {
   _id: string;
   role: string;
-  parentReviewerId?: string;
-  adminReviewerId?: string;
+  parentReviewer?: string;
+  adminReviewer?: string;
 }
 
 const getPerformancePermission = ({
@@ -17,21 +16,18 @@ const getPerformancePermission = ({
   currentUser: IUser;
   employee: IUser;
 }): EditPermissions => {
-  // console.log("stage", stage);
-  // console.log("currentUser", currentUser);
-  // console.log("employee", employee);
   return {
     canEditSelf: stage === "self_review" && employee._id === currentUser._id,
     canEditManager:
       stage === "manager_review" &&
       currentUser.role === "manager" &&
-      currentUser._id === employee.parentReviewerId,
+      currentUser._id === employee.parentReviewer,
     canEditAdmin:
       stage === "admin_review" &&
       currentUser.role === "admin" &&
-      currentUser._id === employee.adminReviewerId,
+      currentUser._id === employee.adminReviewer,
     canEditUserFinalComments:
-      "final_review" === stage && currentUser.role === "employee",
+      "user_final_review" === stage && currentUser.role === "employee",
   };
 };
 export type { IUser };

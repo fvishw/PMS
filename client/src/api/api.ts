@@ -141,9 +141,14 @@ export class API {
       })
     );
   }
-  getReviewAppraisalData() {
+  getAdminReviewAppraisalData() {
     return this.request(
       this.instance.get("/performance/review-appraisal-data")
+    );
+  }
+  getManagerReviewAppraisalData() {
+    return this.request(
+      this.instance.get("/performance/manager-review-appraisal-data")
     );
   }
   addSelfPerformanceForm(data: PerformanceFormValue) {
@@ -159,8 +164,10 @@ export class API {
   addAdminPerformanceForm(data: PerformanceFormValue) {
     return this.request(this.instance.put("/performance/admin-review", data));
   }
-  addFinalPerformanceForm(data: PerformanceFormValue) {
-    return this.request(this.instance.put("/performance/final-review", data));
+  addFinalUserPerformanceForm(data: PerformanceFormValue) {
+    return this.request(
+      this.instance.put("/performance/user-final-review", data)
+    );
   }
   getPerformanceFormById(performanceId: string) {
     return this.request(

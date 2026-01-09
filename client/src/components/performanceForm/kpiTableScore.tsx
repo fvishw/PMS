@@ -5,7 +5,7 @@ import { EditPermissions, KpiData } from "@/types/performance";
 import { ColumnDef } from "@tanstack/react-table";
 
 interface KpiTableProps {
-  data: KpiData["kpis"];
+  data: KPI[];
   permissions: EditPermissions;
   register?: any;
 }

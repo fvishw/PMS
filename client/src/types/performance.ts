@@ -16,6 +16,7 @@ type Competency = {
   _id: string;
   title: string;
   indicators: string[];
+  score?: number;
 };
 
 type CompetenciesData = Competency[];
@@ -64,4 +65,5 @@ export type {
   Competency,
   PerformanceFormValue,
   EditPermissions,
+  IFinalReview,
 };

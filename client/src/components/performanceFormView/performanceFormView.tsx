@@ -1,11 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import Competencies from "./competencyView";
-import { KpiScoreTable } from "./kpiTableScore";
 import Api from "@/api/api";
 import { Spinner } from "../ui/spinner";
 import { useAuth } from "@/hooks/useAuthContext";
 import ApiError from "../errorMessage";
-import { Button } from "../ui/button";
+import { KpiScoreViewTable } from "./kpiTableViewScore";
 
 export const PerformanceForm = () => {
   const { user } = useAuth();
@@ -13,9 +12,7 @@ export const PerformanceForm = () => {
     queryKey: ["performanceForm", user?.id],
     queryFn: () => Api.fetchUserPerformanceForm(),
   });
-  const { control, handleSubmit, reset, register, setValue } =
- 
-  const { user: currentUser } = useAuth();
+
   if (isLoading) {
     return (
       <div className="w-full h-full flex justify-center items-center">
@@ -29,40 +26,13 @@ export const PerformanceForm = () => {
   }
 
   if (data) {
-    const { hasUserAcceptedKpi, userPerformanceRecord, user } = data;
-    // console.log("currentUser", currentUser);
-    // console.log("performanceUser", user);
-    const permissions: EditPermissions = getPerformancePermission({
-      stage: userPerformanceRecord?.stage || "",
-      currentUser: currentUser,
-      employee: user,
-    });
-    // console.log("permissions", permissions);
+    const { hasUserAcceptedKpi, userPerformanceRecord } = data;
 
-    const performanceId = userPerformanceRecord._id;
-
-    if (hasUserAcceptedKpi && userPerformanceRecord && performanceId !== "") {
-      setValue("userPerformanceId", performanceId);
+    if (hasUserAcceptedKpi && userPerformanceRecord) {
       return (
-        <form onSubmit={handleSubmit(console.log)}>
-          <KpiScoreTable
-            data={userPerformanceRecord?.kpis || []}
-            permissions={permissions}
-            register={register}
-          />
-          <Competencies
-            data={userPerformanceRecord?.competencies || []}
-            permissions={permissions}
-            register={register}
-          />
-          <FinalReview
-            permissions={permissions}
-            register={register}
-            control={control}
-          />
-          <div className="flex justify-end my-4">
-            <Button type="submit">Submit Review</Button>
-          </div>
+        <form>
+          <KpiScoreViewTable data={userPerformanceRecord?.kpis || []} />
+          <Competencies data={userPerformanceRecord?.competencies || []} />
         </form>
       );
     } else {

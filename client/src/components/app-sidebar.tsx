@@ -96,6 +96,11 @@ const sidebarItems = {
       url: "my-appraisal",
       icon: IconTrophy,
     },
+    {
+      title: "Review Appraisals",
+      url: "review-appraisals",
+      icon: IconEyeEdit,
+    },
   ],
 };
 

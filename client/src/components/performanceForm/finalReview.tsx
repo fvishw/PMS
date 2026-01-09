@@ -14,16 +14,22 @@ import {
   remarkOptions,
 } from "./option";
 import { Textarea } from "../ui/textarea";
-import { EditPermissions } from "@/types/performance";
+import { EditPermissions, IFinalReview } from "@/types/performance";
 import { Controller } from "react-hook-form";
 
 interface FinalReviewProps {
+  data: IFinalReview;
   permissions: EditPermissions;
   register: any;
   control: any;
 }
 
-function FinalReview({ permissions, register, control }: FinalReviewProps) {
+function FinalReview({
+  data,
+  permissions,
+  register,
+  control,
+}: FinalReviewProps) {
   return (
     <SectionWrapper title="Section C: Final Comments">
       <div>
@@ -43,6 +49,7 @@ function FinalReview({ permissions, register, control }: FinalReviewProps) {
                     <Select
                       disabled={!permissions.canEditAdmin}
                       onValueChange={field.onChange}
+                      defaultValue={data.adminReview?.remarks || ""}
                     >
                       <SelectTrigger className="w-[200px]">
                         <SelectValue placeholder="Select remark" />
@@ -71,6 +78,7 @@ function FinalReview({ permissions, register, control }: FinalReviewProps) {
                     <Select
                       disabled={!permissions.canEditAdmin}
                       onValueChange={field.onChange}
+                      defaultValue={data.adminReview?.recommendation || ""}
                     >
                       <SelectTrigger className="w-[200px]">
                         <SelectValue placeholder="Select Recommendation" />
@@ -98,6 +106,8 @@ function FinalReview({ permissions, register, control }: FinalReviewProps) {
             <Textarea
               disabled={!permissions.canEditAdmin}
               placeholder="Enter final comments..."
+              {...register("finalComments.adminReview.finalComments")}
+              defaultValue={data.adminReview?.finalComments || ""}
             />
           </div>
         </div>
@@ -115,7 +125,7 @@ function FinalReview({ permissions, register, control }: FinalReviewProps) {
                     <Select
                       disabled={!permissions.canEditUserFinalComments}
                       onValueChange={field.onChange}
-                      value={field.value}
+                      defaultValue={data.selfReview?.remarks || ""}
                     >
                       <SelectTrigger className="w-[200px]">
                         <SelectValue placeholder="Select Recommendation" />
@@ -143,6 +153,7 @@ function FinalReview({ permissions, register, control }: FinalReviewProps) {
                 placeholder="Enter final comments..."
                 disabled={!permissions.canEditUserFinalComments}
                 {...register("finalComments.selfReview.comments")}
+                defaultValue={data.selfReview?.comments || ""}
               />
             </div>
           </div>
