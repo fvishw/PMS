@@ -20,11 +20,13 @@ import userAuth from "./routes/userAuth.routes.js";
 import userRouter from "./routes/user.route.js";
 import performanceRouter from "./routes/performance.route.js";
 import CheckInsRouter from "./routes/checkIns.routes.js";
+import GoalRouter from "./routes/goal.router.js";
 
 app.use("/api/user", userRouter);
 app.use("/api/user/auth", userAuth);
 app.use("/api/performance", performanceRouter);
 app.use("/api/check-ins", CheckInsRouter);
+app.use("/api/goals", GoalRouter);
 
 app.use(
   (
