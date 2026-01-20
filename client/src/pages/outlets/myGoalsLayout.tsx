@@ -1,16 +1,16 @@
-import { GoalManagement } from "@/components/goalManagement/GoalManagement";
 import OutletWrapper from "@/components/mainLayout";
+import MyGoals from "@/components/myGoals/myGoals";
 import { SiteHeader } from "@/components/site-header";
 
-function ReviewGoalsLayout() {
+function MyGoalsLayout() {
   return (
     <>
       <SiteHeader headerName="Goal Management" />
       <OutletWrapper>
-        <GoalManagement />
+        <MyGoals />
       </OutletWrapper>
     </>
   );
 }
 
-export default ReviewGoalsLayout;
+export default MyGoalsLayout;

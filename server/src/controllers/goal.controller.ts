@@ -8,7 +8,7 @@ import type { Request, Response } from "express";
 const addGoal = asyncHandler(async (req: Request, res: Response) => {
   const parsedPayload = GoalSchema.safeParse(req.body);
   if (!parsedPayload.success) {
-    throw new ApiError(401, "Invalid Goal Payload");
+    throw new ApiError(400, "Invalid Goal Payload");
   }
   const { title, subTasks, owner, dueDate } = parsedPayload.data;
   const userGoal = new Goal({
@@ -28,14 +28,14 @@ const markAsComplete = asyncHandler(async (req: Request, res: Response) => {
   const parsedPayload = markAsCompletedSchema.safeParse(req.body);
 
   if (!parsedPayload.success) {
-    throw new ApiError(401, "Invalid Goal payload");
+    throw new ApiError(400, "Invalid Goal payload");
   }
   const { goalId, subTasks } = parsedPayload.data;
 
   const goal = await Goal.findById(goalId);
 
   if (!goal) {
-    throw new ApiError(401, "Goal not Found");
+    throw new ApiError(400, "Goal not Found");
   }
 
   subTasks.map((subTask) => {
@@ -59,7 +59,7 @@ const markAsComplete = asyncHandler(async (req: Request, res: Response) => {
 const deleteGoal = asyncHandler(async (req: Request, res: Response) => {
   const { goalId } = req.params;
   if (!goalId) {
-    throw new ApiError(401, "Goal Id not found.");
+    throw new ApiError(400, "Goal Id not found.");
   }
 
   const goal = await Goal.findById(goalId);
@@ -85,7 +85,7 @@ const getAllGoals = asyncHandler(async (req: Request, res: Response) => {
 const getGoalById = asyncHandler(async (req: Request, res: Response) => {
   const { goalId } = req.params;
   if (!goalId) {
-    throw new ApiError(401, "Goal Id not found.");
+    throw new ApiError(400, "Goal Id not found.");
   }
 
   const goal = await Goal.findById(goalId);
@@ -106,11 +106,14 @@ const getGoalsByOwner = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(401, "User Id not found.");
   }
 
-  const goals = await Goal.find({ owner: userId });
+  const goals = await Goal.find({ owner: userId }).populate(
+    "owner",
+    "fullName"
+  );
 
   return res
     .status(200)
-    .json(new ApiResponse(200, goals, "Goals fetched successfully"));
+    .json(new ApiResponse(200, { goals }, "Goals fetched successfully"));
 });
 
 export {

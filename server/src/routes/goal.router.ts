@@ -9,7 +9,6 @@ import {
 import authMiddleware from "@/middlewares/auth.middleware.js";
 import { Router } from "express";
 
-
 const router = Router();
 
 router.post("/add", authMiddleware(["admin", "employee", "manager"]), addGoal);
@@ -27,10 +26,6 @@ router.delete(
 );
 
 router.get("/get-all/admin", authMiddleware(["admin"]), getAllGoals);
-
-router.get("/get-all/manager", authMiddleware(["manager"]));
-
-router.get("/get-all/employee", authMiddleware(["employee"]), getAllGoals);
 
 router.get(
   "/get/:goalId",
