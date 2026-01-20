@@ -1,6 +1,5 @@
 import { ReviewAppraisalCard } from "./reviewAppraisalCard";
 import { useQuery } from "@tanstack/react-query";
-import Api from "@/api/api";
 import { Spinner } from "../ui/spinner";
 import { CustomDataTable } from "../customTable";
 import { columns } from "./reviewAppraisalTable.config";
@@ -16,8 +15,6 @@ export const ReviewAppraisal = () => {
     queryKey: ["reviewAppraisalData"],
     queryFn: getReviewAppraisalApi(role),
   });
-  console.log(data);
-
   if (isLoading) {
     return (
       <div className="w-full flex justify-center items-center">
@@ -29,7 +26,7 @@ export const ReviewAppraisal = () => {
     return <ApiError message={error.message} />;
   }
   if (data) {
-    const { performances } = data;
+    const performances = data?.performances || [];
     return (
       <>
         <ReviewAppraisalCard />

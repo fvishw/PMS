@@ -1,15 +1,4 @@
 import * as React from "react";
-import {
-  IconDashboard,
-  IconDatabaseCog,
-  IconEyeEdit,
-  IconListCheck,
-  IconListDetails,
-  IconTargetArrow,
-  IconTrophy,
-  IconUser,
-  IconUsers,
-} from "@tabler/icons-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -25,6 +14,7 @@ import {
 
 import NFLogo from "../assets/nf-logo.svg";
 import { useAuth } from "@/hooks/useAuthContext";
+import { sidebarItems } from "./side-bar-items";
 
 interface IUserConfig {
   name: string;
@@ -32,88 +22,17 @@ interface IUserConfig {
   avatar: string;
 }
 
-const sidebarItems = {
-  admin: [
-    {
-      title: "Dashboard",
-      url: "dashboard",
-      icon: IconDashboard,
-    },
-    {
-      title: "User Management",
-      url: "manage-users",
-      icon: IconUsers,
-    },
-    {
-      title: "CheckIn Management",
-      url: "manage-checkins",
-      icon: IconListCheck,
-    },
-    {
-      title: "Performance Management",
-      url: "manage-performance",
-      icon: IconDatabaseCog,
-    },
-    {
-      title: "Review Goals",
-      url: "review-goals",
-      icon: IconListDetails,
-    },
-    {
-      title: "Review Appraisals",
-      url: "review-appraisals",
-      icon: IconEyeEdit,
-    },
-    {
-      title: "Personal Details",
-      url: "me",
-      icon: IconUser,
-    },
-  ],
-  user: [
-    {
-      title: "Dashboard",
-      url: "dashboard",
-      icon: IconDashboard,
-    },
-    {
-      title: "Personal Details",
-      url: "me",
-      icon: IconUser,
-    },
-    {
-      title: "KPIs",
-      url: "kpis",
-      icon: IconTargetArrow,
-    },
-    {
-      title: "Checkins",
-      url: "checkins",
-      icon: IconListCheck,
-    },
-    {
-      title: "My Appraisal",
-      url: "my-appraisal",
-      icon: IconTrophy,
-    },
-    {
-      title: "Review Appraisals",
-      url: "review-appraisals",
-      icon: IconEyeEdit,
-    },
-  ],
-};
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth();
-  const isAdmin = user?.role.toLowerCase() === "admin";
-
+  const role = user?.role || "employee";
+  const items = sidebarItems[role as keyof typeof sidebarItems] || [];
+  console.log(items);
   const userConfig: IUserConfig = user
     ? {
         name: user.fullName,
         email: user.email,
         avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(
-          user.fullName
+          user.fullName,
         )}&background=random&size=128`,
       }
     : {
@@ -144,7 +63,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={isAdmin ? sidebarItems.admin : sidebarItems.user} />
+        <NavMain items={items} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={userConfig} />
