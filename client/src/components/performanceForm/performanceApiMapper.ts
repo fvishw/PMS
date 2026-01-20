@@ -21,9 +21,10 @@ const getPostPerformanceApi = (
     })),
     finalComments: data.finalComments,
   };
-  const stageApiMap: {
-    [key: string]: (parsedData: PerformanceFormValue) => Promise<unknown>;
-  } = {
+  const stageApiMap: Record<
+    string,
+    (parsedData: PerformanceFormValue) => Promise<unknown>
+  > = {
     self_review: (parsedData: PerformanceFormValue) =>
       Api.addSelfPerformanceForm(parsedData),
     manager_review: (parsedData: PerformanceFormValue) =>
@@ -33,7 +34,11 @@ const getPostPerformanceApi = (
     user_final_review: (parsedData: PerformanceFormValue) =>
       Api.addFinalUserPerformanceForm(parsedData),
   };
-  return stageApiMap[stage](parsedData);
+  const stageApi = stageApiMap[stage];
+  if (!stageApi) {
+    return Promise.reject(new Error("Unsupported performance stage"));
+  }
+  return stageApi(parsedData);
 };
 const getPerformanceApi = (performanceId?: string) => {
   if (performanceId) {

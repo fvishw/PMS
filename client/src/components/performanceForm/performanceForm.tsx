@@ -15,6 +15,7 @@ import {
   getPostPerformanceApi,
 } from "./performanceApiMapper";
 import { queryClient } from "@/utils/queryClient";
+import { IUser } from "@/types/user";
 interface PerformanceFormProps {
   performanceId?: string;
 }
@@ -22,10 +23,10 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
   const { user } = useAuth();
 
   const { isLoading, error, data } = useQuery({
-    queryKey: ["performanceForm", performanceId || user?.id],
+    queryKey: ["performanceForm", performanceId || user?._id],
     queryFn: getPerformanceApi(performanceId),
   });
-  const { control, handleSubmit, reset, register, setValue, formState } =
+  const { control, handleSubmit, reset, register, setValue } =
     useForm<PerformanceFormValue>({
       defaultValues: {
         userPerformanceId: "",
@@ -37,15 +38,20 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
   const { user: currentUser } = useAuth();
   const stage = data?.userPerformanceRecord?.stage || "";
 
-  const { mutate: addPerformance, isPending } = useMutation({
-    mutationFn: (data) => getPostPerformanceApi(stage, data),
+  const { mutate, isPending } = useMutation<
+    unknown,
+    Error,
+    PerformanceFormValue
+  >({
+    mutationFn: (performanceData: PerformanceFormValue) =>
+      getPostPerformanceApi(stage, performanceData),
     onSuccess: () => {
       reset();
       toast.success("Performance review submitted successfully", {
         position: "top-right",
       });
       queryClient.invalidateQueries({
-        queryKey: ["performanceForm", user?.id],
+        queryKey: ["performanceForm", user?._id],
       });
     },
     onError: (error) => {
@@ -56,7 +62,7 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
   });
 
   const onsubmit = (formData: PerformanceFormValue) => {
-    addPerformance(formData);
+    mutate(formData);
   };
 
   if (isLoading) {
@@ -72,17 +78,22 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
   }
 
   if (data) {
-    const { hasUserAcceptedKpi, userPerformanceRecord, user } = data;
+    const { hasUserAcceptedKpi, userPerformanceRecord } = data;
 
     const permissions: EditPermissions = getPerformancePermission({
       stage: userPerformanceRecord?.stage || "",
-      currentUser: currentUser,
-      employee: user,
+      currentUser: currentUser as unknown as IUser,
+      parentReviewer: userPerformanceRecord?.parentReviewer || "",
+      adminReviewer: userPerformanceRecord?.adminReviewer || "",
+      employeeId: userPerformanceRecord?.user || "",
     });
 
-    const performanceId = userPerformanceRecord._id;
-
-    if (hasUserAcceptedKpi && userPerformanceRecord && performanceId !== "") {
+    if (
+      hasUserAcceptedKpi &&
+      userPerformanceRecord &&
+      userPerformanceRecord._id !== ""
+    ) {
+      const performanceId = userPerformanceRecord._id;
       setValue("userPerformanceId", performanceId);
       return (
         <form className="space-y-4" onSubmit={handleSubmit(onsubmit)}>

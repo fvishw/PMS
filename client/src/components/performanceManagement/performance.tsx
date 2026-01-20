@@ -4,22 +4,19 @@ import { AddPerformanceFormModal } from "./addPerformanceFormModal";
 import { columns } from "./kpiTable.config";
 import { Spinner } from "../ui/spinner";
 import { useQuery } from "@tanstack/react-query";
-import dayjs from "dayjs";
 import ApiError from "../errorMessage";
 import { useState } from "react";
 import { Button } from "../ui/button";
+import { AllPerformanceTemplate } from "@/types/performance";
 
-type PerformanceTableRow = {
-  _id: string;
-  designation: {
-    title: string;
-    role: string;
-  };
-  role: string;
-  createdBy: {
-    fullName: string;
-  };
-  createdAt: string;
+const transformPerformanceData = (data: AllPerformanceTemplate[]) => {
+  return data.map((item) => ({
+    _id: item._id,
+    designation: item.designation.title,
+    role: item.designation.role,
+    createdBy: item.createdBy.fullName,
+    createdAt: item.createdAt,
+  }));
 };
 
 function Performance() {
@@ -30,6 +27,8 @@ function Performance() {
     queryFn: () => Api.fetchAllPerformanceRecords(),
   });
 
+  let contentToRender;
+
   if (isLoading) {
     return (
       <div className="w-full flex justify-center items-center ">
@@ -37,19 +36,16 @@ function Performance() {
       </div>
     );
   }
-  if (error) {
-    return <ApiError message={error.message} />;
+  if (data)
+    if (error) {
+      return <ApiError message={error.message} />;
+    }
+  if (data) {
+    const transformedData = transformPerformanceData(data.performanceTemplates);
+    contentToRender = (
+      <CustomDataTable columns={columns} data={transformedData} />
+    );
   }
-  const tableData: PerformanceTableRow[] = (
-    data?.performanceTemplates || []
-  ).map((performance: PerformanceTableRow) => ({
-    id: performance._id,
-    designation: performance.designation?.title || "N/A",
-    role: performance.designation?.role || "N/A",
-    createdBy: performance.createdBy?.fullName || "N/A",
-    createdAt: dayjs(performance.createdAt).format("D MMM YY"),
-  }));
-
   return (
     <>
       <div className="flex justify-end">
@@ -59,7 +55,7 @@ function Performance() {
         />
         <Button onClick={() => setIsOpen(true)}>Add Master Performance</Button>
       </div>
-      <CustomDataTable columns={columns} data={tableData} />
+      {contentToRender}
     </>
   );
 }

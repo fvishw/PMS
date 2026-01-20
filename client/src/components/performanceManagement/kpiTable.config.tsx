@@ -1,7 +1,9 @@
 import { type ColumnDef } from "@tanstack/react-table";
 import { PerformanceTableAction } from "./performanceTable.action";
+import dayjs from "dayjs";
 
 export type KPITableColumn = {
+  _id: string;
   designation: string;
   createdBy: string;
   createdAt: Date | string;
@@ -43,30 +45,18 @@ export const columns: ColumnDef<KPITableColumn>[] = [
   {
     accessorKey: "createdAt",
     header: () => <div className="text-center">Created At</div>,
-    cell: ({ row }) => (
-      <div className="font-medium text-center">{row.getValue("createdAt")}</div>
-    ),
+    cell: ({ row }) => {
+      const formattedDate = dayjs(row.getValue("createdAt")).format("D MMM YY");
+      return <div className="font-medium text-center">{formattedDate}</div>;
+    },
   },
   {
     accessorKey: "actions",
     header: () => <div className="text-center">Actions</div>,
     cell: ({ row }) => (
       <div className="font-medium text-center">
-        <PerformanceTableAction performanceId={row.original.id} />
+        <PerformanceTableAction performanceId={row.original._id} />
       </div>
     ),
-  },
-];
-
-export const data: KPITableColumn[] = [
-  {
-    designation: "Software Developer",
-    createdBy: "John Doe",
-    createdAt: "2024-01-01",
-  },
-  {
-    designation: "Product Manager",
-    createdBy: "Jane Smith",
-    createdAt: "2024-01-02",
   },
 ];

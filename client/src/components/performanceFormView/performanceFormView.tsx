@@ -9,7 +9,7 @@ import { KpiScoreViewTable } from "./kpiTableViewScore";
 export const PerformanceForm = () => {
   const { user } = useAuth();
   const { isLoading, error, data } = useQuery({
-    queryKey: ["performanceForm", user?.id],
+    queryKey: ["performanceForm", user?._id],
     queryFn: () => Api.fetchUserPerformanceForm(),
   });
 

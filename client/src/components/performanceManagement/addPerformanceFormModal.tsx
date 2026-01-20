@@ -10,27 +10,19 @@ import {
 } from "@/components/ui/dialog";
 import { ColumnDef } from "@tanstack/react-table";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { IDesignationOption } from "@/types/user";
-import { Spinner } from "../ui/spinner";
+
 import {
   getColumns,
   KpiFormRow,
   PerformanceFormValue,
 } from "./addKpiTable.config";
-import { useFieldArray, useForm, Controller } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { CustomDataTable } from "../customTable";
 import CompetencyItem from "./copetencyItem";
 import { toast } from "sonner";
 import { queryClient } from "@/utils/queryClient";
+import DesignationSelection from "./designationSelection";
+import { useMutation } from "@tanstack/react-query";
 
 export function AddPerformanceFormModal({
   isOpen,
@@ -50,10 +42,6 @@ export function AddPerformanceFormModal({
         },
       ],
     },
-  });
-  const { data: designationsData, isPending: designationLoader } = useQuery({
-    queryKey: ["designations"],
-    queryFn: () => Api.fetchAllDesignations(),
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -87,7 +75,6 @@ export function AddPerformanceFormModal({
 
   const columns: ColumnDef<KpiFormRow>[] = getColumns(control, remove);
 
-  const designationOptions = designationsData?.designations || [];
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto overflow-x-hidden">
@@ -104,37 +91,7 @@ export function AddPerformanceFormModal({
           <div className="grid space-y-4">
             <div className="grid gap-3">
               <Label>Designation</Label>
-
-              {designationLoader ? (
-                <div className="w-full h-full flex justify-center items-center ">
-                  <Spinner className="size-8 text-primary" />
-                </div>
-              ) : (
-                <Controller
-                  control={control}
-                  name="designationId"
-                  render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className="w-[250px]">
-                        <SelectValue placeholder="Select a designation" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {designationOptions.map((d: IDesignationOption) => (
-                            <SelectItem
-                              key={d._id}
-                              value={d._id}
-                              className="capitalize"
-                            >
-                              {d.title} - ({d.role})
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              )}
+              <DesignationSelection control={control} />
             </div>
 
             <h1 className="font-bold text-lg dark:text-white text-black">

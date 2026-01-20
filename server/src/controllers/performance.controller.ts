@@ -39,15 +39,15 @@ const createPerformanceRecord = asyncHandler(
       );
     }
 
-    let totalWeight = 0;
+    // let totalWeight = 0;
 
-    kpis.forEach((c) => {
-      totalWeight += c.weight;
-    });
+    // kpis.forEach((c) => {
+    //   totalWeight += c.weight;
+    // });
 
-    if (totalWeight !== 100) {
-      throw new ApiError(400, "Sum of Kpi's Weight must be 100");
-    }
+    // if (totalWeight !== 100) {
+    //   throw new ApiError(400, "Sum of Kpi's Weight must be 100");
+    // }
 
     const masterPerformance = new MasterPerformance({
       designation: designationId,
@@ -276,7 +276,7 @@ const getReviewAppraisalData = asyncHandler(
           { performances },
           "Performance records fetched successfully"
         )
-      );
+      ); 
   }
 );
 
@@ -437,9 +437,6 @@ const getUserPerformanceFormById = asyncHandler(
           )
         );
     }
-    const user = await User.findById(userPerformanceRecord.user).select(
-      "fullName email role parentReviewer adminReviewer"
-    );
 
     return res.status(200).json(
       new ApiResponse(
@@ -447,7 +444,6 @@ const getUserPerformanceFormById = asyncHandler(
         {
           hasUserAcceptedKpi: true,
           userPerformanceRecord,
-          user,
         },
         "User KPIs fetched successfully"
       )

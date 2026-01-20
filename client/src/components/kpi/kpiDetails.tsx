@@ -34,8 +34,8 @@ const KpiDetails = ({ criteria }: { criteria: KpiCriteria[] }) => {
 
       {criteria.map((criteria) => (
         <Criteria
-          key={criteria.id}
-          id={criteria.id}
+          key={criteria._id}
+          id={criteria._id}
           objective={criteria.objective}
           indicator={criteria.indicator}
           weight={criteria.weight}
