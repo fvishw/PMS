@@ -63,7 +63,7 @@ function NewCheckIn() {
     ) : (
       <div className="w-full flex flex-col space-y-4">
         <CheckInQuestionAns
-          questions={data?.questions || null}
+          questions={data?.questions || []}
           register={register}
           setValue={setValue}
           isPastCheckIn={false}

@@ -37,10 +37,14 @@ export const UserPastCheckInModal = ({
         <Spinner />
       </div>
     );
-  } else if (data && Array.isArray(data.answers) && data.answers.length > 0) {
-    const answers = data.answers;
+  } else if (
+    data &&
+    Array.isArray(data.checkIns.answers) &&
+    data.checkIns.answers.length > 0
+  ) {
+    const answers = data.checkIns.answers;
     dataToRender = (
-      <CheckInQuestionAns questions={answers} isPastCheckIn={true} />
+      <CheckInQuestionAns questions={answers || null} isPastCheckIn={true} />
     );
   } else {
     dataToRender = <ApiError message="No check-in answers found." />;

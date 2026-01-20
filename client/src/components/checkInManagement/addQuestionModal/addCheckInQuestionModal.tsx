@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import Api from "@/api/api";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/utils/queryClient";
+import DesignationSelection from "@/components/performanceManagement/designationSelection";
 
 export function AddCheckInQuestionModal({
   isOpen,
@@ -34,6 +35,7 @@ export function AddCheckInQuestionModal({
       defaultValues: {
         questions: [{ question: "", type: "text" }],
         version: "",
+        designationId: "",
       },
     });
 
@@ -90,6 +92,10 @@ export function AddCheckInQuestionModal({
                 placeholder="v.1"
                 id="version"
               />
+            </div>
+            <div className="flex flex-col space-y-2">
+              <Label>Designation</Label>
+              <DesignationSelection control={control} />
             </div>
             <div className="ml-auto">
               <Button

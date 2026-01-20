@@ -6,11 +6,7 @@ import { CustomDataTable } from "../../customTable";
 import ApiError from "@/components/errorMessage";
 
 export const UserCheckIns = () => {
-  const {
-    data: userData,
-    isLoading,
-    error,
-  } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["userCheckIns"],
     queryFn: () => Api.fetchAllUserCheckIns(),
   });
@@ -27,7 +23,7 @@ export const UserCheckIns = () => {
   }
   return (
     <div className="w-full py-4">
-      <CustomDataTable data={userData?.checkIns || []} columns={columns} />
+      <CustomDataTable data={data?.checkIns || []} columns={columns} />
     </div>
   );
 };

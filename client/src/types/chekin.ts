@@ -14,9 +14,8 @@ interface ICheckIn {
   _id: string;
   user: IUser;
   version: number;
-  createdAt: string; // ISO date string
-  updatedAt: string; // ISO date string
-  __v: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface ICheckInsResponse {
@@ -32,4 +31,49 @@ interface ICheckInPayload {
   version: string;
 }
 
-export { CheckInPayload, ICheckInsResponse, ICheckInPayload };
+interface UserCheckIn {
+  _id: string;
+  user: string;
+  version: string;
+  createdAt: Date;
+  name: string;
+  email: string;
+}
+
+type IAnswer = {
+  _id: string;
+  question: string;
+  type: "rating" | "text";
+  answer: string;
+};
+
+type UserPastCheckIn = {
+  answers: {
+    _id: string;
+    question: string;
+    answer: string;
+    type: "rating" | "text";
+  }[];
+  user: string;
+  version: string;
+  createdAt?: Date;
+  _id: string;
+};
+
+interface ICheckInQuestion {
+  _id: string;
+  question: string;
+  type: "rating" | "text";
+  version: string;
+  isActive: boolean;
+  createdAt: Date;
+}
+export {
+  CheckInPayload,
+  ICheckInsResponse,
+  ICheckInPayload,
+  UserCheckIn,
+  IAnswer,
+  UserPastCheckIn,
+  ICheckInQuestion,
+};

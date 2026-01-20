@@ -4,9 +4,8 @@ import { CheckInTableAction } from "./checkInTableAction";
 export type CheckInQuestionTableColumn = {
   _id: string;
   user: string;
-  srNo: string;
   version: string;
-  createdAt: string;
+  createdAt: string | Date;
   email: string;
   name: string;
 };
