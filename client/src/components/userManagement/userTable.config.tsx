@@ -11,7 +11,7 @@ type Reviewer = {
 export type UserTableColumn = {
   fullName: string;
   email: string;
-  createdAt: string;
+  createdAt: string | Date;
   role: string;
   designation: Designation;
   parentReviewer: Reviewer;

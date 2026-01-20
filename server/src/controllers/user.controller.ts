@@ -75,8 +75,8 @@ const fetchUsersByRole = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const users = await User.find({ role })
-    .select("-password -refreshToken -passwordResetToken -email")
-    .populate({ path: "designation", select: "title" });
+    .select("-password -refreshToken -passwordResetTokens")
+    .populate({ path: "designation", select: "title role" });
 
   return res
     .status(200)

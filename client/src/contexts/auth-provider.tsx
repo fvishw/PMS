@@ -1,17 +1,17 @@
 import React, { createContext, useEffect, useState } from "react";
 
 interface IUser {
-  id: string;
+  _id: string;
   fullName: string;
   email: string;
   role: string;
-  designation: { name: string };
+  designation: { title: string };
 }
 
 interface AuthContextType {
   user: IUser | null;
   isAuthenticated: boolean;
-  login: (accessToken: string, refreshToken: string, user: IUser) => void;
+  login: (accessToken: string, user: IUser) => void;
   logout: () => void;
 }
 
@@ -28,10 +28,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<IUser | null>(
     localStorage.getItem("user")
       ? JSON.parse(localStorage.getItem("user")!)
-      : null
+      : null,
   );
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    !!localStorage.getItem("accessToken")
+    !!localStorage.getItem("accessToken"),
   );
 
   useEffect(() => {
@@ -41,13 +41,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.setItem("user", JSON.stringify(user));
   }, [user]);
 
-  const login = (
-    accessToken: string,
-    refreshToken: string,
-    userDetails: IUser
-  ) => {
+  const login = (accessToken: string, userDetails: IUser) => {
     localStorage.setItem("accessToken", accessToken);
-    localStorage.setItem("refreshToken", refreshToken);
     setUser({
       ...userDetails,
     });
@@ -55,7 +50,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const logout = () => {
     localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
     //here we need to call logout api to remove refresh toke from db
     localStorage.removeItem("user");
     setUser(null);

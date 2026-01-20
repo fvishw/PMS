@@ -35,8 +35,8 @@ const signUp = asyncHandler(async (req: Request, res: Response) => {
       new ApiResponse(
         201,
         { email: user.email, role: user.role },
-        "User registered successfully"
-      )
+        "User registered successfully",
+      ),
     );
 });
 
@@ -53,8 +53,6 @@ const login = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const accessToken = user.generateAuthToken();
-  const refreshToken = user.generateRefreshToken();
-  user.refreshToken = refreshToken;
   await user.save();
 
   const savedUser = await User.findById(user._id)
@@ -66,9 +64,9 @@ const login = asyncHandler(async (req: Request, res: Response) => {
     .json(
       new ApiResponse(
         200,
-        { accessToken, refreshToken, user: savedUser },
-        "Login successful"
-      )
+        { accessToken, user: savedUser },
+        "Login successful",
+      ),
     );
 });
 
@@ -84,34 +82,6 @@ const logout = asyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json(new ApiResponse(200, null, "Logout successful"));
 });
 
-const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
-  const { refreshToken } = req.body;
-
-  if (!refreshToken) {
-    throw new ApiError(400, "Refresh token is required");
-  }
-  const decodedToken = AuthService.verifyRefreshToken(refreshToken);
-  if (
-    typeof decodedToken === "string" ||
-    decodedToken.tokenType !== "refresh"
-  ) {
-    throw new ApiError(401, "Invalid refresh token");
-  }
-
-  const user = await User.findById(decodedToken.id);
-  if (!user || user.refreshToken !== refreshToken) {
-    throw new ApiError(401, "Invalid refresh token");
-  }
-
-  const newAccessToken = user.generateAuthToken();
-
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(200, { accessToken: newAccessToken }, "Token refreshed")
-    );
-});
-
 const sendResetLink = asyncHandler(async (req: Request, res: Response) => {
   const { email } = req.body;
   if (!email) {
@@ -125,13 +95,13 @@ const sendResetLink = asyncHandler(async (req: Request, res: Response) => {
         new ApiResponse(
           200,
           null,
-          "If an account exists with this email, a password reset link has been sent"
-        )
+          "If an account exists with this email, a password reset link has been sent",
+        ),
       );
   }
   const resetToken = AuthService.generatePasswordResetToken(
     user._id,
-    user.email
+    user.email,
   );
   user.passwordResetToken = resetToken;
   await user.save();
@@ -144,8 +114,8 @@ const sendResetLink = asyncHandler(async (req: Request, res: Response) => {
       new ApiResponse(
         200,
         null,
-        "If an account exists with this email, a password reset link has been sent"
-      )
+        "If an account exists with this email, a password reset link has been sent",
+      ),
     );
 });
 
@@ -169,7 +139,7 @@ const verifyPasswordResetLink = asyncHandler(
     return res
       .status(200)
       .json(new ApiResponse(200, null, "Password reset token is valid"));
-  }
+  },
 );
 
 const resetPassword = asyncHandler(async (req: Request, res: Response) => {
@@ -199,7 +169,6 @@ export {
   signUp,
   login,
   logout,
-  refreshAccessToken,
   sendResetLink,
   verifyPasswordResetLink,
   resetPassword,

@@ -4,7 +4,6 @@ import {
   sendResetLink,
   login,
   logout,
-  refreshAccessToken,
   signUp,
   verifyPasswordResetLink,
   resetPassword,
@@ -19,10 +18,8 @@ userAuth.post("/login", login);
 userAuth.put(
   "/logout",
   authMiddleware(["admin", "employee", "manager"]),
-  logout
+  logout,
 );
-
-userAuth.post("/refresh-token", refreshAccessToken);
 
 userAuth.post("/send-reset-link", sendResetLink);
 
