@@ -87,6 +87,14 @@ interface GetCheckInById {
   checkIns: UserPastCheckIn;
 }
 
+interface GetPerformanceStatus {
+  stage:
+    | "self_review"
+    | "manager_review"
+    | "admin_review"
+    | "user_final_review"
+    | "completed";
+}
 export {
   UserPerformanceFormResponse,
   GetAllUserResponse,
@@ -105,4 +113,5 @@ export {
   SignInResponse,
   GetCheckInById,
   GetPerformanceById,
+  GetPerformanceStatus,
 };

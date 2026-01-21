@@ -17,6 +17,7 @@ import {
   GetGoal,
   GetCheckInById,
   GetPerformanceById,
+  GetPerformanceStatus,
 } from "@/types/apiResponse";
 import { CheckInPayload, ICheckInPayload } from "@/types/chekin";
 import { Goal } from "@/types/goal";
@@ -224,6 +225,9 @@ export class API {
   }
   getGoalsByOwner(): Promise<GetGoals> {
     return this.request(this.instance.get("/goals/get-by-owner"));
+  }
+  getPerformanceStatus(): Promise<GetPerformanceStatus> {
+    return this.request(this.instance.get("/cards/performance-status"));
   }
 }
 

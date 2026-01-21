@@ -17,7 +17,7 @@ export type KPI = {
 
 const getColumns = (
   permissions: EditPermissions,
-  register: any
+  register: any,
 ): ColumnDef<KPI>[] => [
   {
     id: "sr.no",
@@ -85,8 +85,7 @@ const getColumns = (
           <Textarea
             className="h-5 w-[200px]"
             rows={1}
-            defaultValue={row.getValue("selfComments") || ""}
-            value={row.original.selfComments || ""}
+            defaultValue={row.original.selfComments || ""}
             disabled={!permissions.canEditSelf}
             {...register(`criteria.${row.id}.selfComments`)}
           />

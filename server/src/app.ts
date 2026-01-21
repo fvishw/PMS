@@ -21,24 +21,26 @@ import userRouter from "./routes/user.route.js";
 import performanceRouter from "./routes/performance.route.js";
 import CheckInsRouter from "./routes/checkIns.routes.js";
 import GoalRouter from "./routes/goal.router.js";
+import cardsRouter from "./routes/cards.route.js";
 
 app.use("/api/user", userRouter);
 app.use("/api/user/auth", userAuth);
 app.use("/api/performance", performanceRouter);
 app.use("/api/check-ins", CheckInsRouter);
 app.use("/api/goals", GoalRouter);
+app.use("/api/cards", cardsRouter);
 
 app.use(
   (
     error: ApiError | Error,
     req: express.Request,
     res: express.Response,
-    next: express.NextFunction
+    next: express.NextFunction,
   ) => {
     const statusCode = (error as ApiError).statusCode || 500;
     const message = error.message || "Internal Server Error";
     res.status(statusCode).json({ message });
-  }
+  },
 );
 
 export default app;
