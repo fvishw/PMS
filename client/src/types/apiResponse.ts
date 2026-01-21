@@ -54,6 +54,11 @@ interface GetCheckInQuestionSets {
     version: string;
     isActive: boolean;
     createdAt: string;
+    designation: {
+      _id: string;
+      title: string;
+      role: string;
+    };
   }[];
 }
 
