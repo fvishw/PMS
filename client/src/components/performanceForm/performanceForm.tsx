@@ -4,7 +4,7 @@ import FinalReview from "./finalReview";
 import { KpiScoreTable } from "./kpiTableScore";
 import { Spinner } from "../ui/spinner";
 import { useAuth } from "@/hooks/useAuthContext";
-import ApiError from "../errorMessage";
+import ApiErrorMessage from "../ApiErrorMessage";
 import { Button } from "../ui/button";
 import getPerformancePermission from "./performancePermission";
 import { useForm } from "react-hook-form";
@@ -74,7 +74,7 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
   }
 
   if (error) {
-    return <ApiError message={error.message} />;
+    return <ApiErrorMessage message={error.message} />;
   }
 
   if (data) {

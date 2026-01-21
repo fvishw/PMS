@@ -9,7 +9,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import CheckInQuestionAns from "@/components/checkIns/checkInQuestionAns";
 import { Spinner } from "@/components/ui/spinner";
-import ApiError from "@/components/errorMessage";
+import ApiErrorMessage from "@/components/ApiErrorMessage";
 
 export const UserPastCheckInModal = ({
   checkInId,
@@ -28,7 +28,7 @@ export const UserPastCheckInModal = ({
   let dataToRender;
 
   if (error) {
-    return <ApiError message={error.message} />;
+    return <ApiErrorMessage message={error.message} />;
   }
 
   if (isLoading) {
@@ -47,7 +47,7 @@ export const UserPastCheckInModal = ({
       <CheckInQuestionAns questions={answers || null} isPastCheckIn={true} />
     );
   } else {
-    dataToRender = <ApiError message="No check-in answers found." />;
+    dataToRender = <ApiErrorMessage message="No check-in answers found." />;
   }
 
   return (

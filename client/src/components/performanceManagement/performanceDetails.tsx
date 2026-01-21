@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
 import { Button } from "../ui/button";
 import { IconChevronLeft } from "@tabler/icons-react";
-import ApiError from "../errorMessage";
+import ApiErrorMessage from "../ApiErrorMessage";
 import { Spinner } from "../ui/spinner";
 import { KpiScoreViewTable } from "../performanceFormView/kpiTableViewScore";
 import CompetenciesView from "../performanceFormView/competencyView";
@@ -25,10 +25,10 @@ function PerformanceDetails() {
     );
   }
   if (!data?.performanceTemplate) {
-    return <ApiError message="Performance template data is missing." />;
+    return <ApiErrorMessage message="Performance template data is missing." />;
   }
   if (error) {
-    return <ApiError message={error.message} />;
+    return <ApiErrorMessage message={error.message} />;
   }
 
   return (

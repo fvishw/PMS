@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "../ui/spinner";
 import { CustomDataTable } from "../customTable";
 import { columns } from "./reviewAppraisalTable.config";
-import ApiError from "../errorMessage";
+import ApiErrorMessage from "../ApiErrorMessage";
 import { useAuth } from "@/hooks/useAuthContext";
 import { getReviewAppraisalApi } from "./reviewAppraisalApiMapper";
 
@@ -23,7 +23,7 @@ export const ReviewAppraisal = () => {
     );
   }
   if (error) {
-    return <ApiError message={error.message} />;
+    return <ApiErrorMessage message={error.message} />;
   }
   if (data) {
     const performances = data?.performances || [];

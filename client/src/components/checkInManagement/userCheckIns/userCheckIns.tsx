@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { columns } from "../checkInManagement/checkInTable.config";
 import { Spinner } from "../../ui/spinner";
 import { CustomDataTable } from "../../customTable";
-import ApiError from "@/components/errorMessage";
+import ApiErrorMessage from "@/components/ApiErrorMessage";
 
 export const UserCheckIns = () => {
   const { data, isLoading, error } = useQuery({
@@ -19,7 +19,7 @@ export const UserCheckIns = () => {
     );
   }
   if (error) {
-    return <ApiError message={error.message} />;
+    return <ApiErrorMessage message={error.message} />;
   }
   return (
     <div className="w-full py-4">

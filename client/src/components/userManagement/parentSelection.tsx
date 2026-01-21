@@ -13,7 +13,7 @@ import { Label } from "../ui/label";
 import { parentRoleMapper } from "./options";
 import { Controller } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
-import ApiError from "../errorMessage";
+import ApiErrorMessage from "../ApiErrorMessage";
 
 export const ParentSelection = ({
   selectedRole,
@@ -41,7 +41,11 @@ export const ParentSelection = ({
     );
   }
   if (error) {
-    return <ApiError message={error.message} />;
+    return (
+      <ApiErrorMessage
+        message={error.message || "Failed to load parent reviewers"}
+      />
+    );
   }
   return (
     <>

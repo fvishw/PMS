@@ -12,7 +12,7 @@ export type CheckInQuestionTableColumn = {
 
 export const columns: ColumnDef<CheckInQuestionTableColumn>[] = [
   {
-    accessorKey: "srNo",
+    id: "srNo",
     header: () => <div className="text-center">Sr. No.</div>,
     cell: ({ row }) => (
       <div className="font-medium text-center">{row.index + 1}</div>

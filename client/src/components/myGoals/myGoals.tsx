@@ -7,7 +7,7 @@ import { GoalRow } from "../goalManagement/goalTable.config";
 import Api from "@/api/api";
 import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "../ui/spinner";
-import ApiError from "../errorMessage";
+import ApiErrorMessage from "../ApiErrorMessage";
 
 export type IGoal = GoalRow;
 
@@ -38,7 +38,9 @@ const MyGoals = () => {
     ));
   }
   if (error) {
-    contentToRender = <ApiError message={error.message || "Unknown error"} />;
+    contentToRender = (
+      <ApiErrorMessage message={error.message || "Unknown error"} />
+    );
   }
 
   return (

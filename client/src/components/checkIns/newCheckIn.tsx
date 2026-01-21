@@ -7,7 +7,7 @@ import { Spinner } from "../ui/spinner";
 import CheckInQuestionAns from "./checkInQuestionAns";
 import { toast } from "sonner";
 import { queryClient } from "@/utils/queryClient";
-import ApiError from "../errorMessage";
+import ApiErrorMessage from "../ApiErrorMessage";
 
 export type CheckInFormValue = {
   questionId: string;
@@ -52,7 +52,7 @@ function NewCheckIn() {
     return <Spinner />;
   }
   if (error) {
-    return <ApiError message={error.message} />;
+    return <ApiErrorMessage message={error.message} />;
   }
 
   const content =

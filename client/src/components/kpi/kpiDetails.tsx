@@ -1,5 +1,5 @@
 import { queryClient } from "@/utils/queryClient";
-import ApiError from "../errorMessage";
+import ApiErrorMessage from "../ApiErrorMessage";
 import { KpiCriteria } from "@/types/criteria";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -23,7 +23,7 @@ const KpiDetails = ({ criteria }: { criteria: KpiCriteria[] }) => {
     mutate();
   };
   if (error) {
-    return <ApiError message={error.message} />;
+    return <ApiErrorMessage message={error.message} />;
   }
   return (
     <>

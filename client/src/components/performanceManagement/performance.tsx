@@ -4,7 +4,7 @@ import { AddPerformanceFormModal } from "./addPerformanceFormModal";
 import { columns } from "./kpiTable.config";
 import { Spinner } from "../ui/spinner";
 import { useQuery } from "@tanstack/react-query";
-import ApiError from "../errorMessage";
+import ApiErrorMessage from "../ApiErrorMessage";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { AllPerformanceTemplate } from "@/types/performance";
@@ -38,7 +38,7 @@ function Performance() {
   }
   if (data)
     if (error) {
-      return <ApiError message={error.message} />;
+      return <ApiErrorMessage message={error.message} />;
     }
   if (data) {
     const transformedData = transformPerformanceData(data.performanceTemplates);

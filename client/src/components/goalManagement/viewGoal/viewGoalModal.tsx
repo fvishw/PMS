@@ -1,5 +1,5 @@
 import Api from "@/api/api";
-import ApiError from "@/components/errorMessage";
+import ApiErrorMessage from "@/components/ApiErrorMessage";
 import {
   Dialog,
   DialogContent,
@@ -80,7 +80,9 @@ export const ViewGoalModal = ({
     contentToRender = <Spinner />;
   }
   if (error) {
-    contentToRender = <ApiError message={error.message || "Unknown error"} />;
+    contentToRender = (
+      <ApiErrorMessage message={error.message || "Unknown error"} />
+    );
   }
   if (data) {
     const goal = data?.goal;

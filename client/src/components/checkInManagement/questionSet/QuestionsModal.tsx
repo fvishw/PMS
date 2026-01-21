@@ -8,7 +8,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import CheckInQuestionAns from "@/components/checkIns/checkInQuestionAns";
 import { Spinner } from "@/components/ui/spinner";
-import ApiError from "@/components/errorMessage";
+import ApiErrorMessage from "@/components/ApiErrorMessage";
 
 export const QuestionsModal = ({
   version,
@@ -33,7 +33,7 @@ export const QuestionsModal = ({
     );
   }
   if (error) {
-    dataToRender = <ApiError message={error.message} />;
+    dataToRender = <ApiErrorMessage message={error.message} />;
   }
   if (data) {
     if (Array.isArray(data.questionSet) && data.questionSet.length > 0) {
@@ -45,7 +45,7 @@ export const QuestionsModal = ({
       );
     } else {
       dataToRender = (
-        <ApiError message="No questions found for this version." />
+        <ApiErrorMessage message="No questions found for this version." />
       );
     }
   }

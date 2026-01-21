@@ -3,7 +3,7 @@ import Competencies from "./competencyView";
 import Api from "@/api/api";
 import { Spinner } from "../ui/spinner";
 import { useAuth } from "@/hooks/useAuthContext";
-import ApiError from "../errorMessage";
+import ApiErrorMessage from "../ApiErrorMessage";
 import { KpiScoreViewTable } from "./kpiTableViewScore";
 
 export const PerformanceForm = () => {
@@ -22,7 +22,7 @@ export const PerformanceForm = () => {
   }
 
   if (error) {
-    return <ApiError message={error.message} />;
+    return <ApiErrorMessage message={error.message} />;
   }
 
   if (data) {
