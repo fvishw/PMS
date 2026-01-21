@@ -1,7 +1,5 @@
 import { createBrowserRouter } from "react-router";
 import { lazy } from "react";
-import SignupPage from "@/pages/signup";
-import LoginPage from "@/pages/login";
 import PublicRoute from "./PublicRoute";
 import ProtectedDashboard from "./protectedDashboard";
 import HomeOutlet from "@/pages/outlets/homeOutlet";
@@ -13,11 +11,11 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        Component: LoginPage,
+        Component: lazy(() => import("@/pages/login")),
       },
       {
         path: "signup",
-        Component: SignupPage,
+        Component: lazy(() => import("@/pages/signup")),
       },
       {
         path: "verify-otp",
@@ -55,7 +53,7 @@ const router = createBrowserRouter([
       },
       {
         path: "my-goals",
-        Component: lazy(() => import("@/pages/outlets/myGoalLayout")),
+        Component: lazy(() => import("@/pages/outlets/myGoalsLayout")),
       },
       {
         path: "review-appraisals",
@@ -63,17 +61,19 @@ const router = createBrowserRouter([
           {
             index: true,
             Component: lazy(
-              () => import("@/pages/outlets/reviewAppraisalLayout")
+              () => import("@/pages/outlets/reviewAppraisalLayout"),
             ),
           },
           {
             path: ":performanceId",
-            Component: lazy(() => import("@/pages/outlets/reviewPerformanceLayout")),
+            Component: lazy(
+              () => import("@/pages/outlets/reviewPerformanceLayout"),
+            ),
           },
         ],
       },
       {
-        path: "review-goals",
+        path: "manage-goals",
         Component: lazy(() => import("@/pages/outlets/reviewGoalsLayout")),
       },
       {
@@ -86,7 +86,7 @@ const router = createBrowserRouter([
           {
             index: true,
             Component: lazy(
-              () => import("@/pages/outlets/performanceManagementLayout")
+              () => import("@/pages/outlets/performanceManagementLayout"),
             ),
           },
           {
@@ -98,7 +98,7 @@ const router = createBrowserRouter([
       {
         path: "manage-checkins",
         Component: lazy(
-          () => import("@/pages/outlets/checkInManagementLayout")
+          () => import("@/pages/outlets/checkInManagementLayout"),
         ),
       },
     ],
