@@ -25,7 +25,7 @@ interface IUserConfig {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth();
   const role = user?.role || "employee";
-  const items = sidebarItems[role as keyof typeof sidebarItems] || [];
+  const items = sidebarItems[role as keyof typeof sidebarItems];
   console.log(items);
   const userConfig: IUserConfig = user
     ? {

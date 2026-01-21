@@ -1,4 +1,5 @@
 import {
+  type Icon,
   IconDashboard,
   IconDatabaseCog,
   IconEyeEdit,
@@ -11,9 +12,15 @@ import {
 } from "@tabler/icons-react";
 type role = "admin" | "manager" | "employee";
 
+type SidebarItem = {
+  title: string;
+  url: string;
+  icon: Icon;
+};
+
 export const sidebarItems: Record<
   role,
-  Array<{ title: string; url: string; icon: React.ElementType }>
+  SidebarItem[]
 > = {
   admin: [
     {
