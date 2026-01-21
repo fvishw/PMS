@@ -219,7 +219,8 @@ const getAllCheckInQuestions = asyncHandler(
     const checkInQuestions = await CheckInQuestions.aggregate([
       {
         $group: {
-          _id: "$version",
+          _id: "$designation",
+          version: { $first: "$version" },
           createdAt: { $first: "$createdAt" },
           isActive: { $first: "$isActive" },
           designation: { $first: "$designation" },
@@ -236,7 +237,7 @@ const getAllCheckInQuestions = asyncHandler(
       {
         $project: {
           _id: 0,
-          version: "$_id",
+          version: 1,
           createdAt: 1,
           isActive: 1,
           designation: { $arrayElemAt: ["$designationDetails", 0] },
