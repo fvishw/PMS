@@ -7,8 +7,11 @@ export type QuestionTableColumn = {
   version: string;
   createdAt: string;
   isActive: boolean;
-  designation: string;
-  role: string;
+  designation: {
+    _id: string;
+    title: string;
+    role: string;
+  };
 };
 
 export const columns: ColumnDef<QuestionTableColumn>[] = [

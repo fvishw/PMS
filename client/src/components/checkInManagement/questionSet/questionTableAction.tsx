@@ -60,13 +60,13 @@ export const QuestionTableAction = ({
             <DropdownMenuItem onClick={() => setIsOpen(true)}>
               View Questions
             </DropdownMenuItem>
-            {
+            {isActive ? null : (
               <DropdownMenuItem
                 onClick={() => handleVersionActivate(version, designationId)}
               >
                 Set as Active
               </DropdownMenuItem>
-            }
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
