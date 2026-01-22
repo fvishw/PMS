@@ -3,6 +3,7 @@ import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 
 export type KPI = {
+  _id: string;
   objective: string;
   indicator: string;
   weight: number;
@@ -16,7 +17,9 @@ const getColumns = (): ColumnDef<KPI>[] => [
   {
     id: "sr.no",
     header: () => <div className="text-center">Sr.No</div>,
-    cell: ({ row }) => <div className="capitalize text-center">{row.id}</div>,
+    cell: ({ row }) => (
+      <div className="capitalize text-center">{row.index + 1}</div>
+    ),
   },
   {
     accessorKey: "objective",
@@ -49,7 +52,7 @@ const getColumns = (): ColumnDef<KPI>[] => [
         <span>
           <Input
             className="w-13 text-center"
-            defaultValue={row.getValue("selfScore") || ""}
+            defaultValue={row.original.selfScore ?? ""}
           />
         </span>
       );
@@ -64,7 +67,7 @@ const getColumns = (): ColumnDef<KPI>[] => [
           <Textarea
             className="h-5 w-[200px]"
             rows={1}
-            defaultValue={row.getValue("selfComments") || ""}
+            defaultValue={row.original.selfComments || ""}
           />
         </span>
       );
@@ -78,7 +81,7 @@ const getColumns = (): ColumnDef<KPI>[] => [
         <span className="text-center">
           <Input
             className="w-13"
-            defaultValue={row.getValue("managerScore") || ""}
+            defaultValue={row.original.managerScore || ""}
           />
         </span>
       );
@@ -93,7 +96,7 @@ const getColumns = (): ColumnDef<KPI>[] => [
           <Textarea
             className="h-5 w-[200px]"
             rows={1}
-            defaultValue={row.getValue("managerComments") || ""}
+            defaultValue={row.original.managerComments || ""}
           />
         </span>
       );

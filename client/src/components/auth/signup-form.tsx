@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import Logo from "@/assets/nf-logo.svg";
 import { ErrorMessage } from "@hookform/error-message";
-import { Spinner } from "../ui/spinner";
+import { Spinner } from "@/components/ui/spinner";
 interface SignupFormValues {
   email: string;
   password: string;
@@ -166,7 +166,7 @@ export function SignupForm({
                 </Field>
               </Field>
               <Field>
-                <Button type="submit">
+                <Button type="submit" disabled={isPending}>
                   {isPending ? <Spinner /> : "Create Account"}
                 </Button>
               </Field>

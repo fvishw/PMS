@@ -5,7 +5,10 @@ import asyncHandler from "@/utils/asyncHandler.js";
 import type { Request, Response } from "express";
 
 const performanceStatus = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id!;
+  const userId = req.user?.id;
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized");
+  }
 
   const userPerformanceRecord = await UserPerformance.findOne({
     user: userId,

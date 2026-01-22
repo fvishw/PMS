@@ -35,7 +35,7 @@ interface UserCheckIn {
   _id: string;
   user: string;
   version: string;
-  createdAt: Date;
+  createdAt: string;
   name: string;
   email: string;
 }
@@ -56,7 +56,7 @@ type UserPastCheckIn = {
   }[];
   user: string;
   version: string;
-  createdAt?: Date;
+  createdAt?: string;
   _id: string;
 };
 
@@ -66,7 +66,7 @@ interface ICheckInQuestion {
   type: "rating" | "text";
   version: string;
   isActive: boolean;
-  createdAt: Date;
+  createdAt: string;
 }
 export {
   CheckInPayload,

@@ -89,6 +89,7 @@ interface GetCheckInById {
 
 interface GetPerformanceStatus {
   stage:
+    | "kpi_acceptance"
     | "self_review"
     | "manager_review"
     | "admin_review"

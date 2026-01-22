@@ -47,10 +47,9 @@ export const columns: ColumnDef<GoalRow>[] = [
     accessorKey: "dueDate",
     header: () => <div className="text-center">Due Date</div>,
     cell: ({ row }) => {
-      const transformDate = dayjs(row.getValue("dueDate")).format(
-        "MMM DD, YYYY",
-      );
-      return <div className="text-center">{transformDate}</div>;
+      const raw: Date | string = row.getValue("dueDate");
+      const formattedDate = raw ? dayjs(raw).format("D MMM YY") : "-";
+      return <div className="text-center">{formattedDate}</div>;
     },
   },
   {

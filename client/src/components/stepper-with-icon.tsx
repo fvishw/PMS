@@ -11,8 +11,9 @@ import { defineStepper } from "@/components/ui/stepper";
 import { useQuery } from "@tanstack/react-query";
 import Api from "@/api/api";
 import { Spinner } from "./ui/spinner";
+import ApiErrorMessage from "./ApiErrorMessage";
 
-const { Stepper, useStepper } = defineStepper(
+const { Stepper } = defineStepper(
   {
     id: "kpi_acceptance",
     title: "KPI Acceptance",
@@ -60,6 +61,9 @@ export function StepperWithIcon() {
         <Spinner />
       </div>
     );
+  }
+  if (error) {
+    return <ApiErrorMessage message={error.message || "An error occurred"} />;
   }
 
   return (

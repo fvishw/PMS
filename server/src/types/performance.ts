@@ -16,7 +16,7 @@ const CompetenciesSchema = z.array(
   z.object({
     _id: z.string(),
     score: z.coerce.number().min(0).max(5),
-  })
+  }),
 );
 
 const CommentSchema = z.object({
@@ -47,6 +47,8 @@ const ManagerScorePayloadSchema = z.object({
   userPerformanceId: z.string(),
   criteria: z.array(managerCriteria),
   competencies: CompetenciesSchema,
+  areaOfImprovement: z.string().max(1000),
+  areaOfStrength: z.string().max(1000),
 });
 
 const KpiCriteria = z.object({
@@ -61,7 +63,7 @@ const Competency = z.object({
 });
 
 const MasterPerformancePayload = z.object({
-  designationId: z.string().min(1),
+  designationId: z.string().min(1, "DesignationId cannot be empty"),
   kpis: z.array(KpiCriteria),
   competencies: z.array(Competency).max(4, "Maximum 4 Competency Allowed"),
 });

@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 
 export type KPITableColumn = {
   _id: string;
+  role: string;
   designation: string;
   createdBy: string;
   createdAt: Date | string;
@@ -46,7 +47,8 @@ export const columns: ColumnDef<KPITableColumn>[] = [
     accessorKey: "createdAt",
     header: () => <div className="text-center">Created At</div>,
     cell: ({ row }) => {
-      const formattedDate = dayjs(row.getValue("createdAt")).format("D MMM YY");
+      const raw: Date | string = row.getValue("createdAt");
+      const formattedDate = raw ? dayjs(raw).format("D MMM YY") : "-";
       return <div className="font-medium text-center">{formattedDate}</div>;
     },
   },

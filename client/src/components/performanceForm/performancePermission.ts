@@ -27,7 +27,7 @@ const getPerformancePermission = ({
       currentUser.role === "admin" &&
       currentUser._id === adminReviewer,
     canEditUserFinalComments:
-      "user_final_review" === stage && currentUser.role === "employee",
+      "user_final_review" === stage && employeeId === currentUser._id,
   };
 };
 export default getPerformancePermission;

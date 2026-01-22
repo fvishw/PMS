@@ -55,7 +55,7 @@ const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
 
 const getAllManagers = asyncHandler(async (req: Request, res: Response) => {
   const managers = await User.find({ role: "manager" }).select(
-    "-password -refreshToken -passwordResetToken"
+    "-password -refreshToken -passwordResetToken",
   );
 
   return res
@@ -70,12 +70,12 @@ const fetchUsersByRole = asyncHandler(async (req: Request, res: Response) => {
   if (!role || !allowedRoles.includes(role as string)) {
     throw new ApiError(
       400,
-      `Invalid role. Allowed values: ${allowedRoles.join(", ")}`
+      `Invalid role. Allowed values: ${allowedRoles.join(", ")}`,
     );
   }
 
   const users = await User.find({ role })
-    .select("-password -refreshToken -passwordResetTokens")
+    .select("-password -refreshToken -passwordResetToken")
     .populate({ path: "designation", select: "title role" });
 
   return res

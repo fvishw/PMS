@@ -1,3 +1,5 @@
+import { KPI } from "@/components/performanceForm/kpiTableConfig";
+
 type Kpi = {
   objective: string;
   indicator: string;
@@ -9,7 +11,7 @@ type Kpi = {
 };
 
 interface KpiData {
-  kpis: Kpi[];
+  kpis: KPI[];
 }
 
 type Competency = {
@@ -54,6 +56,8 @@ type IFinalReview = {
 interface PerformanceFormValue {
   userPerformanceId: string;
   criteria: CriteriaType[];
+  areaOfStrength: string;
+  areaOfImprovement: string;
   competencies: CompetenciesType[];
   finalComments: IFinalReview;
 }

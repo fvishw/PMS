@@ -12,7 +12,7 @@ export const ReviewAppraisal = () => {
   const role = user?.role || "";
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["reviewAppraisalData"],
+    queryKey: ["reviewAppraisalData", role, user?._id],
     queryFn: getReviewAppraisalApi(role),
   });
   if (isLoading) {

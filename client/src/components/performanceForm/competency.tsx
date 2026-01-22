@@ -61,7 +61,7 @@ function Competencies({
                         <Input
                           type="hidden"
                           {...register(`competencies.${index}._id`)}
-                          value={competency._id}
+                          defaultValue={competency._id}
                         />
                         {ratings.map((rating) => (
                           <div
@@ -94,12 +94,13 @@ function Competencies({
       <div className="grid grid-cols-1 sm:grid-cols-2  gap-4 mt-6">
         <div className="rounded border p-4">
           <Label className="pb-4 font-semibold">
-            Employee Area of strength
+            Employee Area of Strength
           </Label>
           <div>
             <Textarea
               placeholder="Describe the employee's strengths..."
               disabled={!permissions.canEditManager}
+              {...register("areaOfStrength", { required: true })}
             />
           </div>
         </div>
@@ -109,6 +110,7 @@ function Competencies({
             <Textarea
               placeholder="Describe areas where the employee can improve..."
               disabled={!permissions.canEditManager}
+              {...register("areaOfImprovement", { required: true })}
             />
           </div>
         </div>

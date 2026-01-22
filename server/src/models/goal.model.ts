@@ -43,8 +43,10 @@ const goalSchema = new Schema<IGoal>(
       default: "on_track",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
+
+goalSchema.index({ owner: 1 });
 
 const Goal = model<IGoal>("Goal", goalSchema);
 

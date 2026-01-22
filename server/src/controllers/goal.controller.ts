@@ -21,7 +21,7 @@ const addGoal = asyncHandler(async (req: Request, res: Response) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, null, "KPI status updated successfully"));
+    .json(new ApiResponse(200, null, "Goal added successfully"));
 });
 
 const markAsComplete = asyncHandler(async (req: Request, res: Response) => {
@@ -40,7 +40,7 @@ const markAsComplete = asyncHandler(async (req: Request, res: Response) => {
 
   subTasks.map((subTask) => {
     const userTask = goal.subTasks.find(
-      (task) => String(task._id) === subTask._id.toString()
+      (task) => String(task._id) === subTask._id.toString(),
     );
     if (userTask) {
       userTask.isCompleted = subTask.isCompleted;
@@ -52,7 +52,7 @@ const markAsComplete = asyncHandler(async (req: Request, res: Response) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(200, null, "Task Marks as Completed as Successfully")
+      new ApiResponse(200, null, "Task Marks as Completed as Successfully"),
     );
 });
 
@@ -68,11 +68,11 @@ const deleteGoal = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(404, "Goal with given id not found");
   }
 
-  await Goal.findOneAndDelete(goal._id);
+  await Goal.findByIdAndDelete(goalId);
 
   return res
     .status(200)
-    .json(new ApiResponse(200, null, "KPI status updated successfully"));
+    .json(new ApiResponse(200, null, "Goal deleted successfully"));
 });
 
 const getAllGoals = asyncHandler(async (req: Request, res: Response) => {
@@ -108,7 +108,7 @@ const getGoalsByOwner = asyncHandler(async (req: Request, res: Response) => {
 
   const goals = await Goal.find({ owner: userId }).populate(
     "owner",
-    "fullName"
+    "fullName",
   );
 
   return res

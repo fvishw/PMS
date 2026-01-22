@@ -36,8 +36,8 @@ export const columns: ColumnDef<CheckInQuestionTableColumn>[] = [
     accessorKey: "createdAt",
     header: () => <div className="text-center">Created At</div>,
     cell: ({ row }) => {
-      const formattedDate = dayjs(row.getValue("createdAt")).format("D MMM YY");
-
+      const raw: Date | string = row.getValue("createdAt");
+      const formattedDate = raw ? dayjs(raw).format("D MMM YY") : "-";
       return <div className="text-center">{formattedDate}</div>;
     },
   },

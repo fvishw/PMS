@@ -44,7 +44,8 @@ export const columns: ColumnDef<QuestionTableColumn>[] = [
     accessorKey: "createdAt",
     header: () => <div className="text-center">Created At</div>,
     cell: ({ row }) => {
-      const formattedDate = dayjs(row.getValue("createdAt")).format("D MMM YY");
+      const raw: Date | string = row.getValue("createdAt");
+      const formattedDate = raw ? dayjs(raw).format("D MMM YY") : "-";
 
       return <div className="text-center">{formattedDate}</div>;
     },
@@ -65,12 +66,17 @@ export const columns: ColumnDef<QuestionTableColumn>[] = [
   {
     accessorKey: "actions",
     header: () => <div className="text-center">Actions</div>,
-    cell: ({ row }) => (
-      <QuestionTableAction
-        version={row.getValue("version")}
-        designationId={row.original.designation?._id}
-        isActive={row.getValue("isActive")}
-      />
-    ),
+    cell: ({ row }) => {
+      const designationId = row.original.designation?._id;
+      return designationId ? (
+        <QuestionTableAction
+          version={row.getValue("version")}
+          designationId={designationId}
+          isActive={row.getValue("isActive")}
+        />
+      ) : (
+        <div className="text-center text-muted-foreground">—</div>
+      );
+    },
   },
 ];

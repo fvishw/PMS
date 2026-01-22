@@ -30,6 +30,8 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
     useForm<PerformanceFormValue>({
       defaultValues: {
         userPerformanceId: "",
+        areaOfImprovement: "",
+        areaOfStrength: "",
         criteria: [],
         competencies: [],
         finalComments: {},

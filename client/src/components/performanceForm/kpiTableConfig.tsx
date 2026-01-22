@@ -66,7 +66,7 @@ const getColumns = (
             type="number"
             min={0}
             max={row.original.weight}
-            defaultValue={row.original.selfScore || ""}
+            defaultValue={row.original.selfScore ?? ""}
             step={1}
             className="w-18 text-center"
             disabled={!permissions.canEditSelf}
@@ -85,7 +85,7 @@ const getColumns = (
           <Textarea
             className="h-5 w-[200px]"
             rows={1}
-            defaultValue={row.original.selfComments || ""}
+            defaultValue={row.original.selfComments ?? ""}
             disabled={!permissions.canEditSelf}
             {...register(`criteria.${row.id}.selfComments`)}
           />

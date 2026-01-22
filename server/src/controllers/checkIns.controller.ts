@@ -263,17 +263,22 @@ const activateQuestionSet = asyncHandler(
     if (!version || typeof version !== "string") {
       throw new ApiError(400, "Invalid or missing version parameter");
     }
+    if (!designationId || !Types.ObjectId.isValid(designationId)) {
+      throw new ApiError(400, "Invalid or missing designationId parameter");
+    }
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
       await CheckInQuestions.updateMany(
         { isActive: true, designation: new Types.ObjectId(designationId) },
         { $set: { isActive: false } },
+        { session },
       );
 
       await CheckInQuestions.updateMany(
         { version: version, designation: new Types.ObjectId(designationId) },
         { $set: { isActive: true } },
+        { session },
       );
       await session.commitTransaction();
     } catch (error) {

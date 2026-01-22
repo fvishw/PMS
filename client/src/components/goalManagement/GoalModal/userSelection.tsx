@@ -32,7 +32,7 @@ export const UserSelection = ({ control }: UserSelectionProps) => {
       name={`owner`}
       control={control}
       render={({ field }) => (
-        <Select onValueChange={field.onChange}>
+        <Select onValueChange={field.onChange} value={field.value}>
           <SelectTrigger>
             <SelectValue placeholder="Select owner" />
           </SelectTrigger>

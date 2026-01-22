@@ -24,11 +24,11 @@ function PerformanceDetails() {
       </div>
     );
   }
-  if (!data?.performanceTemplate) {
-    return <ApiErrorMessage message="Performance template data is missing." />;
-  }
   if (error) {
     return <ApiErrorMessage message={error.message} />;
+  }
+  if (!data?.performanceTemplate) {
+    return <ApiErrorMessage message="Performance template data is missing." />;
   }
 
   return (

@@ -45,11 +45,12 @@ function FinalReview({
                 <Controller
                   control={control}
                   name="finalComments.adminReview.remarks"
+                  defaultValue={data.adminReview?.remarks || ""}
                   render={({ field }) => (
                     <Select
                       disabled={!permissions.canEditAdmin}
                       onValueChange={field.onChange}
-                      defaultValue={data.adminReview?.remarks || ""}
+                      value={field.value}
                     >
                       <SelectTrigger className="w-[200px]">
                         <SelectValue placeholder="Select remark" />
@@ -121,11 +122,12 @@ function FinalReview({
                 <Controller
                   control={control}
                   name="finalComments.selfReview.remarks"
+                  defaultValue={data.selfReview?.remarks || ""}
                   render={({ field }) => (
                     <Select
                       disabled={!permissions.canEditUserFinalComments}
                       onValueChange={field.onChange}
-                      defaultValue={data.selfReview?.remarks || ""}
+                      value={field.value}
                     >
                       <SelectTrigger className="w-[200px]">
                         <SelectValue placeholder="Select Recommendation" />

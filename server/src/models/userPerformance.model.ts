@@ -41,6 +41,8 @@ const UserPerformanceSchema = new Schema<IUserPerformance>(
         score: { type: Number },
       },
     ],
+    areaOfStrength: { type: String },
+    areaOfImprovement: { type: String },
     finalReview: {
       adminReview: {
         remarks: { type: String },
@@ -80,11 +82,11 @@ const UserPerformanceSchema = new Schema<IUserPerformance>(
     },
     isKpiLocked: { type: Boolean, default: false },
     parentReviewer: { type: Types.ObjectId, ref: "User", required: true },
-    adminReviewer: { type: Types.ObjectId, ref: "User" },
+    adminReviewer: { type: Types.ObjectId, ref: "User", required: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 export const UserPerformance = model<IUserPerformance>(
   "UserPerformance",
-  UserPerformanceSchema
+  UserPerformanceSchema,
 );

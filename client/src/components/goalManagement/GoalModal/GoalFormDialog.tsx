@@ -19,7 +19,12 @@ import { useMutation } from "@tanstack/react-query";
 import Api from "@/api/api";
 import { toast } from "sonner";
 
-function GoalFormDialog() {
+interface GoalFormDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+function GoalFormDialog({ isOpen, onClose }: GoalFormDialogProps) {
   const { control, reset, handleSubmit, register } = useForm<Goal>({
     defaultValues: {
       title: "",
@@ -38,6 +43,7 @@ function GoalFormDialog() {
     onSuccess: () => {
       reset();
       toast.success("Goal Add Successfully.");
+      onClose();
     },
     onError: (error) => {
       toast.error(error.message || "Something went wrong while add Goal.");
@@ -54,6 +60,10 @@ function GoalFormDialog() {
   });
 
   const onSubmit = (data: Goal) => {
+    if (!data.dueDate) {
+      toast.error("Due date is required.");
+      return;
+    }
     const parsedData: Goal = {
       ...data,
       dueDate: new Date(data.dueDate),
@@ -62,7 +72,7 @@ function GoalFormDialog() {
   };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogTrigger asChild>
         <Button>Create goal</Button>
       </DialogTrigger>
@@ -80,7 +90,7 @@ function GoalFormDialog() {
               <Label>Goal title</Label>
               <Input
                 placeholder="Increase customer retention to 92%"
-                {...register("title")}
+                {...register("title", { required: true })}
               />
             </div>
 
@@ -118,12 +128,18 @@ function GoalFormDialog() {
 
             <div className="grid gap-2">
               <span className="text-sm font-medium">Due date</span>
-              <Input type="date" {...register("dueDate")} />
+              <Input type="date" {...register("dueDate", { required: true })} />
             </div>
           </div>
           <DialogFooter className="mt-8">
             <Button variant="outline">Cancel</Button>
-            <Button>{isPending ? "Creating..." : "Create Goal"}</Button>
+
+            <Button variant="outline" type="button" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Creating..." : "Create Goal"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

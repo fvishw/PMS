@@ -8,12 +8,14 @@ import Api from "@/api/api";
 import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "../ui/spinner";
 import ApiErrorMessage from "../ApiErrorMessage";
+import { useAuth } from "@/hooks/useAuthContext";
 
 export type IGoal = GoalRow;
 
 const MyGoals = () => {
+  const { user } = useAuth();
   const { data, isLoading, error } = useQuery({
-    queryKey: ["goals"],
+    queryKey: ["goals", user?._id],
     queryFn: async () => Api.getGoalsByOwner(),
   });
 

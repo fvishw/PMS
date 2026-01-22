@@ -45,4 +45,5 @@ export const PerformanceForm = () => {
       );
     }
   }
+  return null;
 };
