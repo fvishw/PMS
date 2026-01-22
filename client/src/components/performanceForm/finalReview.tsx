@@ -71,35 +71,35 @@ function FinalReview({
             </div>
             <div>
               <Label className="mb-2">Appraiser's Recommendation</Label>
-              {
-                <Controller
-                  control={control}
-                  name="finalComments.adminReview.recommendation"
-                  render={({ field }) => (
-                    <Select
-                      disabled={!permissions.canEditAdmin}
-                      onValueChange={field.onChange}
-                      defaultValue={data.adminReview?.recommendation || ""}
-                    >
-                      <SelectTrigger className="w-[200px]">
-                        <SelectValue placeholder="Select Recommendation" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {performanceRatingOptions.map((performance) => (
-                            <SelectItem
-                              key={performance.value}
-                              value={performance.value}
-                            >
-                              {performance.label}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              }
+
+              <Controller
+                control={control}
+                name="finalComments.adminReview.recommendation"
+                defaultValue={data.adminReview?.recommendation || ""}
+                render={({ field }) => (
+                  <Select
+                    disabled={!permissions.canEditAdmin}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  >
+                    <SelectTrigger className="w-[200px]">
+                      <SelectValue placeholder="Select Recommendation" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {performanceRatingOptions.map((performance) => (
+                          <SelectItem
+                            key={performance.value}
+                            value={performance.value}
+                          >
+                            {performance.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
           </div>
           <div className="col-span-2 mt-4">

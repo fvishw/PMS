@@ -40,6 +40,7 @@ export const ViewGoalModal = ({
   const { data, isLoading, error } = useQuery({
     queryKey: ["goal", goalId],
     queryFn: async () => Api.getGoalById(goalId),
+    enabled: isOpen && !!goalId,
   });
   const { register, control, handleSubmit, reset } =
     useForm<ViewGoalFormValues>({
