@@ -7,6 +7,7 @@ import criteriaOptions from "./options";
 export type IQuestion = {
   _id: string;
   question: string;
+  answer?: string;
   type: "rating" | "text";
 };
 

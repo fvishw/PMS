@@ -2,8 +2,10 @@ import { type ColumnDef } from "@tanstack/react-table";
 
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
+import { EditPermissions } from "@/types/performance";
 
 export type KPI = {
+  _id: string;
   objective: string;
   indicator: string;
   weight: number;
@@ -13,11 +15,23 @@ export type KPI = {
   managerComments?: string;
 };
 
-export const columns: ColumnDef<KPI>[] = [
+const getColumns = (
+  permissions: EditPermissions,
+  register: any,
+): ColumnDef<KPI>[] => [
   {
     id: "sr.no",
     header: () => <div className="text-center">Sr.No</div>,
-    cell: ({ row }) => <div className="capitalize text-center">{row.id}</div>,
+    cell: ({ row }) => (
+      <div className="capitalize text-center">
+        {row.id}
+        <Input
+          type="hidden"
+          value={row.original._id}
+          {...register(`criteria.${row.id}._id`)}
+        />
+      </div>
+    ),
   },
   {
     accessorKey: "objective",
@@ -49,8 +63,14 @@ export const columns: ColumnDef<KPI>[] = [
       return (
         <span>
           <Input
-            className="w-13 text-center"
-            defaultValue={row.getValue("selfScore") || ""}
+            type="number"
+            min={0}
+            max={row.original.weight}
+            defaultValue={row.original.selfScore ?? ""}
+            step={1}
+            className="w-18 text-center"
+            disabled={!permissions.canEditSelf}
+            {...register(`criteria.${row.id}.selfScore`)}
           />
         </span>
       );
@@ -65,7 +85,9 @@ export const columns: ColumnDef<KPI>[] = [
           <Textarea
             className="h-5 w-[200px]"
             rows={1}
-            defaultValue={row.getValue("selfComments") || ""}
+            defaultValue={row.original.selfComments ?? ""}
+            disabled={!permissions.canEditSelf}
+            {...register(`criteria.${row.id}.selfComments`)}
           />
         </span>
       );
@@ -78,8 +100,13 @@ export const columns: ColumnDef<KPI>[] = [
       return (
         <span className="text-center">
           <Input
-            className="w-13"
-            defaultValue={row.getValue("managerScore") || ""}
+            type="number"
+            min={0}
+            max={row.original.weight}
+            className="w-18 text-center"
+            defaultValue={row.original.managerScore || ""}
+            disabled={!permissions.canEditManager}
+            {...register(`criteria.${row.id}.managerScore`)}
           />
         </span>
       );
@@ -94,7 +121,9 @@ export const columns: ColumnDef<KPI>[] = [
           <Textarea
             className="h-5 w-[200px]"
             rows={1}
-            defaultValue={row.getValue("managerComments") || ""}
+            disabled={!permissions.canEditManager}
+            defaultValue={row.original.managerComments || ""}
+            {...register(`criteria.${row.id}.managerComments`)}
           />
         </span>
       );
@@ -102,20 +131,4 @@ export const columns: ColumnDef<KPI>[] = [
   },
 ];
 
-export const data: KPI[] = [
-  {
-    objective: "Timely Delivery of Assigned Tasks",
-    indicator:
-      "% of tasks delivered on or before deadline (based on sprint/project schedule)",
-    weight: 20,
-    selfScore: 0,
-    managerScore: 0,
-    selfComments: "",
-    managerComments: "",
-  },
-  {
-    objective: "Improve customer satisfaction",
-    indicator: "Customer feedback surveys",
-    weight: 15,
-  },
-];
+export { getColumns };

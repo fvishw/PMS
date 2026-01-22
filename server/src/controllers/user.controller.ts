@@ -1,9 +1,9 @@
 import { type Request, type Response } from "express";
-import { User } from "../models/user.model.ts";
-import { ApiError } from "../utils/ApiError.ts";
-import asyncHandler from "../utils/asyncHandler.ts";
-import { ApiResponse } from "../utils/ApiResponse.ts";
-import { userAddPayloadSchema } from "../types/user.ts";
+import { User } from "@/models/user.model.js";
+import { ApiError } from "@/utils/ApiError.js";
+import asyncHandler from "@/utils/asyncHandler.js";
+import { ApiResponse } from "@/utils/ApiResponse.js";
+import { userAddPayloadSchema } from "@/types/user.js";
 
 const addUser = asyncHandler(async (req: Request, res: Response) => {
   const parsedPayload = userAddPayloadSchema.safeParse(req.body);
@@ -55,7 +55,7 @@ const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
 
 const getAllManagers = asyncHandler(async (req: Request, res: Response) => {
   const managers = await User.find({ role: "manager" }).select(
-    "-password -refreshToken -passwordResetToken"
+    "-password -refreshToken -passwordResetToken",
   );
 
   return res
@@ -70,13 +70,13 @@ const fetchUsersByRole = asyncHandler(async (req: Request, res: Response) => {
   if (!role || !allowedRoles.includes(role as string)) {
     throw new ApiError(
       400,
-      `Invalid role. Allowed values: ${allowedRoles.join(", ")}`
+      `Invalid role. Allowed values: ${allowedRoles.join(", ")}`,
     );
   }
 
   const users = await User.find({ role })
-    .select("-password -refreshToken -passwordResetToken -email")
-    .populate({ path: "designation", select: "title" });
+    .select("-password -refreshToken -passwordResetToken")
+    .populate({ path: "designation", select: "title role" });
 
   return res
     .status(200)

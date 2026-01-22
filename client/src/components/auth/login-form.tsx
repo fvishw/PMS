@@ -49,9 +49,8 @@ export function LoginForm({
         position: "top-right",
       });
       const accessToken = data.accessToken;
-      const refreshToken = data.refreshToken;
       const user = data.user;
-      login(accessToken, refreshToken, user);
+      login(accessToken, user);
       navigate("/dashboard");
     },
     onError: (error) => {

@@ -4,13 +4,13 @@ import {
   fetchUsersByRole,
   getAllManagers,
   getAllUsers,
-} from "../controllers/user.controller.ts";
-import authMiddleware from "../middlewares/auth.middleware.ts";
+} from "@/controllers/user.controller.js";
+import authMiddleware from "@/middlewares/auth.middleware.js";
 import {
   addDesignation,
   deleteDesignation,
   getAllDesignations,
-} from "../controllers/userDesignation.controller.ts";
+} from "@/controllers/userDesignation.controller.js";
 
 const userRouter = Router();
 

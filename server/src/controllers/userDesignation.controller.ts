@@ -1,8 +1,8 @@
 import { type Request, type Response } from "express";
-import { Designation } from "../models/designation.model.ts";
+import { Designation } from "@/models/designation.model.js";
 
-import { ApiResponse } from "../utils/ApiResponse.ts";
-import asyncHandler from "../utils/asyncHandler.ts";
+import { ApiResponse } from "@/utils/ApiResponse.js";
+import asyncHandler from "@/utils/asyncHandler.js";
 
 const getAllDesignations = asyncHandler(async (req: Request, res: Response) => {
   const { role } = req.query;

@@ -37,6 +37,8 @@ export interface IMasterPerformance extends Document {
   designation: Types.ObjectId;
   kpis: IKpis[];
   competencies: ICompetency[];
+  areaOfStrength: string;
+  areaOfImprovement: string;
   finalReview: IFinalReview;
   createdAt: Date;
   createdBy: Types.ObjectId;
@@ -63,6 +65,8 @@ const MasterPerformanceSchema = new Schema<IMasterPerformance>(
         score: { type: Number },
       },
     ],
+    areaOfStrength: { type: String },
+    areaOfImprovement: { type: String },
     finalReview: {
       adminReview: {
         remarks: { type: String },
@@ -76,9 +80,9 @@ const MasterPerformanceSchema = new Schema<IMasterPerformance>(
     },
     createdBy: { type: Types.ObjectId, ref: "User", required: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 export const MasterPerformance = model<IMasterPerformance>(
   "MasterPerformance",
-  MasterPerformanceSchema
+  MasterPerformanceSchema,
 );

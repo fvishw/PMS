@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
-import { UserPerformance } from "../models/userPerformance.model.ts";
-import asyncHandler from "../utils/asyncHandler.ts";
-import { ApiError } from "../utils/ApiError.ts";
-import { ApiResponse } from "../utils/ApiResponse.ts";
-import { User } from "../models/user.model.ts";
+import { UserPerformance } from "@/models/userPerformance.model.js";
+import asyncHandler from "@/utils/asyncHandler.js";
+import { ApiError } from "@/utils/ApiError.js";
+import { ApiResponse } from "@/utils/ApiResponse.js";
+import { User } from "@/models/user.model.js";
 import {
   adminPayloadSchema,
   ManagerScorePayloadSchema,
@@ -12,8 +12,8 @@ import {
   selfReviewPayloadSchema,
   type ManagerCriteria,
   type SelfCriteria,
-} from "../types/performance.ts";
-import { MasterPerformance, type IKpis } from "../models/masterPerformance.ts";
+} from "@/types/performance.js";
+import { MasterPerformance, type IKpis } from "@/models/masterPerformance.js";
 import { Types } from "mongoose";
 
 const createPerformanceRecord = asyncHandler(
@@ -35,7 +35,7 @@ const createPerformanceRecord = asyncHandler(
     if (isMasterPerformanceExist) {
       throw new ApiError(
         400,
-        "Performance Record for this designation already exists"
+        "Performance Record for this designation already exists",
       );
     }
 
@@ -60,9 +60,9 @@ const createPerformanceRecord = asyncHandler(
     return res
       .status(201)
       .json(
-        new ApiResponse(201, null, "Performance record created successfully")
+        new ApiResponse(201, null, "Performance record created successfully"),
       );
-  }
+  },
 );
 
 const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
@@ -82,7 +82,7 @@ const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
   if (!userParentReviewer) {
     throw new ApiError(
       400,
-      "User must have a parent reviewer assigned before accepting KPIs"
+      "User must have a parent reviewer assigned before accepting KPIs",
     );
   }
 
@@ -99,11 +99,17 @@ const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
   };
   delete masterPerformanceTemplate._id;
 
+  const parentReviewerId = userParentReviewer;
+  const adminReviewerId = user?.adminReviewer
+    ? user.adminReviewer
+    : parentReviewerId;
+
   const userPerformance = new UserPerformance({
     ...masterPerformanceTemplate,
     user: userId,
-    stage: "kpi_acceptance",
-    parentReviewer: userParentReviewer,
+    stage: "self_review",
+    parentReviewer: parentReviewerId,
+    adminReviewer: adminReviewerId,
   });
   await userPerformance.save();
 
@@ -135,13 +141,14 @@ const selfReviewKpi = asyncHandler(async (req: Request, res: Response) => {
 
   criteria.forEach((item: SelfCriteria) => {
     const userKpi = (userPerformance.kpis as unknown as IKpis[]).find(
-      (c) => c._id.toString() === item._id
+      (c) => c._id.toString() === item._id,
     );
     if (userKpi) {
       userKpi.selfScore = item.selfScore;
       userKpi.selfComments = item.selfComments;
     }
   });
+  userPerformance.stage = "manager_review";
   await userPerformance.save();
 
   return res
@@ -171,7 +178,7 @@ const managerReviewKpi = asyncHandler(async (req: Request, res: Response) => {
 
   criteria.forEach((item: ManagerCriteria) => {
     const kpiCriterion = (userPerformance.kpis as unknown as IKpis[]).find(
-      (c) => c._id.toString() === item._id
+      (c) => c._id.toString() === item._id,
     );
     if (kpiCriterion) {
       kpiCriterion.managerScore = item.managerScore;
@@ -181,14 +188,14 @@ const managerReviewKpi = asyncHandler(async (req: Request, res: Response) => {
 
   competencies.forEach((comp) => {
     const userCompetency = userPerformance.competencies.find(
-      (c) => c._id.toString() === comp._id
+      (c) => c._id.toString() === comp._id,
     );
     if (userCompetency) {
       userCompetency.score = comp.score;
     }
   });
 
-  userPerformance.stage = "manager_review";
+  userPerformance.stage = "admin_review";
 
   await userPerformance.save();
 
@@ -197,9 +204,13 @@ const managerReviewKpi = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, null, "Manager review submitted successfully"));
 });
 
-const adminReviewKpi = asyncHandler(async (req: Request, res: Response) => {
+const adminReview = asyncHandler(async (req: Request, res: Response) => {
   const reviewerId = req.user?.id!;
-  const parsedPayload = adminPayloadSchema.safeParse(req.body);
+  const { userPerformanceId: performanceId, finalComments } = req.body;
+  const parsedPayload = adminPayloadSchema.safeParse({
+    userPerformanceId: performanceId,
+    adminComments: finalComments?.adminReview,
+  });
 
   if (!parsedPayload.success) {
     throw new ApiError(400, "Invalid payload format");
@@ -213,7 +224,7 @@ const adminReviewKpi = asyncHandler(async (req: Request, res: Response) => {
   }
 
   userPerformance.finalReview.adminReview = adminComments;
-  userPerformance.stage = "admin_review";
+  userPerformance.stage = "user_final_review";
 
   await userPerformance.save();
 
@@ -222,8 +233,13 @@ const adminReviewKpi = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, null, "Admin review submitted successfully"));
 });
 
-const userFinalReviewKpi = asyncHandler(async (req: Request, res: Response) => {
-  const parsedPayload = selfReviewPayloadSchema.safeParse(req.body);
+const userFinalReview = asyncHandler(async (req: Request, res: Response) => {
+  const { finalComments: userFinalComments, userPerformanceId: performanceId } =
+    req.body;
+  const parsedPayload = selfReviewPayloadSchema.safeParse({
+    selfReview: userFinalComments?.selfReview,
+    userPerformanceId: performanceId,
+  });
 
   if (!parsedPayload.success) {
     throw new ApiError(400, "Invalid payload format");
@@ -238,7 +254,7 @@ const userFinalReviewKpi = asyncHandler(async (req: Request, res: Response) => {
   }
 
   userPerformance.finalReview.selfReview = selfReview;
-  userPerformance.stage = "user_final_review";
+  userPerformance.stage = "completed";
 
   await userPerformance.save();
 
@@ -260,10 +276,10 @@ const getReviewAppraisalData = asyncHandler(
         new ApiResponse(
           200,
           { performances },
-          "Performance records fetched successfully"
-        )
+          "Performance records fetched successfully",
+        ),
       );
-  }
+  },
 );
 
 const getUserKpiDetails = asyncHandler(async (req: Request, res: Response) => {
@@ -278,8 +294,8 @@ const getUserKpiDetails = asyncHandler(async (req: Request, res: Response) => {
         new ApiResponse(
           200,
           { hasKpiTemplate: true, hasUserAccepted: true, criteria: [] },
-          "User KPI details fetched successfully"
-        )
+          "User KPI details fetched successfully",
+        ),
       );
   }
 
@@ -300,8 +316,8 @@ const getUserKpiDetails = asyncHandler(async (req: Request, res: Response) => {
         new ApiResponse(
           200,
           { hasKpiTemplate: false, hasUserAccepted: false, criteria: [] },
-          "User KPI details fetched successfully"
-        )
+          "User KPI details fetched successfully",
+        ),
       );
   }
 
@@ -315,8 +331,8 @@ const getUserKpiDetails = asyncHandler(async (req: Request, res: Response) => {
         hasUserAccepted: false,
         criteria: userKpis,
       },
-      "User KPI details fetched successfully"
-    )
+      "User KPI details fetched successfully",
+    ),
   );
 });
 
@@ -333,10 +349,10 @@ const getAllPerformanceTemplates = asyncHandler(
         new ApiResponse(
           200,
           { performanceTemplates },
-          "Performance templates fetched successfully"
-        )
+          "Performance templates fetched successfully",
+        ),
       );
-  }
+  },
 );
 
 const getUserPerformanceForm = asyncHandler(
@@ -354,10 +370,13 @@ const getUserPerformanceForm = asyncHandler(
           new ApiResponse(
             200,
             { hasUserAcceptedKpi: false, performanceForm: null },
-            "User has not accepted KPI yet"
-          )
+            "User has not accepted KPI yet",
+          ),
         );
     }
+    const user = await User.findById(userPerformanceRecord.user).select(
+      "fullName email role parentReviewer adminReviewer",
+    );
 
     return res.status(200).json(
       new ApiResponse(
@@ -365,11 +384,12 @@ const getUserPerformanceForm = asyncHandler(
         {
           hasUserAcceptedKpi: true,
           userPerformanceRecord,
+          user,
         },
-        "User KPIs fetched successfully"
-      )
+        "User KPIs fetched successfully",
+      ),
     );
-  }
+  },
 );
 
 const getPerformanceTemplateById = asyncHandler(
@@ -394,21 +414,80 @@ const getPerformanceTemplateById = asyncHandler(
         new ApiResponse(
           200,
           { performanceTemplate },
-          "Performance template fetched successfully"
-        )
+          "Performance template fetched successfully",
+        ),
       );
-  }
+  },
 );
+const getUserPerformanceFormById = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { performanceId } = req.query;
+
+    if (!performanceId || !Types.ObjectId.isValid(performanceId)) {
+      throw new ApiError(400, "Invalid performance ID");
+    }
+    const userPerformanceRecord = await UserPerformance.findById(performanceId);
+
+    if (!userPerformanceRecord) {
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            { hasUserAcceptedKpi: false, performanceForm: null },
+            "User has not accepted KPI yet",
+          ),
+        );
+    }
+
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          hasUserAcceptedKpi: true,
+          userPerformanceRecord,
+        },
+        "User KPIs fetched successfully",
+      ),
+    );
+  },
+);
+
+const getManagerReviewAppraisalData = asyncHandler(
+  async (req: Request, res: Response) => {
+    const managerId = req.user?.id!;
+
+    const performances = await UserPerformance.find({
+      parentReviewer: managerId,
+    })
+      .select("-kpis -competencies -finalReview")
+      .populate("user", "fullName email role")
+      .populate("designation", "title");
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { performances },
+          "Performance records fetched successfully",
+        ),
+      );
+  },
+);
+
 export {
   createPerformanceRecord,
   updateKpiStatus,
   selfReviewKpi,
   managerReviewKpi,
-  adminReviewKpi,
-  userFinalReviewKpi,
+  adminReview,
+  userFinalReview,
   getReviewAppraisalData,
   getUserKpiDetails,
   getAllPerformanceTemplates,
   getUserPerformanceForm,
   getPerformanceTemplateById,
+  getUserPerformanceFormById,
+  getManagerReviewAppraisalData,
 };

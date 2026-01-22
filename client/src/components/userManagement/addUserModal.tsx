@@ -59,7 +59,7 @@ export function AddUserModal() {
     },
   });
 
-  const { mutate, isLoading } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: (data: AddUserModalProps) => Api.addUser(data),
     onSuccess: () => {
       toast.success("User added successfully", toasterPosition);
@@ -179,8 +179,8 @@ export function AddUserModal() {
             )}
           </div>
           <DialogFooter className="mt-4">
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? <Spinner /> : "Add User"}
+            <Button type="submit" disabled={isPending}>
+              {isPending ? <Spinner /> : "Add User"}
             </Button>
           </DialogFooter>
         </form>

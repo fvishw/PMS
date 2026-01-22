@@ -4,16 +4,15 @@ import { CheckInTableAction } from "./checkInTableAction";
 export type CheckInQuestionTableColumn = {
   _id: string;
   user: string;
-  srNo: string;
   version: string;
-  createdAt: string;
+  createdAt: string | Date;
   email: string;
   name: string;
 };
 
 export const columns: ColumnDef<CheckInQuestionTableColumn>[] = [
   {
-    accessorKey: "srNo",
+    id: "srNo",
     header: () => <div className="text-center">Sr. No.</div>,
     cell: ({ row }) => (
       <div className="font-medium text-center">{row.index + 1}</div>
@@ -37,8 +36,8 @@ export const columns: ColumnDef<CheckInQuestionTableColumn>[] = [
     accessorKey: "createdAt",
     header: () => <div className="text-center">Created At</div>,
     cell: ({ row }) => {
-      const formattedDate = dayjs(row.getValue("createdAt")).format("D MMM YY");
-
+      const raw: Date | string = row.getValue("createdAt");
+      const formattedDate = raw ? dayjs(raw).format("D MMM YY") : "-";
       return <div className="text-center">{formattedDate}</div>;
     },
   },

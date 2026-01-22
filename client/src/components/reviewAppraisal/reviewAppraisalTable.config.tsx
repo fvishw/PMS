@@ -48,7 +48,9 @@ export const columns: ColumnDef<ReviewTableColumn>[] = [
     header: () => <div className="text-center">Designation</div>,
     cell: ({ row }) => {
       return (
-        <div className="text-center">{row.original.designation?.title || "Unknown"}</div>
+        <div className="text-center">
+          {row.original.designation?.title || "Unknown"}
+        </div>
       );
     },
   },
@@ -68,7 +70,7 @@ export const columns: ColumnDef<ReviewTableColumn>[] = [
   {
     accessorKey: "actions",
     header: () => <div className="text-center">Actions</div>,
-    cell: ({ row }) => <ReviewTableAction />,
+    cell: ({ row }) => <ReviewTableAction row={row} />,
   },
 ];
 
@@ -78,4 +80,5 @@ const stageMapper: Record<string, string> = {
   manager_review: "Manager Review",
   admin_review: "Admin Review",
   user_final_review: "Final Review",
+  completed: "Completed",
 };

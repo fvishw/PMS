@@ -1,15 +1,13 @@
+import { GoalManagement } from "@/components/goalManagement/GoalManagement";
 import OutletWrapper from "@/components/mainLayout";
 import { SiteHeader } from "@/components/site-header";
 
 function ReviewGoalsLayout() {
   return (
     <>
-      <SiteHeader headerName="Review Goals" />
+      <SiteHeader headerName="Goal Management" />
       <OutletWrapper>
-        <div>
-          {/* Review Goals content goes here */}
-          This is the Review Goals page.
-        </div>
+        <GoalManagement />
       </OutletWrapper>
     </>
   );

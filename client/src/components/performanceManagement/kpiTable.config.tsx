@@ -1,8 +1,10 @@
 import { type ColumnDef } from "@tanstack/react-table";
 import { PerformanceTableAction } from "./performanceTable.action";
+import dayjs from "dayjs";
 
 export type KPITableColumn = {
-  srNo: string;
+  _id: string;
+  role: string;
   designation: string;
   createdBy: string;
   createdAt: Date | string;
@@ -12,7 +14,9 @@ export const columns: ColumnDef<KPITableColumn>[] = [
   {
     id: "sr.no",
     header: () => <div className="text-center">Sr.No</div>,
-    cell: ({ row }) => <div className="capitalize text-center">{row.id}</div>,
+    cell: ({ row }) => (
+      <div className="capitalize text-center">{row.index + 1}</div>
+    ),
   },
   {
     accessorKey: "designation",
@@ -42,32 +46,19 @@ export const columns: ColumnDef<KPITableColumn>[] = [
   {
     accessorKey: "createdAt",
     header: () => <div className="text-center">Created At</div>,
-    cell: ({ row }) => (
-      <div className="font-medium text-center">{row.getValue("createdAt")}</div>
-    ),
+    cell: ({ row }) => {
+      const raw: Date | string = row.getValue("createdAt");
+      const formattedDate = raw ? dayjs(raw).format("D MMM YY") : "-";
+      return <div className="font-medium text-center">{formattedDate}</div>;
+    },
   },
   {
     accessorKey: "actions",
     header: () => <div className="text-center">Actions</div>,
     cell: ({ row }) => (
       <div className="font-medium text-center">
-        <PerformanceTableAction performanceId={row.original.id} />
+        <PerformanceTableAction performanceId={row.original._id} />
       </div>
     ),
-  },
-];
-
-export const data: KPITableColumn[] = [
-  {
-    srNo: "1",
-    designation: "Software Developer",
-    createdBy: "John Doe",
-    createdAt: "2024-01-01",
-  },
-  {
-    srNo: "2",
-    designation: "Product Manager",
-    createdBy: "Jane Smith",
-    createdAt: "2024-01-02",
   },
 ];

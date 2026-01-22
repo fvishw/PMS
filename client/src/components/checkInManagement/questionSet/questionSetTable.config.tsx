@@ -5,9 +5,13 @@ import { QuestionTableAction } from "./questionTableAction";
 
 export type QuestionTableColumn = {
   version: string;
-  srNo: string;
   createdAt: string;
   isActive: boolean;
+  designation: {
+    _id: string;
+    title: string;
+    role: string;
+  };
 };
 
 export const columns: ColumnDef<QuestionTableColumn>[] = [
@@ -19,10 +23,29 @@ export const columns: ColumnDef<QuestionTableColumn>[] = [
     ),
   },
   {
+    accessorKey: "designation",
+    header: () => <div className="text-center">Designation</div>,
+    cell: ({ row }) => (
+      <div className="capitalize text-center">
+        {row.original.designation?.title}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "role",
+    header: () => <div className="text-center">Role</div>,
+    cell: ({ row }) => (
+      <div className="capitalize text-center">
+        {row.original.designation?.role}
+      </div>
+    ),
+  },
+  {
     accessorKey: "createdAt",
     header: () => <div className="text-center">Created At</div>,
     cell: ({ row }) => {
-      const formattedDate = dayjs(row.getValue("createdAt")).format("D MMM YY");
+      const raw: Date | string = row.getValue("createdAt");
+      const formattedDate = raw ? dayjs(raw).format("D MMM YY") : "-";
 
       return <div className="text-center">{formattedDate}</div>;
     },
@@ -43,8 +66,17 @@ export const columns: ColumnDef<QuestionTableColumn>[] = [
   {
     accessorKey: "actions",
     header: () => <div className="text-center">Actions</div>,
-    cell: ({ row }) => (
-      <QuestionTableAction version={row.getValue("version")} />
-    ),
+    cell: ({ row }) => {
+      const designationId = row.original.designation?._id;
+      return designationId ? (
+        <QuestionTableAction
+          version={row.getValue("version")}
+          designationId={designationId}
+          isActive={row.getValue("isActive")}
+        />
+      ) : (
+        <div className="text-center text-muted-foreground">—</div>
+      );
+    },
   },
 ];

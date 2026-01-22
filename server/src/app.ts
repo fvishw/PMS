@@ -2,7 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
-import type { ApiError } from "./utils/ApiError.ts";
+import type { ApiError } from "./utils/ApiError.js";
 
 dotenv.config();
 
@@ -16,27 +16,31 @@ app.use((req, res, next) => {
   next();
 });
 
-import userAuth from "./routes/userAuth.routes.ts";
-import userRouter from "./routes/user.route.ts";
-import performanceRouter from "./routes/performance.route.ts";
-import CheckInsRouter from "./routes/checkIns.routes.ts";
+import userAuth from "./routes/userAuth.routes.js";
+import userRouter from "./routes/user.route.js";
+import performanceRouter from "./routes/performance.route.js";
+import CheckInsRouter from "./routes/checkIns.routes.js";
+import GoalRouter from "./routes/goal.router.js";
+import cardsRouter from "./routes/cards.route.js";
 
 app.use("/api/user", userRouter);
 app.use("/api/user/auth", userAuth);
 app.use("/api/performance", performanceRouter);
 app.use("/api/check-ins", CheckInsRouter);
+app.use("/api/goals", GoalRouter);
+app.use("/api/cards", cardsRouter);
 
 app.use(
   (
     error: ApiError | Error,
     req: express.Request,
     res: express.Response,
-    next: express.NextFunction
+    next: express.NextFunction,
   ) => {
     const statusCode = (error as ApiError).statusCode || 500;
     const message = error.message || "Internal Server Error";
     res.status(statusCode).json({ message });
-  }
+  },
 );
 
 export default app;

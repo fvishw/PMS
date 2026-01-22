@@ -29,7 +29,7 @@ type QuestionFormPayload = {
 
 export const getColumns = (
   control: Control<QuestionFormPayload>,
-  remove: (index: number) => void
+  remove: (index: number) => void,
 ): ColumnDef<QuestionRow>[] => [
   {
     id: "sr.no",

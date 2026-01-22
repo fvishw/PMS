@@ -1,6 +1,6 @@
 import { Schema, model, Document, Types } from "mongoose";
 import bcrypt from "bcrypt";
-import AuthService from "../utils/AuthService.ts";
+import AuthService from "@/utils/AuthService.js";
 
 interface IUser extends Document {
   fullName: string;
@@ -8,7 +8,8 @@ interface IUser extends Document {
   password: string;
   role: "admin" | "employee" | "manager";
   designation: Types.ObjectId;
-  parentReviewer?: Types.ObjectId;
+  parentReviewer: Types.ObjectId;
+  adminReviewer: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
   isSignUpComplete?: boolean;
@@ -17,7 +18,6 @@ interface IUser extends Document {
   postPasswordResetCleanup(): void;
   comparePassword(password: string): boolean;
   generateAuthToken(): string;
-  generateRefreshToken(): string;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -35,12 +35,21 @@ const UserSchema = new Schema<IUser>(
       type: Schema.Types.ObjectId,
       ref: "Designation",
     },
-    parentReviewer: { type: Schema.Types.ObjectId, ref: "User" },
+    parentReviewer: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    adminReviewer: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     isSignUpComplete: { type: Boolean, default: false },
     refreshToken: { type: String, default: "" },
     passwordResetToken: { type: String, default: null },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 UserSchema.pre<IUser>("save", async function () {
@@ -54,9 +63,7 @@ UserSchema.method("comparePassword", function (password: string) {
 UserSchema.method("generateAuthToken", function () {
   return AuthService.generateAccessToken(this._id, this.role, this.email);
 });
-UserSchema.method("generateRefreshToken", function () {
-  return AuthService.generateRefreshToken(this._id, this.email);
-});
+
 UserSchema.method("postPasswordResetCleanup", function () {
   this.passwordResetToken = null;
 });

@@ -1,15 +1,15 @@
 import type { Request, Response } from "express";
 import mongoose, { Types } from "mongoose";
-import { QuestionsPayload, AnswerPayload } from "../types/checkIns.ts";
-import { ApiError } from "../utils/ApiError.ts";
-import asyncHandler from "../utils/asyncHandler.ts";
+import { QuestionsPayload, AnswerPayload } from "@/types/checkIns.js";
+import { ApiError } from "@/utils/ApiError.js";
+import asyncHandler from "@/utils/asyncHandler.js";
 import {
   CheckInQuestions,
   type ICheckInQuestion,
-} from "../models/question.model.ts";
-import { ApiResponse } from "../utils/ApiResponse.ts";
-import type { IUser } from "../models/user.model.ts";
-import UserCheckIns from "../models/userCheckIns.model.ts";
+} from "../models/question.model.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { User, type IUser } from "../models/user.model.js";
+import UserCheckIns from "../models/userCheckIns.model.js";
 
 const addCheckIns = asyncHandler(async (req: Request, res: Response) => {
   const { checkIns } = req.body;
@@ -46,10 +46,11 @@ const addCheckInQuestions = asyncHandler(
     if (parsedCheckInQuestions.success === false) {
       throw new ApiError(400, "Invalid checkInQuestions payload");
     }
-    const { questions, version } = parsedCheckInQuestions.data;
+    const { questions, version, designationId } = parsedCheckInQuestions.data;
 
     const isVersionExists = await CheckInQuestions.findOne({
-      version: version,
+      version,
+      designation: designationId,
     });
 
     if (isVersionExists) {
@@ -59,7 +60,8 @@ const addCheckInQuestions = asyncHandler(
     const questionsToInsert = questions.map((question) => ({
       question: question.question,
       type: question.type,
-      version: version,
+      version,
+      designation: designationId,
       isActive: false,
     }));
 
@@ -68,9 +70,9 @@ const addCheckInQuestions = asyncHandler(
     return res
       .status(201)
       .json(
-        new ApiResponse(201, null, "Check-in questions added successfully")
+        new ApiResponse(201, null, "Check-in questions added successfully"),
       );
-  }
+  },
 );
 
 const getCheckIns = asyncHandler(async (req: Request, res: Response) => {
@@ -90,19 +92,27 @@ const getCheckIns = asyncHandler(async (req: Request, res: Response) => {
         new ApiResponse(
           200,
           { questions: [] },
-          "User has already submitted this month's check-ins"
-        )
+          "User has already submitted this month's check-ins",
+        ),
       );
   }
 
+  const currentUser = await User.findById(userId);
+  if (!currentUser) {
+    throw new ApiError(404, "User not found");
+  }
+
+  const designationId = currentUser.designation;
+
   const checkInQuestion = await CheckInQuestions.find({
     isActive: true,
+    designation: String(designationId),
   }).select("-isActive -__v -createdAt ");
 
   return res
     .status(200)
     .json(
-      new ApiResponse(200, { questions: checkInQuestion }, "Check-ins fetched")
+      new ApiResponse(200, { questions: checkInQuestion }, "Check-ins fetched"),
     );
 });
 
@@ -110,7 +120,7 @@ const getPastCheckIns = asyncHandler(async (req: Request, res: Response) => {
   const { month, year } = req.query;
   const userId = req.user?.id!;
 
-  const pastCheckIns = await UserCheckIns.find({
+  const pastCheckIns = await UserCheckIns.findOne({
     user: userId,
     createdAt: {
       $gte: new Date(Number(year as string), Number(month as string) - 1, 1),
@@ -120,26 +130,25 @@ const getPastCheckIns = asyncHandler(async (req: Request, res: Response) => {
     .populate("answers.questionId", "question type")
     .lean();
 
-  const flattenedCheckIns = pastCheckIns.map((checkIn) => ({
-    ...checkIn,
-    answers: checkIn.answers.map((item) => ({
-      _id: item.questionId._id,
-      question: item.questionId?.question,
-      answer: item.answer,
-      type: item.questionId?.type,
-    })),
-  }));
+  if (!pastCheckIns) {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, { answers: [] }, "Past Check-ins fetched"));
+  }
 
-  const result =
-    flattenedCheckIns.length === 0
-      ? {
-          answers: [],
-        }
-      : flattenedCheckIns[0];
+  const flattenedCheckIns = {
+    ...pastCheckIns,
+    answers: pastCheckIns.answers.map((item) => ({
+      _id: (item.questionId as any)._id,
+      question: (item.questionId as any)?.question as string,
+      answer: item.answer,
+      type: (item.questionId as any)?.type as string,
+    })),
+  };
 
   return res
     .status(200)
-    .json(new ApiResponse(200, result, "Past Check-ins fetched"));
+    .json(new ApiResponse(200, flattenedCheckIns, "Past Check-ins fetched"));
 });
 
 const getAllUserCheckIns = asyncHandler(async (req: Request, res: Response) => {
@@ -163,8 +172,8 @@ const getAllUserCheckIns = asyncHandler(async (req: Request, res: Response) => {
       new ApiResponse(
         200,
         { checkIns: flattenedCheckIns },
-        "User Check-ins fetched"
-      )
+        "User Check-ins fetched",
+      ),
     );
 });
 
@@ -188,15 +197,21 @@ const getUserCheckInById = asyncHandler(async (req: Request, res: Response) => {
     ...checkIn,
     answers: checkIn.answers.map((item) => ({
       _id: item.questionId._id,
-      question: item.questionId?.question,
+      question: (item.questionId as any)?.question as string,
       answer: item.answer,
-      type: item.questionId?.type,
+      type: (item.questionId as any)?.type as string,
     })),
   };
 
   return res
     .status(200)
-    .json(new ApiResponse(200, flattenedCheckIns, "Past Check-ins fetched"));
+    .json(
+      new ApiResponse(
+        200,
+        { checkIns: flattenedCheckIns },
+        "Past Check-ins fetched",
+      ),
+    );
 });
 
 const getAllCheckInQuestions = asyncHandler(
@@ -204,17 +219,28 @@ const getAllCheckInQuestions = asyncHandler(
     const checkInQuestions = await CheckInQuestions.aggregate([
       {
         $group: {
-          _id: "$version",
+          _id: "$designation",
+          version: { $first: "$version" },
           createdAt: { $first: "$createdAt" },
           isActive: { $first: "$isActive" },
+          designation: { $first: "$designation" },
+        },
+      },
+      {
+        $lookup: {
+          from: "designations",
+          localField: "designation",
+          foreignField: "_id",
+          as: "designationDetails",
         },
       },
       {
         $project: {
           _id: 0,
-          version: "$_id",
+          version: 1,
           createdAt: 1,
           isActive: 1,
+          designation: { $arrayElemAt: ["$designationDetails", 0] },
         },
       },
     ]);
@@ -225,29 +251,34 @@ const getAllCheckInQuestions = asyncHandler(
         new ApiResponse(
           200,
           { questionSet: checkInQuestions },
-          "Check-in questions fetched"
-        )
+          "Check-in questions fetched",
+        ),
       );
-  }
+  },
 );
 
 const activateQuestionSet = asyncHandler(
   async (req: Request, res: Response) => {
-    const { version } = req.body;
+    const { version, designationId } = req.body;
     if (!version || typeof version !== "string") {
       throw new ApiError(400, "Invalid or missing version parameter");
+    }
+    if (!designationId || !Types.ObjectId.isValid(designationId)) {
+      throw new ApiError(400, "Invalid or missing designationId parameter");
     }
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
       await CheckInQuestions.updateMany(
-        { isActive: true },
-        { $set: { isActive: false } }
+        { isActive: true, designation: new Types.ObjectId(designationId) },
+        { $set: { isActive: false } },
+        { session },
       );
 
       await CheckInQuestions.updateMany(
-        { version: version },
-        { $set: { isActive: true } }
+        { version: version, designation: new Types.ObjectId(designationId) },
+        { $set: { isActive: true } },
+        { session },
       );
       await session.commitTransaction();
     } catch (error) {
@@ -260,7 +291,7 @@ const activateQuestionSet = asyncHandler(
     return res
       .status(200)
       .json(new ApiResponse(200, null, "Question set activated"));
-  }
+  },
 );
 
 const getAllCheckInQuestionsByVersion = asyncHandler(
@@ -297,9 +328,9 @@ const getAllCheckInQuestionsByVersion = asyncHandler(
     return res
       .status(200)
       .json(
-        new ApiResponse(200, checkInQuestions[0], "Check-in questions fetched")
+        new ApiResponse(200, checkInQuestions[0], "Check-in questions fetched"),
       );
-  }
+  },
 );
 
 export {

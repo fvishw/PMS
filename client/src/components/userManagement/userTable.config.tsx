@@ -11,7 +11,7 @@ type Reviewer = {
 export type UserTableColumn = {
   fullName: string;
   email: string;
-  createdAt: string;
+  createdAt: string | Date;
   role: string;
   designation: Designation;
   parentReviewer: Reviewer;
@@ -50,8 +50,8 @@ export const columns: ColumnDef<UserTableColumn>[] = [
     accessorKey: "createdAt",
     header: () => <div className="text-center">Created At</div>,
     cell: ({ row }) => {
-      const formattedDate = dayjs(row.getValue("createdAt")).format("D MMM YY");
-
+      const raw: Date | string = row.getValue("createdAt");
+      const formattedDate = raw ? dayjs(raw).format("D MMM YY") : "-";
       return <div className="text-center">{formattedDate}</div>;
     },
   },

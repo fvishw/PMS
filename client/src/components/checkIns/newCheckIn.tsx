@@ -7,6 +7,7 @@ import { Spinner } from "../ui/spinner";
 import CheckInQuestionAns from "./checkInQuestionAns";
 import { toast } from "sonner";
 import { queryClient } from "@/utils/queryClient";
+import ApiErrorMessage from "../ApiErrorMessage";
 
 export type CheckInFormValue = {
   questionId: string;
@@ -50,6 +51,9 @@ function NewCheckIn() {
   if (isLoading) {
     return <Spinner />;
   }
+  if (error) {
+    return <ApiErrorMessage message={error.message} />;
+  }
 
   const content =
     data && data?.questions?.length === 0 ? (
@@ -59,7 +63,7 @@ function NewCheckIn() {
     ) : (
       <div className="w-full flex flex-col space-y-4">
         <CheckInQuestionAns
-          questions={data?.questions || null}
+          questions={data?.questions || []}
           register={register}
           setValue={setValue}
           isPastCheckIn={false}

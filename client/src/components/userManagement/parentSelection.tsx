@@ -13,6 +13,7 @@ import { Label } from "../ui/label";
 import { parentRoleMapper } from "./options";
 import { Controller } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
+import ApiErrorMessage from "../ApiErrorMessage";
 
 export const ParentSelection = ({
   selectedRole,
@@ -27,7 +28,7 @@ export const ParentSelection = ({
 }) => {
   const parentRole = parentRoleMapper[selectedRole];
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["designations", parentRole],
     queryFn: ({ queryKey }) => Api.fetchUsersByRole(queryKey[1]),
     enabled: [null, undefined, ""].indexOf(parentRole) === -1,
@@ -37,6 +38,13 @@ export const ParentSelection = ({
       <div className="w-full ">
         <Spinner className="size-8 text-primary" />
       </div>
+    );
+  }
+  if (error) {
+    return (
+      <ApiErrorMessage
+        message={error.message || "Failed to load parent reviewers"}
+      />
     );
   }
   return (

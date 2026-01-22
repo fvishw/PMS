@@ -13,10 +13,26 @@ import Api from "@/api/api";
 import { useMutation } from "@tanstack/react-query";
 import toasterPosition from "@/utils/toaster";
 
-export const QuestionTableAction = ({ version }: { version: string }) => {
+interface QuestionTableActionProps {
+  version: string;
+  designationId: string;
+  isActive: boolean;
+}
+
+export const QuestionTableAction = ({
+  version,
+  designationId,
+  isActive,
+}: QuestionTableActionProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const { mutate } = useMutation({
-    mutationFn: (version: string) => Api.setActiveQuestionSet(version),
+    mutationFn: ({
+      version,
+      designationId,
+    }: {
+      version: string;
+      designationId: string;
+    }) => Api.setActiveQuestionSet(version, designationId),
     onError: (error) => {
       toast.error(error.message || "Failed to set active question set", {
         position: "top-right",
@@ -26,6 +42,10 @@ export const QuestionTableAction = ({ version }: { version: string }) => {
       toast.success("Active question set updated", toasterPosition);
     },
   });
+
+  const handleVersionActivate = (version: string, designationId: string) => {
+    mutate({ version, designationId });
+  };
   return (
     <>
       <div className="text-center">
@@ -40,9 +60,13 @@ export const QuestionTableAction = ({ version }: { version: string }) => {
             <DropdownMenuItem onClick={() => setIsOpen(true)}>
               View Questions
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => mutate(version)}>
-              Set as Active
-            </DropdownMenuItem>
+            {isActive ? null : (
+              <DropdownMenuItem
+                onClick={() => handleVersionActivate(version, designationId)}
+              >
+                Set as Active
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

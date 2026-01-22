@@ -1,5 +1,5 @@
-import { Schema, model, Document, Types } from "mongoose";
-import type { IFinalReview, IMasterPerformance } from "./masterPerformance.ts";
+import { Schema, model, Types } from "mongoose";
+import type { IMasterPerformance } from "./masterPerformance.js";
 
 interface IUserPerformance extends IMasterPerformance {
   user: Types.ObjectId;
@@ -11,7 +11,8 @@ interface IUserPerformance extends IMasterPerformance {
     | "self_review"
     | "manager_review"
     | "admin_review"
-    | "user_final_review";
+    | "user_final_review"
+    | "completed";
   interval: {
     quarterly: "Q1" | "Q2" | "Q3" | "Q4";
     year: number;
@@ -40,6 +41,8 @@ const UserPerformanceSchema = new Schema<IUserPerformance>(
         score: { type: Number },
       },
     ],
+    areaOfStrength: { type: String },
+    areaOfImprovement: { type: String },
     finalReview: {
       adminReview: {
         remarks: { type: String },
@@ -61,6 +64,7 @@ const UserPerformanceSchema = new Schema<IUserPerformance>(
         "manager_review",
         "admin_review",
         "user_final_review",
+        "completed",
       ],
     },
     // this need to added for tracking performance by interval like quarterly and yearly
@@ -78,11 +82,11 @@ const UserPerformanceSchema = new Schema<IUserPerformance>(
     },
     isKpiLocked: { type: Boolean, default: false },
     parentReviewer: { type: Types.ObjectId, ref: "User", required: true },
-    adminReviewer: { type: Types.ObjectId, ref: "User" },
+    adminReviewer: { type: Types.ObjectId, ref: "User", required: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 export const UserPerformance = model<IUserPerformance>(
   "UserPerformance",
-  UserPerformanceSchema
+  UserPerformanceSchema,
 );

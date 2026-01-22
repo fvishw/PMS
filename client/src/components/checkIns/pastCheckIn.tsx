@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { monthOptions, yearOptions } from "@/types/option";
 import { useState } from "react";
-import ErrorMessage from "../errorMessage";
+import ApiErrorMessage from "../ApiErrorMessage";
 
 function PastCheckIn() {
   const [year, setYear] = useState(new Date().getFullYear().toString());
@@ -32,7 +32,7 @@ function PastCheckIn() {
     );
   }
   if (error) {
-    return <ErrorMessage message={error.message} />;
+    return <ApiErrorMessage message={error.message} />;
   }
   const pastCheckIns =
     data && data?.answers?.length === 0 ? (

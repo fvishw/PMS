@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import Api from "@/api/api";
 import { CustomDataTable } from "../customTable";
 import { columns } from "./userTable.config";
-import ErrorMessage from "../errorMessage";
+import ApiErrorMessage from "../ApiErrorMessage";
 
 export function UserTable() {
   const { data, error, isLoading } = useQuery({
@@ -15,10 +15,10 @@ export function UserTable() {
     return <div>Loading...</div>;
   }
   if (error) {
-    return <ErrorMessage message={error.message} />;
+    return <ApiErrorMessage message={error.message} />;
   }
   if (!data || !users) {
-    return <ErrorMessage message="No user data available." />;
+    return <ApiErrorMessage message="No user data available." />;
   }
 
   return (
