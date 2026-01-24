@@ -82,7 +82,13 @@ export function LoginForm({
                   placeholder="v@nexforge.tech"
                   {...register("email", { required: "Email is required" })}
                 />
-                <ErrorMessage errors={errors} name="email" as="p" />
+                <ErrorMessage
+                  errors={errors}
+                  name="email"
+                  render={({ message }) => (
+                    <p className="text-sm text-red-600">{message}</p>
+                  )}
+                />
               </Field>
               <Field>
                 <div className="flex items-center">
@@ -116,8 +122,14 @@ export function LoginForm({
                       <IconEyeClosed size={18} />
                     )}
                   </button>
-                  <ErrorMessage errors={errors} name="password" as="p" />
                 </div>
+                  <ErrorMessage
+                    errors={errors}
+                    name="password"
+                    render={({ message }) => (
+                      <p className="text-sm text-red-600">{message}</p>
+                    )}
+                  />
               </Field>
               <Field>
                 <Button type="submit" disabled={isPending}>

@@ -86,7 +86,13 @@ export function SignupForm({
                     required: "Email is required",
                   })}
                 />
-                <ErrorMessage errors={errors} name="email" />
+                <ErrorMessage
+                  errors={errors}
+                  name="email"
+                  render={({ message }) => (
+                    <p className="text-sm text-red-600">{message}</p>
+                  )}
+                />
               </Field>
               <Field>
                 <Field className="grid grid-cols-1 gap-4">
@@ -119,8 +125,14 @@ export function SignupForm({
                           <IconEyeClosed size={18} />
                         )}
                       </button>
-                      <ErrorMessage errors={errors} name="password" as="p" />
                     </div>
+                      <ErrorMessage
+                        errors={errors}
+                        name="password"
+                        render={({ message }) => (
+                          <p className="text-sm text-red-600">{message}</p>
+                        )}
+                      />
                   </Field>
                   <Field>
                     <FieldLabel htmlFor="confirm-password">
@@ -141,7 +153,9 @@ export function SignupForm({
                       <ErrorMessage
                         errors={errors}
                         name="confirmPassword"
-                        as="p"
+                        render={({ message }) => (
+                          <p className="text-sm text-red-600">{message}</p>
+                        )}
                       />
                       <button
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
