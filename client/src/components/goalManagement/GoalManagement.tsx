@@ -6,6 +6,7 @@ import Api from "@/api/api";
 import { Goal } from "@/types/goal";
 import dayjs from "dayjs";
 import { useState } from "react";
+import { Button } from "../ui/button";
 
 export const getTransformedGoals = (data: Goal[]): GoalRow[] => {
   const transformedGoals: GoalRow[] = data.map((goal: Goal) => {
@@ -49,6 +50,7 @@ export const GoalManagement = () => {
     <div className="flex flex-col gap-6">
       <div className="flex justify-end">
         <GoalFormDialog isOpen={isOpen} onClose={() => setIsOpen(false)} />
+        <Button onClick={() => setIsOpen(!isOpen)}>Create goal</Button>
       </div>
 
       {/* <GoalsSummary {...summary} /> */}

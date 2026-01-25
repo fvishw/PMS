@@ -73,9 +73,6 @@ function GoalFormDialog({ isOpen, onClose }: GoalFormDialogProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogTrigger asChild>
-        <Button>Create goal</Button>
-      </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Create a new goal</DialogTitle>
