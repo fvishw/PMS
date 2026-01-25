@@ -34,7 +34,7 @@ export function NavUser({
     avatar: string;
   };
 }) {
-  const { isMobile } = useSidebar();
+  const { isMobile, setOpenMobile } = useSidebar();
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -98,6 +98,11 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {
+                try {
+                  if (isMobile && typeof setOpenMobile === "function") {
+                    setOpenMobile(false);
+                  }
+                } catch (e) {}
                 logout();
                 navigate("/");
               }}
