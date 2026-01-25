@@ -38,7 +38,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     : {
         name: "",
         email: "",
-        avatar: "",
+        avatar:
+          "https://ui-avatars.com/api/?name=Guest&background=random&size=128",
       };
 
   return (

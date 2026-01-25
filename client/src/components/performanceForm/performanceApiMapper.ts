@@ -3,7 +3,7 @@ import { PerformanceFormValue } from "@/types/performance";
 
 const getPostPerformanceApi = (
   stage: string,
-  data: PerformanceFormValue
+  data: PerformanceFormValue,
 ): Promise<unknown> => {
   const parsedData: PerformanceFormValue = {
     ...data,
@@ -43,9 +43,10 @@ const getPostPerformanceApi = (
 const getPerformanceApi = (performanceId?: string) => {
   if (performanceId) {
     return () => Api.getPerformanceFormById(performanceId!);
-  } else {
+  } else if (!performanceId) {
     return () => Api.fetchUserPerformanceForm();
   }
+  return () => Promise.reject(new Error("Invalid performance ID"));
 };
 
 export { getPostPerformanceApi, getPerformanceApi };
