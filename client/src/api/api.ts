@@ -18,6 +18,9 @@ import {
   GetCheckInById,
   GetPerformanceById,
   GetPerformanceStatus,
+  GetDashboardCardStatus,
+  GetReviewDashboardCardStatus,
+  GetGoalCardStatus,
 } from "@/types/apiResponse";
 import { CheckInPayload, ICheckInPayload } from "@/types/chekin";
 import { Goal } from "@/types/goal";
@@ -228,6 +231,16 @@ export class API {
   }
   getPerformanceStatus(): Promise<GetPerformanceStatus> {
     return this.request(this.instance.get("/cards/performance-status"));
+  }
+
+  getDashboardCardStatus(): Promise<GetDashboardCardStatus> {
+    return this.request(this.instance.get("/cards/dashboard-status"));
+  }
+  getReviewCardStatus(): Promise<GetReviewDashboardCardStatus> {
+    return this.request(this.instance.get("/cards/review-dashboard-status"));
+  }
+  getGoalCardStatus(): Promise<GetGoalCardStatus> {
+    return this.request(this.instance.get("/cards/goal-dashboard-status"));
   }
 }
 

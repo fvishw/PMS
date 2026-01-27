@@ -96,6 +96,27 @@ interface GetPerformanceStatus {
     | "user_final_review"
     | "completed";
 }
+
+interface GetDashboardCardStatus {
+  stats: {
+    totalUser: number;
+    totalMasterPerformanceTemplate: number;
+    totalCompletedReview: number;
+  };
+}
+interface GetReviewDashboardCardStatus {
+  stats: {
+    totalMasterPerformanceTemplate: number;
+    totalCompletedReview: number;
+    totalPendingReview: number;
+  };
+}
+interface GetGoalCardStatus {
+  stats: {
+    totalGoals: number;
+    completedGoals: number;
+  };
+}
 export {
   UserPerformanceFormResponse,
   GetAllUserResponse,
@@ -115,4 +136,7 @@ export {
   GetCheckInById,
   GetPerformanceById,
   GetPerformanceStatus,
+  GetDashboardCardStatus,
+  GetReviewDashboardCardStatus,
+  GetGoalCardStatus,
 };
