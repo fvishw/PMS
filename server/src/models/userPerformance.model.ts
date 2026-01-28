@@ -1,7 +1,7 @@
 import { Schema, model, Types } from "mongoose";
 import type { IMasterPerformance } from "./masterPerformance.js";
 
-interface IUserPerformance extends IMasterPerformance {
+export interface IUserPerformance extends IMasterPerformance {
   user: Types.ObjectId;
   parentReviewer: Types.ObjectId;
   adminReviewer?: Types.ObjectId;

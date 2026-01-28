@@ -12,7 +12,6 @@ export const Home = () => {
     <>
       {role === "admin" && <SectionCards />}
       <UserDashboard />
-      {/* colums need to change */}
       <CustomDataTable data={[]} columns={columns} />
     </>
   );
