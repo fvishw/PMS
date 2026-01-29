@@ -81,6 +81,10 @@ const router = createBrowserRouter([
         Component: lazy(() => import("@/pages/outlets/userManagementLayout")),
       },
       {
+        path: "settings",
+        Component: lazy(() => import("@/pages/outlets/settingsLayout")),
+      },
+      {
         path: "manage-performance",
         children: [
           {

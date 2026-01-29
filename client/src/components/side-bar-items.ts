@@ -18,10 +18,7 @@ type SidebarItem = {
   icon: Icon;
 };
 
-export const sidebarItems: Record<
-  role,
-  SidebarItem[]
-> = {
+export const sidebarItems: Record<role, SidebarItem[]> = {
   admin: [
     {
       title: "Dashboard",
@@ -57,6 +54,11 @@ export const sidebarItems: Record<
       title: "Personal Details",
       url: "me",
       icon: IconUser,
+    },
+    {
+      title: "Settings",
+      url: "settings",
+      icon: IconDatabaseCog,
     },
   ],
   manager: [

@@ -42,6 +42,23 @@ const monthOptions: IOption[] = [
   { label: "December", value: "12" },
 ];
 
+const quarterOptions: IOption[] = [
+  { label: "Q1", value: "Q1" },
+  { label: "Q2", value: "Q2" },
+  { label: "Q3", value: "Q3" },
+  { label: "Q4", value: "Q4" },
+];
+
+const isEnabledOptions: IOption[] = [
+  { label: "Enabled", value: "true" },
+  { label: "Disabled", value: "false" },
+];
 export default IOption;
 
-export { TypeOptions, yearOptions, monthOptions };
+export {
+  TypeOptions,
+  yearOptions,
+  monthOptions,
+  quarterOptions,
+  isEnabledOptions,
+};
