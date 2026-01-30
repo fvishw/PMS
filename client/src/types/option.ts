@@ -50,8 +50,8 @@ const quarterOptions: IOption[] = [
 ];
 
 const isEnabledOptions: IOption[] = [
-  { label: "Enabled", value: "true" },
-  { label: "Disabled", value: "false" },
+  { label: "Enabled", value: "enabled" },
+  { label: "Disabled", value: "disabled" },
 ];
 export default IOption;
 

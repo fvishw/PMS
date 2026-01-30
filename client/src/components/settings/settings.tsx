@@ -9,13 +9,18 @@ import {
 import { isEnabledOptions, quarterOptions } from "@/types/option";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Controller, useForm } from "react-hook-form";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import Api from "@/api/api";
+import { toast } from "sonner";
+import { Spinner } from "../ui/spinner";
+import ApiErrorMessage from "../ApiErrorMessage";
 
-interface ISettingsForm {
-  quarter: string;
-  year: string;
+export interface ISettingsForm {
+  currentQuarter: string;
+  currentYear: string;
   kpiStartDate: string;
   kpiEndDate: string;
   enableKPI: string;
@@ -23,8 +28,80 @@ interface ISettingsForm {
   appraisalEndDate: string;
   enableAppraisal: string;
 }
+export interface SettingsValue {
+  currentQuarter: "Q1" | "Q2" | "Q3" | "Q4";
+  currentYear: number;
+  kpiStartDate: string | null;
+  kpiEndDate: string | null;
+  isKpiEnabled: boolean;
+  appraisalStartDate: string | null;
+  appraisalEndDate: string | null;
+  isAppraisalEnabled: boolean;
+}
+function settingsDtoToForm(settings: any): ISettingsForm {
+  return {
+    currentQuarter: settings.currentQuarter,
+    currentYear: settings?.currentYear ? settings.currentYear.toString() : "",
+
+    kpiStartDate: settings.kpiStartDate
+      ? settings.kpiStartDate.slice(0, 10)
+      : "",
+
+    kpiEndDate: settings.kpiEndDate ? settings.kpiEndDate.slice(0, 10) : "",
+
+    enableKPI: settings.isKpiEnabled ? "enabled" : "disabled",
+
+    appraisalStartDate: settings.appraisalStartDate
+      ? settings.appraisalStartDate.slice(0, 10)
+      : "",
+
+    appraisalEndDate: settings.appraisalEndDate
+      ? settings.appraisalEndDate.slice(0, 10)
+      : "",
+
+    enableAppraisal: settings.isAppraisalEnabled ? "enabled" : "disabled",
+  };
+}
+
+function formToSettingsDto(form: any): SettingsValue {
+  return {
+    currentQuarter: form.currentQuarter,
+    currentYear: Number(form.currentYear),
+
+    kpiStartDate: form.kpiStartDate
+      ? new Date(form.kpiStartDate).toISOString()
+      : null,
+
+    kpiEndDate: form.kpiEndDate
+      ? new Date(form.kpiEndDate).toISOString()
+      : null,
+
+    isKpiEnabled: form.enableKPI === "enabled",
+
+    appraisalStartDate: form.appraisalStartDate
+      ? new Date(form.appraisalStartDate).toISOString()
+      : null,
+
+    appraisalEndDate: form.appraisalEndDate
+      ? new Date(form.appraisalEndDate).toISOString()
+      : null,
+
+    isAppraisalEnabled: form.enableAppraisal === "enabled",
+  };
+}
+
 function Settings() {
+  const {
+    data,
+    isLoading: getSettingsLoading,
+    error,
+  } = useQuery({
+    queryKey: ["settings"],
+    queryFn: () => Api.getSettings(),
+  });
+
   const [currentYear] = useState<string>(new Date().getFullYear().toString());
+
   const yearOptions = [
     {
       label: currentYear,
@@ -35,21 +112,33 @@ function Settings() {
       value: (parseInt(currentYear) - 1).toString(),
     },
   ];
-  const { control, handleSubmit } = useForm<ISettingsForm>({
-    defaultValues: {
-      quarter: "",
-      year: currentYear,
-      kpiStartDate: "",
-      kpiEndDate: "",
-      enableKPI: "",
-      appraisalStartDate: "",
-      appraisalEndDate: "",
-      enableAppraisal: "",
+  const { control, handleSubmit, reset } = useForm<ISettingsForm>();
+
+  const { mutate, isPending: isUpdating } = useMutation({
+    mutationFn: (data: ISettingsForm) =>
+      Api.updateSettings(formToSettingsDto(data)),
+    onSuccess: () => {
+      toast.success("Settings updated successfully", {
+        position: "top-right",
+      });
     },
   });
 
-  return (
-    <form onSubmit={handleSubmit(console.log)} className="space-y-4">
+  useEffect(() => {
+    if (data && data?.settings && !getSettingsLoading) {
+      const settingsForm = settingsDtoToForm(data.settings);
+      console.log(settingsForm);
+      reset(settingsForm);
+    }
+  }, [data, getSettingsLoading, reset]);
+
+  const onSubmit = (data: ISettingsForm) => {
+    mutate(data);
+  };
+  let contentToRender;
+
+  const settingsForm = (
+    <>
       <div className="space-y-4">
         <div className="rounded-lg border bg-card p-4 sm:p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -62,7 +151,7 @@ function Settings() {
             <div className="grid grid-cols-2 gap-2 sm:flex sm:gap-3">
               <Controller
                 control={control}
-                name="quarter"
+                name="currentQuarter"
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger className="w-full sm:w-[180px]">
@@ -85,7 +174,7 @@ function Settings() {
               />
               <Controller
                 control={control}
-                name="year"
+                name="currentYear"
                 render={({ field }) => (
                   <Select
                     defaultValue={currentYear}
@@ -243,10 +332,32 @@ function Settings() {
         </div>
       </div>
       <div className="flex justify-end">
-        <Button type="submit" className="ml-auto">
-          Save Settings
+        <Button type="submit" className="ml-auto" disabled={isUpdating}>
+          {isUpdating ? "Updating..." : "Save Settings"}
         </Button>
       </div>
+    </>
+  );
+
+  if (getSettingsLoading) {
+    contentToRender = (
+      <div className="w-full flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (data && data?.settings && !getSettingsLoading) {
+    contentToRender = settingsForm;
+  }
+
+  if (error) {
+    contentToRender = <ApiErrorMessage message={error.message} />;
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {contentToRender}
     </form>
   );
 }

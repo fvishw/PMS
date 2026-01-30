@@ -1,43 +1,31 @@
 import { Schema, model, Document } from "mongoose";
 
-interface KpiSettings {
-  isEnabled: boolean;
-  startDate: Date;
-  endDate: Date;
-}
-interface AppraisalSettings {
-  isEnabled: boolean;
-  startDate: Date;
-  endDate: Date;
-}
-
 interface ISettings extends Document {
-  kpiSettings: KpiSettings;
-  appraisalSettings: AppraisalSettings;
-  currentQuarter: string;
+  kpiStartDate: Date | null;
+  kpiEndDate: Date | null;
+  isKpiEnabled: boolean;
+  appraisalStartDate: Date | null;
+  appraisalEndDate: Date | null;
+  isAppraisalEnabled: boolean;
+  currentQuarter: "Q1" | "Q2" | "Q3" | "Q4";
   currentYear: number;
   updatedAt: Date;
 }
 
 const SettingsSchema = new Schema<ISettings>(
   {
-    kpiSettings: {
-      isEnabled: { type: Boolean, default: false },
-      startDate: { type: Date, default: null },
-      endDate: { type: Date, default: null },
-    },
-    appraisalSettings: {
-      isEnabled: { type: Boolean, default: false },
-      startDate: { type: Date, default: null },
-      endDate: { type: Date, default: null },
-    },
+    kpiStartDate: { type: Date, default: null },
+    kpiEndDate: { type: Date, default: null },
+    isKpiEnabled: { type: Boolean, default: false },
+    appraisalStartDate: { type: Date, default: null },
+    appraisalEndDate: { type: Date, default: null },
+    isAppraisalEnabled: { type: Boolean, default: false },
     currentQuarter: {
       type: String,
       enum: ["Q1", "Q2", "Q3", "Q4"],
       required: true,
     },
     currentYear: { type: Number, required: true },
-    updatedAt: { type: Date, default: Date.now },
   },
   {
     timestamps: true,

@@ -117,6 +117,20 @@ interface GetGoalCardStatus {
     completedGoals: number;
   };
 }
+interface GetCurrentSettings {
+  settings: {
+    kpiStartDate: string | null;
+    kpiEndDate: string | null;
+    isKpiEnabled: boolean;
+    appraisalStartDate: string | null;
+    appraisalEndDate: string | null;
+    isAppraisalEnabled: boolean;
+    currentQuarter: "Q1" | "Q2" | "Q3" | "Q4";
+    currentYear: number;
+    updatedAt: string;
+  };
+}
+
 export {
   UserPerformanceFormResponse,
   GetAllUserResponse,
@@ -139,4 +153,5 @@ export {
   GetDashboardCardStatus,
   GetReviewDashboardCardStatus,
   GetGoalCardStatus,
+  GetCurrentSettings,
 };
