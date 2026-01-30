@@ -33,6 +33,7 @@ interface GetAllPerformanceRecordsResponse {
 }
 
 interface GetUserKPiDetails {
+  isKpiEnabled: boolean;
   hasKpiTemplate: boolean;
   hasUserAccepted: boolean;
   criteria: KpiCriteria[];

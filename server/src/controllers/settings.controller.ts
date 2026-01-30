@@ -40,7 +40,9 @@ const updateSettings = asyncHandler(async (req: Request, res: Response) => {
     { $set: parsedSettings.data },
     { new: true, upsert: true },
   );
-  return res.status(200).json(new ApiResponse(200, updatedSettings));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { settings: updatedSettings }));
 });
 
 export { getCurrentSettings, updateSettings };

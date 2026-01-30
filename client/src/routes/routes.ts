@@ -49,7 +49,7 @@ const router = createBrowserRouter([
       },
       {
         path: "kpis",
-        Component: lazy(() => import("@/pages/outlets/performanceLayout")),
+        Component: lazy(() => import("@/pages/outlets/kpiLayout")),
       },
       {
         path: "my-goals",

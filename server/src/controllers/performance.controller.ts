@@ -15,6 +15,7 @@ import {
 } from "@/types/performance.js";
 import { MasterPerformance, type IKpis } from "@/models/masterPerformance.js";
 import { Types } from "mongoose";
+import Settings from "@/models/settings.model.js";
 
 const createPerformanceRecord = asyncHandler(
   async (req: Request, res: Response) => {
@@ -284,24 +285,37 @@ const getReviewAppraisalData = asyncHandler(
 
 const getUserKpiDetails = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id!;
+  const isKpiActive = await Settings.checkIsKpiEnabled();
 
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  if (!isKpiActive) {
+    return res.status(200).json({
+      isKpiEnabled: false,
+      hasKpiTemplate: false,
+      hasUserAccepted: true,
+      criteria: [],
+    });
+  }
   const userPerformance = await UserPerformance.findOne({ user: userId });
 
   if (userPerformance) {
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          { hasKpiTemplate: true, hasUserAccepted: true, criteria: [] },
-          "User KPI details fetched successfully",
-        ),
-      );
-  }
-
-  const user = await User.findById(userId);
-  if (!user) {
-    throw new ApiError(404, "User not found");
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          isKpiEnabled: true,
+          hasKpiTemplate: true,
+          hasUserAccepted: true,
+          criteria: [],
+        },
+        "User KPI details fetched successfully",
+      ),
+    );
   }
 
   const designationId = user.designation;
@@ -310,15 +324,18 @@ const getUserKpiDetails = asyncHandler(async (req: Request, res: Response) => {
   });
 
   if (!masterPerformance) {
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          { hasKpiTemplate: false, hasUserAccepted: false, criteria: [] },
-          "User KPI details fetched successfully",
-        ),
-      );
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          isKpiEnabled: true,
+          hasKpiTemplate: false,
+          hasUserAccepted: false,
+          criteria: [],
+        },
+        "User KPI details fetched successfully",
+      ),
+    );
   }
 
   const userKpis = masterPerformance.kpis;
@@ -327,6 +344,7 @@ const getUserKpiDetails = asyncHandler(async (req: Request, res: Response) => {
     new ApiResponse(
       200,
       {
+        isKpiEnabled: true,
         hasKpiTemplate: true,
         hasUserAccepted: false,
         criteria: userKpis,

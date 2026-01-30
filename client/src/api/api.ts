@@ -247,7 +247,7 @@ export class API {
   getSettings(): Promise<GetCurrentSettings> {
     return this.request(this.instance.get("/settings/"));
   }
-  updateSettings(data: SettingsValue) {
+  updateSettings(data: SettingsValue): Promise<GetCurrentSettings> {
     return this.request(this.instance.put("/settings/", data));
   }
 }

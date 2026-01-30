@@ -17,16 +17,17 @@ import Api from "@/api/api";
 import { toast } from "sonner";
 import { Spinner } from "../ui/spinner";
 import ApiErrorMessage from "../ApiErrorMessage";
+import { queryClient } from "@/utils/queryClient";
 
 export interface ISettingsForm {
   currentQuarter: string;
   currentYear: string;
   kpiStartDate: string;
   kpiEndDate: string;
-  enableKPI: string;
+  isKpiEnabled: string;
   appraisalStartDate: string;
   appraisalEndDate: string;
-  enableAppraisal: string;
+  isAppraisalEnabled: string;
 }
 export interface SettingsValue {
   currentQuarter: "Q1" | "Q2" | "Q3" | "Q4";
@@ -39,6 +40,7 @@ export interface SettingsValue {
   isAppraisalEnabled: boolean;
 }
 function settingsDtoToForm(settings: any): ISettingsForm {
+  console.log("backend Settings", settings);
   return {
     currentQuarter: settings.currentQuarter,
     currentYear: settings?.currentYear ? settings.currentYear.toString() : "",
@@ -49,7 +51,7 @@ function settingsDtoToForm(settings: any): ISettingsForm {
 
     kpiEndDate: settings.kpiEndDate ? settings.kpiEndDate.slice(0, 10) : "",
 
-    enableKPI: settings.isKpiEnabled ? "enabled" : "disabled",
+    isKpiEnabled: settings.isKpiEnabled ? "enabled" : "disabled",
 
     appraisalStartDate: settings.appraisalStartDate
       ? settings.appraisalStartDate.slice(0, 10)
@@ -59,7 +61,7 @@ function settingsDtoToForm(settings: any): ISettingsForm {
       ? settings.appraisalEndDate.slice(0, 10)
       : "",
 
-    enableAppraisal: settings.isAppraisalEnabled ? "enabled" : "disabled",
+    isAppraisalEnabled: settings.isAppraisalEnabled ? "enabled" : "disabled",
   };
 }
 
@@ -76,7 +78,7 @@ function formToSettingsDto(form: any): SettingsValue {
       ? new Date(form.kpiEndDate).toISOString()
       : null,
 
-    isKpiEnabled: form.enableKPI === "enabled",
+    isKpiEnabled: form.isKpiEnabled === "enabled",
 
     appraisalStartDate: form.appraisalStartDate
       ? new Date(form.appraisalStartDate).toISOString()
@@ -86,7 +88,7 @@ function formToSettingsDto(form: any): SettingsValue {
       ? new Date(form.appraisalEndDate).toISOString()
       : null,
 
-    isAppraisalEnabled: form.enableAppraisal === "enabled",
+    isAppraisalEnabled: form.isAppraisalEnabled === "enabled",
   };
 }
 
@@ -112,7 +114,19 @@ function Settings() {
       value: (parseInt(currentYear) - 1).toString(),
     },
   ];
-  const { control, handleSubmit, reset } = useForm<ISettingsForm>();
+
+  const { control, handleSubmit, reset } = useForm<ISettingsForm>({
+    defaultValues: {
+      currentQuarter: "Q1",
+      currentYear: "",
+      kpiStartDate: "",
+      kpiEndDate: "",
+      isKpiEnabled: "",
+      appraisalStartDate: "",
+      appraisalEndDate: "",
+      isAppraisalEnabled: "",
+    },
+  });
 
   const { mutate, isPending: isUpdating } = useMutation({
     mutationFn: (data: ISettingsForm) =>
@@ -121,24 +135,29 @@ function Settings() {
       toast.success("Settings updated successfully", {
         position: "top-right",
       });
+      reset();
+      queryClient.invalidateQueries({ queryKey: ["settings"] });
     },
   });
 
   useEffect(() => {
     if (data && data?.settings && !getSettingsLoading) {
-      const settingsForm = settingsDtoToForm(data.settings);
-      console.log(settingsForm);
-      reset(settingsForm);
+      const defaultValues = settingsDtoToForm(data.settings);
+      // console.log(defaultValues);
+      reset(defaultValues);
     }
   }, [data, getSettingsLoading, reset]);
 
   const onSubmit = (data: ISettingsForm) => {
     mutate(data);
   };
-  let contentToRender;
 
-  const settingsForm = (
-    <>
+  if (error) {
+    return <ApiErrorMessage message={error.message} />;
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-4">
         <div className="rounded-lg border bg-card p-4 sm:p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -175,29 +194,28 @@ function Settings() {
               <Controller
                 control={control}
                 name="currentYear"
-                render={({ field }) => (
-                  <Select
-                    defaultValue={currentYear}
-                    value={field.value}
-                    onValueChange={field.onChange}
-                  >
-                    <SelectTrigger className="w-full sm:w-[180px]">
-                      <SelectValue placeholder="Select Year" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {yearOptions.map((yearOption) => (
-                          <SelectItem
-                            key={yearOption.value}
-                            value={yearOption.value}
-                          >
-                            {yearOption.label}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                )}
+                render={({ field }) => {
+                  console.log("current year", field.value);
+                  return (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full sm:w-[180px]">
+                        <SelectValue placeholder="Select Year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {yearOptions.map((yearOption) => (
+                            <SelectItem
+                              key={yearOption.value}
+                              value={yearOption.value}
+                            >
+                              {yearOption.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  );
+                }}
               />
             </div>
           </div>
@@ -241,7 +259,7 @@ function Settings() {
                 <Label className="mb-2 block text-sm">Enable KPI</Label>
                 <Controller
                   control={control}
-                  name="enableKPI"
+                  name="isKpiEnabled"
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger className="w-full sm:w-[180px]">
@@ -305,26 +323,32 @@ function Settings() {
                 <Label className="mb-2 block text-sm">Enable Appraisal</Label>
                 <Controller
                   control={control}
-                  name="enableAppraisal"
-                  render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className="w-full sm:w-[180px]">
-                        <SelectValue placeholder="Select Status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {isEnabledOptions.map((isEnabledOption) => (
-                            <SelectItem
-                              key={isEnabledOption.value}
-                              value={isEnabledOption.value}
-                            >
-                              {isEnabledOption.label}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  )}
+                  name="isAppraisalEnabled"
+                  render={({ field }) => {
+                    console.log("isAppraisal", field.value);
+                    return (
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="w-full sm:w-[180px]">
+                          <SelectValue placeholder="Select Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            {isEnabledOptions.map((isEnabledOption) => (
+                              <SelectItem
+                                key={isEnabledOption.value}
+                                value={isEnabledOption.value}
+                              >
+                                {isEnabledOption.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    );
+                  }}
                 />
               </div>
             </div>
@@ -336,28 +360,6 @@ function Settings() {
           {isUpdating ? "Updating..." : "Save Settings"}
         </Button>
       </div>
-    </>
-  );
-
-  if (getSettingsLoading) {
-    contentToRender = (
-      <div className="w-full flex items-center justify-center">
-        <Spinner />
-      </div>
-    );
-  }
-
-  if (data && data?.settings && !getSettingsLoading) {
-    contentToRender = settingsForm;
-  }
-
-  if (error) {
-    contentToRender = <ApiErrorMessage message={error.message} />;
-  }
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      {contentToRender}
     </form>
   );
 }

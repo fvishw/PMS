@@ -23,7 +23,17 @@ function Kpis() {
   }
 
   if (data) {
-    const { criteria, hasKpiTemplate, hasUserAccepted } = data;
+    const { criteria, hasKpiTemplate, hasUserAccepted, isKpiEnabled } = data;
+    if (!isKpiEnabled) {
+      return (
+        <div>
+          <p className="text-center  text-muted-foreground">
+            KPI Feature is currently disabled. Please contact your administrator
+            for more information.
+          </p>
+        </div>
+      );
+    }
     if (hasKpiTemplate && !hasUserAccepted) {
       return <KpiDetails criteria={criteria} />;
     } else if (hasUserAccepted) {
