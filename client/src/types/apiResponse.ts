@@ -9,6 +9,7 @@ import { KpiCriteria } from "./criteria";
 import { Goal } from "./goal";
 
 interface UserPerformanceFormResponse {
+  isAppraisalEnabled: boolean;
   hasUserAcceptedKpi: boolean;
   userPerformanceRecord: UserPerformanceForm | null;
 }

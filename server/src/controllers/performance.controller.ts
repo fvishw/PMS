@@ -16,6 +16,7 @@ import {
 import { MasterPerformance, type IKpis } from "@/models/masterPerformance.js";
 import { Types } from "mongoose";
 import Settings from "@/models/settings.model.js";
+import { is } from "zod/locales";
 
 const createPerformanceRecord = asyncHandler(
   async (req: Request, res: Response) => {
@@ -377,20 +378,36 @@ const getUserPerformanceForm = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.id!;
 
+    const isAppraisalActive = await Settings.checkIsAppraisalEnabled();
+
+    if (!isAppraisalActive) {
+      throw new ApiResponse(
+        200,
+        {
+          hasUserAcceptedKpi: false,
+          performanceForm: null,
+          isAppraisalEnabled: false,
+        },
+        "Appraisal process is currently disabled",
+      );
+    }
+
     const userPerformanceRecord = await UserPerformance.findOne({
       user: userId,
     });
 
     if (!userPerformanceRecord) {
-      return res
-        .status(200)
-        .json(
-          new ApiResponse(
-            200,
-            { hasUserAcceptedKpi: false, performanceForm: null },
-            "User has not accepted KPI yet",
-          ),
-        );
+      return res.status(200).json(
+        new ApiResponse(
+          200,
+          {
+            isAppraisalActive: true,
+            hasUserAcceptedKpi: false,
+            performanceForm: null,
+          },
+          "User has not accepted KPI yet",
+        ),
+      );
     }
     const user = await User.findById(userPerformanceRecord.user).select(
       "fullName email role parentReviewer adminReviewer",
@@ -403,6 +420,7 @@ const getUserPerformanceForm = asyncHandler(
           hasUserAcceptedKpi: true,
           userPerformanceRecord,
           user,
+          isAppraisalEnabled: true,
         },
         "User KPIs fetched successfully",
       ),
@@ -441,21 +459,37 @@ const getUserPerformanceFormById = asyncHandler(
   async (req: Request, res: Response) => {
     const { performanceId } = req.query;
 
+    const isAppraisalActive = await Settings.checkIsAppraisalEnabled();
+
+    if (!isAppraisalActive) {
+      throw new ApiResponse(
+        200,
+        {
+          hasUserAcceptedKpi: false,
+          performanceForm: null,
+          isAppraisalEnabled: false,
+        },
+        "Appraisal process is currently disabled",
+      );
+    }
+
     if (!performanceId || !Types.ObjectId.isValid(performanceId)) {
       throw new ApiError(400, "Invalid performance ID");
     }
     const userPerformanceRecord = await UserPerformance.findById(performanceId);
 
     if (!userPerformanceRecord) {
-      return res
-        .status(200)
-        .json(
-          new ApiResponse(
-            200,
-            { hasUserAcceptedKpi: false, performanceForm: null },
-            "User has not accepted KPI yet",
-          ),
-        );
+      return res.status(200).json(
+        new ApiResponse(
+          200,
+          {
+            hasUserAcceptedKpi: false,
+            performanceForm: null,
+            isAppraisalEnabled: true,
+          },
+          "User has not accepted KPI yet",
+        ),
+      );
     }
 
     return res.status(200).json(
@@ -464,6 +498,7 @@ const getUserPerformanceFormById = asyncHandler(
         {
           hasUserAcceptedKpi: true,
           userPerformanceRecord,
+          isAppraisalEnabled: true,
         },
         "User KPIs fetched successfully",
       ),

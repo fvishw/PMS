@@ -80,7 +80,8 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
   }
 
   if (data) {
-    const { hasUserAcceptedKpi, userPerformanceRecord } = data;
+    const { hasUserAcceptedKpi, userPerformanceRecord, isAppraisalEnabled } =
+      data;
 
     const permissions: EditPermissions = getPerformancePermission({
       stage: userPerformanceRecord?.stage || "",
@@ -90,7 +91,18 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
       employeeId: userPerformanceRecord?.user || "",
     });
 
+    if (!isAppraisalEnabled) {
+      return (
+        <div>
+          <p className="text-center  text-muted-foreground">
+            Appraisal process is currently disabled. Please contact your admin.
+          </p>
+        </div>
+      );
+    }
+
     if (
+      isAppraisalEnabled &&
       hasUserAcceptedKpi &&
       userPerformanceRecord &&
       userPerformanceRecord._id !== ""
