@@ -16,7 +16,6 @@ import {
 import { MasterPerformance, type IKpis } from "@/models/masterPerformance.js";
 import { Types } from "mongoose";
 import Settings from "@/models/settings.model.js";
-import { is } from "zod/locales";
 
 const createPerformanceRecord = asyncHandler(
   async (req: Request, res: Response) => {
@@ -69,6 +68,12 @@ const createPerformanceRecord = asyncHandler(
 
 const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
+  const isKpiActive = await Settings.checkIsKpiEnabled();
+
+  if (!isKpiActive) {
+    throw new ApiError(400, "KPI process is currently disabled");
+  }
+
   if (!userId) {
     throw new ApiError(401, "Unauthorized");
   }
@@ -77,6 +82,13 @@ const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
   if (!user) {
     throw new ApiError(404, "User not found");
   }
+
+  const settings = await Settings.findOne({});
+  if (!settings) {
+    throw new ApiError(500, "Settings not configured");
+  }
+  const currentQuarter = settings.currentQuarter;
+  const currentYear = settings.currentYear;
 
   const userDesignation = user?.designation;
   const userParentReviewer = user?.parentReviewer;
@@ -112,6 +124,8 @@ const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
     stage: "self_review",
     parentReviewer: parentReviewerId,
     adminReviewer: adminReviewerId,
+    quarter: currentQuarter,
+    year: currentYear,
   });
   await userPerformance.save();
 

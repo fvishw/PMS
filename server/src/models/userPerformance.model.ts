@@ -5,7 +5,6 @@ export interface IUserPerformance extends IMasterPerformance {
   user: Types.ObjectId;
   parentReviewer: Types.ObjectId;
   adminReviewer?: Types.ObjectId;
-  isKpiLocked: boolean;
   stage:
     | "kpi_acceptance"
     | "self_review"
@@ -13,10 +12,8 @@ export interface IUserPerformance extends IMasterPerformance {
     | "admin_review"
     | "user_final_review"
     | "completed";
-  interval: {
-    quarterly: "Q1" | "Q2" | "Q3" | "Q4";
-    year: number;
-  };
+  quarter: "Q1" | "Q2" | "Q3" | "Q4";
+  year: number;
 }
 
 const UserPerformanceSchema = new Schema<IUserPerformance>(
@@ -67,20 +64,15 @@ const UserPerformanceSchema = new Schema<IUserPerformance>(
         "completed",
       ],
     },
-    // this need to added for tracking performance by interval like quarterly and yearly
-    interval: {
-      quarterly: {
-        type: String,
-        enum: ["Q1", "Q2", "Q3", "Q4"],
-        set: (v: String) => v?.toUpperCase(),
-        // required: true,
-      },
-      year: {
-        type: Number,
-        // required: true
-      },
+    quarter: {
+      type: String,
+      enum: ["Q1", "Q2", "Q3", "Q4"],
+      required: true,
     },
-    isKpiLocked: { type: Boolean, default: false },
+    year: {
+      type: Number,
+      required: true,
+    },
     parentReviewer: { type: Types.ObjectId, ref: "User", required: true },
     adminReviewer: { type: Types.ObjectId, ref: "User", required: true },
   },
