@@ -87,8 +87,8 @@ const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
   if (!settings) {
     throw new ApiError(500, "Settings not configured");
   }
-  const currentQuarter = settings.currentQuarter;
-  const currentYear = settings.currentYear;
+  const { currentYear, currentQuarter } =
+    await Settings.getCurrentYearAndQuarter();
 
   const userDesignation = user?.designation;
   const userParentReviewer = user?.parentReviewer;

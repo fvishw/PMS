@@ -17,6 +17,10 @@ interface ISettings extends Document {
 interface ISettingsStatics {
   checkIsKpiEnabled: () => Promise<boolean>;
   checkIsAppraisalEnabled: () => Promise<boolean>;
+  getCurrentYearAndQuarter: () => Promise<{
+    currentYear: number;
+    currentQuarter: "Q1" | "Q2" | "Q3" | "Q4";
+  }>;
 }
 
 type SettingsModelType = Model<ISettings> & ISettingsStatics;
@@ -77,6 +81,17 @@ SettingsSchema.statics.checkIsAppraisalEnabled =
     }
     return false;
   };
+
+SettingsSchema.statics.getCurrentYearAndQuarter = async function () {
+  const settings = await Settings.findOne({}).lean();
+  if (!settings) {
+    throw new Error("Settings not found");
+  }
+  return {
+    currentYear: settings.currentYear,
+    currentQuarter: settings.currentQuarter,
+  };
+};
 
 const Settings = model<ISettings, SettingsModelType>(
   "Settings",

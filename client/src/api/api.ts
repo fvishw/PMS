@@ -23,6 +23,7 @@ import {
   GetReviewDashboardCardStatus,
   GetGoalCardStatus,
   GetCurrentSettings,
+  GetUserReport,
 } from "@/types/apiResponse";
 import { CheckInPayload, ICheckInPayload } from "@/types/chekin";
 import { Goal } from "@/types/goal";
@@ -249,6 +250,9 @@ export class API {
   }
   updateSettings(data: SettingsValue): Promise<GetCurrentSettings> {
     return this.request(this.instance.put("/settings/", data));
+  }
+  fetchUserReport(): Promise<GetUserReport> {
+    return this.request(this.instance.get("/reports/user-report"));
   }
 }
 

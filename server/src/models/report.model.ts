@@ -1,7 +1,7 @@
 import { Schema, model, Types } from "mongoose";
 
 interface IUserReportSchema {
-  userPerformance: Types.ObjectId;
+  user: Types.ObjectId;
   summary: string;
   strengths: string[];
   improvements: string[];
@@ -12,12 +12,13 @@ interface IUserReportSchema {
   recommendedActions: string[];
   overAllScore: number;
   createdAt: Date;
-  updatedAt: Date;
+  quarter: string;
+  year: number;
 }
 
 const UserReportSchema = new Schema<IUserReportSchema>(
   {
-    userPerformance: {
+    user: {
       type: Types.ObjectId,
       ref: "UserPerformance",
       required: true,
@@ -44,6 +45,8 @@ const UserReportSchema = new Schema<IUserReportSchema>(
     riskFlags: [{ type: String, required: true }],
     recommendedActions: [{ type: String, required: true }],
     overAllScore: { type: Number, required: true },
+    quarter: { type: String, required: true },
+    year: { type: Number, required: true },
   },
   { timestamps: true },
 );

@@ -129,5 +129,10 @@ export const sidebarItems: Record<role, SidebarItem[]> = {
       url: "my-goals",
       icon: IconListDetails,
     },
+    {
+      title: "Reports",
+      url: "reports",
+      icon: IconDatabaseCog,
+    },
   ],
 };

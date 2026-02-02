@@ -105,6 +105,10 @@ const router = createBrowserRouter([
           () => import("@/pages/outlets/checkInManagementLayout"),
         ),
       },
+      {
+        path: "reports",
+        Component: lazy(() => import("@/pages/outlets/reportsLayout")),
+      },
     ],
   },
 ]);

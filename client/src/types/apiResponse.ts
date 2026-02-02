@@ -133,6 +133,16 @@ interface GetCurrentSettings {
   };
 }
 
+interface GetUserReport {
+  reports: {
+    _id: string;
+    quarter: string;
+    year: number;
+    createdAt: string;
+    overAllScore: number;
+  }[];
+}
+
 export {
   UserPerformanceFormResponse,
   GetAllUserResponse,
@@ -156,4 +166,5 @@ export {
   GetReviewDashboardCardStatus,
   GetGoalCardStatus,
   GetCurrentSettings,
+  GetUserReport,
 };
