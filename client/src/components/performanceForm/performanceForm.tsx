@@ -82,15 +82,6 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
   if (data) {
     const { hasUserAcceptedKpi, userPerformanceRecord, isAppraisalEnabled } =
       data;
-
-    const permissions: EditPermissions = getPerformancePermission({
-      stage: userPerformanceRecord?.stage || "",
-      currentUser: currentUser as unknown as IUser,
-      parentReviewer: userPerformanceRecord?.parentReviewer || "",
-      adminReviewer: userPerformanceRecord?.adminReviewer || "",
-      employeeId: userPerformanceRecord?.user || "",
-    });
-
     if (!isAppraisalEnabled) {
       return (
         <div>
@@ -100,6 +91,24 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
         </div>
       );
     }
+
+    if (!userPerformanceRecord) {
+      return (
+        <div>
+          <p className="text-center  text-muted-foreground">
+            No performance record found. Please Accept KPI first.
+          </p>
+        </div>
+      );
+    }
+
+    const permissions: EditPermissions = getPerformancePermission({
+      stage: userPerformanceRecord?.stage || "",
+      currentUser: currentUser as unknown as IUser,
+      parentReviewer: userPerformanceRecord?.parentReviewer || "",
+      adminReviewer: userPerformanceRecord?.adminReviewer || "",
+      employeeId: userPerformanceRecord?.user || "",
+    });
 
     if (
       isAppraisalEnabled &&
@@ -136,13 +145,7 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
         </form>
       );
     } else {
-      return (
-        <div>
-          <p className="text-center  text-muted-foreground">
-            You have not accepted the KPI yet. Please contact your manager.
-          </p>
-        </div>
-      );
+      return null;
     }
   }
 };

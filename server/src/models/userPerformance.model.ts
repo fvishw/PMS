@@ -4,7 +4,7 @@ import type { IMasterPerformance } from "./masterPerformance.js";
 export interface IUserPerformance extends IMasterPerformance {
   user: Types.ObjectId;
   parentReviewer: Types.ObjectId;
-  adminReviewer?: Types.ObjectId;
+  adminReviewer: Types.ObjectId;
   stage:
     | "kpi_acceptance"
     | "self_review"

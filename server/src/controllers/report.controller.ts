@@ -5,15 +5,14 @@ import { ApiError } from "@/utils/ApiError.js";
 import { ApiResponse } from "@/utils/ApiResponse.js";
 import asyncHandler from "@/utils/asyncHandler.js";
 import type { Request, Response } from "express";
-import { report } from "process";
 
 const getUserReports = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id!;
+  const userId = req.user?.id;
   if (!userId) {
-    return res.status(400).json({ message: "User ID is required" });
+    throw new ApiError(400, "User ID is required");
   }
   const userReports = await UserReportModel.find({
-    userPerformance: userId,
+    user: userId,
   }).select("quarter year overAllScore createdAt");
 
   res
@@ -28,9 +27,9 @@ const getUserReports = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const generateUserReport = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id!;
+  const userId = req.user?.id;
   if (!userId) {
-    return res.status(400).json({ message: "User ID is required" });
+    throw new ApiError(400, "User ID is required");
   }
   const { currentYear, currentQuarter } =
     await Settings.getCurrentYearAndQuarter();

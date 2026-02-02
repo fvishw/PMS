@@ -13,7 +13,7 @@ interface ISettings extends Document {
   checkIsKpiEnabled: () => Promise<boolean>;
   checkIsAppraisalEnabled: () => Promise<boolean>;
 }
-
+export const SETTINGS_ID = "global";
 interface ISettingsStatics {
   checkIsKpiEnabled: () => Promise<boolean>;
   checkIsAppraisalEnabled: () => Promise<boolean>;
@@ -64,7 +64,7 @@ SettingsSchema.statics.checkIsKpiEnabled = async function (): Promise<boolean> {
 SettingsSchema.statics.checkIsAppraisalEnabled =
   async function (): Promise<boolean> {
     const currentDate = new Date();
-    const settings = await Settings.findOne({}).lean();
+    const settings = await Settings.findById(SETTINGS_ID).lean();
     if (!settings) {
       return false;
     }
@@ -83,7 +83,7 @@ SettingsSchema.statics.checkIsAppraisalEnabled =
   };
 
 SettingsSchema.statics.getCurrentYearAndQuarter = async function () {
-  const settings = await Settings.findOne({}).lean();
+  const settings = await Settings.findById(SETTINGS_ID).lean();
   if (!settings) {
     throw new Error("Settings not found");
   }

@@ -415,7 +415,7 @@ const getUserPerformanceForm = asyncHandler(
         new ApiResponse(
           200,
           {
-            isAppraisalActive: true,
+            isAppraisalEnabled: true,
             hasUserAcceptedKpi: false,
             performanceForm: null,
           },

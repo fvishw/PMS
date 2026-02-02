@@ -13,7 +13,7 @@ router.get(
   getUserReports,
 );
 
-router.get(
+router.post(
   "/generate-user-report",
   authMiddleware(["employee", "manager", "admin"]),
   generateUserReport,

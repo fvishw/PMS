@@ -86,7 +86,7 @@ const reviewDashboardStats = asyncHandler(
         {
           $or: [{ adminReviewer: userId }, { parentReviewer: userId }],
         },
-        { status: { $ne: "completed" } },
+        { stage: { $ne: "completed" } },
       ],
     }).countDocuments();
 

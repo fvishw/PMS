@@ -32,10 +32,12 @@ export const ReviewAppraisalCard = () => {
   }
 
   if (data) {
-    const totalCompletedReview = data.stats.totalCompletedReview || 0;
-    const totalPendingReview = data.stats.totalPendingReview || 0;
+    const stats = data.stats ?? {};
+    const totalCompletedReview = stats.totalCompletedReview ?? 0;
+    const totalPendingReview = stats.totalPendingReview ?? 0;
     const totalMasterPerformanceTemplate =
-      data.stats.totalMasterPerformanceTemplate || 0;
+      stats.totalMasterPerformanceTemplate ?? 0;
+
     const reviewGoalsCard = [
       {
         title: "Total Performance Templates",
