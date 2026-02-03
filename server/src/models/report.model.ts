@@ -2,6 +2,7 @@ import { Schema, model, Types } from "mongoose";
 
 interface IUserReportSchema {
   user: Types.ObjectId;
+  performance: Types.ObjectId;
   summary: string;
   strengths: string[];
   improvements: string[];
@@ -20,6 +21,11 @@ interface IUserReportSchema {
 const UserReportSchema = new Schema<IUserReportSchema>(
   {
     user: {
+      type: Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    performance: {
       type: Types.ObjectId,
       ref: "UserPerformance",
       required: true,

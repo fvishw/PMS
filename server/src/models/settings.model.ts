@@ -49,7 +49,9 @@ const SettingsSchema = new Schema<ISettings, SettingsModelType>(
 
 SettingsSchema.statics.checkIsKpiEnabled = async function (): Promise<boolean> {
   const currentDate = new Date();
-  const settings = await Settings.findOne({}).lean();
+  const settings = await Settings.findOne({
+    settingsName: SETTINGS_NAME,
+  }).lean();
   if (!settings) {
     return false;
   }

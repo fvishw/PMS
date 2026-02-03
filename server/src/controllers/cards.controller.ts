@@ -42,10 +42,6 @@ const performanceStatus = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const dashBoardStats = asyncHandler(async (req: Request, res: Response) => {
-  const userId = new Types.ObjectId(req.user?.id!);
-  if (!userId) {
-    throw new ApiError(401, "User not Authorized");
-  }
   // 1: total user
   const totalUser = await User.find().countDocuments();
 

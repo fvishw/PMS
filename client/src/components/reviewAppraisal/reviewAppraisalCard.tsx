@@ -16,7 +16,7 @@ import ApiErrorMessage from "../ApiErrorMessage";
 export const ReviewAppraisalCard = () => {
   const { user } = useAuth();
   const { data, isLoading, error } = useQuery({
-    queryKey: ["sectionCard", user?._id],
+    queryKey: ["reviewCardStatus", user?._id],
     queryFn: () => Api.getReviewCardStatus(),
   });
 
