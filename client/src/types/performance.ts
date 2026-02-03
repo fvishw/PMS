@@ -106,7 +106,6 @@ interface UserPerformanceForm {
   user: string;
   parentReviewer: string;
   adminReviewer?: string;
-  isKpiLocked: boolean;
   stage:
     | "kpi_acceptance"
     | "self_review"
@@ -114,10 +113,8 @@ interface UserPerformanceForm {
     | "admin_review"
     | "user_final_review"
     | "completed";
-  interval: {
-    quarterly: "Q1" | "Q2" | "Q3" | "Q4";
-    year: number;
-  };
+  quarter: "Q1" | "Q2" | "Q3" | "Q4";
+  year: number;
 }
 
 interface AllPerformanceTemplate {

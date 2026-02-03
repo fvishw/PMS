@@ -49,7 +49,7 @@ const router = createBrowserRouter([
       },
       {
         path: "kpis",
-        Component: lazy(() => import("@/pages/outlets/performanceLayout")),
+        Component: lazy(() => import("@/pages/outlets/kpiLayout")),
       },
       {
         path: "my-goals",
@@ -81,6 +81,10 @@ const router = createBrowserRouter([
         Component: lazy(() => import("@/pages/outlets/userManagementLayout")),
       },
       {
+        path: "settings",
+        Component: lazy(() => import("@/pages/outlets/settingsLayout")),
+      },
+      {
         path: "manage-performance",
         children: [
           {
@@ -100,6 +104,10 @@ const router = createBrowserRouter([
         Component: lazy(
           () => import("@/pages/outlets/checkInManagementLayout"),
         ),
+      },
+      {
+        path: "reports",
+        Component: lazy(() => import("@/pages/outlets/reportsLayout")),
       },
     ],
   },

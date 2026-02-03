@@ -22,6 +22,8 @@ import performanceRouter from "./routes/performance.route.js";
 import CheckInsRouter from "./routes/checkIns.routes.js";
 import GoalRouter from "./routes/goal.router.js";
 import cardsRouter from "./routes/cards.route.js";
+import settingsRouter from "./routes/settings.route.js";
+import reportRouter from "./routes/report.route.js";
 
 app.use("/api/user", userRouter);
 app.use("/api/user/auth", userAuth);
@@ -29,6 +31,8 @@ app.use("/api/performance", performanceRouter);
 app.use("/api/check-ins", CheckInsRouter);
 app.use("/api/goals", GoalRouter);
 app.use("/api/cards", cardsRouter);
+app.use("/api/settings", settingsRouter);
+app.use("/api/reports", reportRouter);
 
 app.use(
   (

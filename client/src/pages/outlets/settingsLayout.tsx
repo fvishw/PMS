@@ -1,16 +1,16 @@
-import Home from "@/components/home/home";
 import OutletWrapper from "@/components/mainLayout";
 import { SiteHeader } from "@/components/site-header";
+import Settings from "@/components/settings/settings";
 
-function HomeOutlet() {
+function SettingsLayout() {
   return (
     <>
-      <SiteHeader headerName="Home" />
+      <SiteHeader headerName="Settings" />
       <OutletWrapper>
-        <Home />
+        <Settings />
       </OutletWrapper>
     </>
   );
 }
 
-export default HomeOutlet;
+export default SettingsLayout;

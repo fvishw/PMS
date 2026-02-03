@@ -1,5 +1,6 @@
 import { ViewGoalFormValues } from "@/components/goalManagement/viewGoal/viewGoalModal";
 import { PerformanceFormValue as PerformanceTemplateFormValue } from "@/components/performanceManagement/addKpiTable.config";
+import { SettingsValue } from "@/components/settings/settings";
 import {
   GetAllUserResponse,
   GetAllDesignationsResponse,
@@ -18,6 +19,11 @@ import {
   GetCheckInById,
   GetPerformanceById,
   GetPerformanceStatus,
+  GetDashboardCardStatus,
+  GetReviewDashboardCardStatus,
+  GetGoalCardStatus,
+  GetCurrentSettings,
+  GetUserReport,
 } from "@/types/apiResponse";
 import { CheckInPayload, ICheckInPayload } from "@/types/chekin";
 import { Goal } from "@/types/goal";
@@ -228,6 +234,25 @@ export class API {
   }
   getPerformanceStatus(): Promise<GetPerformanceStatus> {
     return this.request(this.instance.get("/cards/performance-status"));
+  }
+
+  getDashboardCardStatus(): Promise<GetDashboardCardStatus> {
+    return this.request(this.instance.get("/cards/dashboard-status"));
+  }
+  getReviewCardStatus(): Promise<GetReviewDashboardCardStatus> {
+    return this.request(this.instance.get("/cards/review-dashboard-status"));
+  }
+  getGoalCardStatus(): Promise<GetGoalCardStatus> {
+    return this.request(this.instance.get("/cards/goal-dashboard-status"));
+  }
+  getSettings(): Promise<GetCurrentSettings> {
+    return this.request(this.instance.get("/settings/"));
+  }
+  updateSettings(data: SettingsValue): Promise<GetCurrentSettings> {
+    return this.request(this.instance.put("/settings/", data));
+  }
+  fetchUserReport(): Promise<GetUserReport> {
+    return this.request(this.instance.get("/reports/user-report"));
   }
 }
 

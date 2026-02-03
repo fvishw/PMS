@@ -9,6 +9,7 @@ import { KpiCriteria } from "./criteria";
 import { Goal } from "./goal";
 
 interface UserPerformanceFormResponse {
+  isAppraisalEnabled: boolean;
   hasUserAcceptedKpi: boolean;
   userPerformanceRecord: UserPerformanceForm | null;
 }
@@ -33,6 +34,7 @@ interface GetAllPerformanceRecordsResponse {
 }
 
 interface GetUserKPiDetails {
+  isKpiEnabled: boolean;
   hasKpiTemplate: boolean;
   hasUserAccepted: boolean;
   criteria: KpiCriteria[];
@@ -96,6 +98,51 @@ interface GetPerformanceStatus {
     | "user_final_review"
     | "completed";
 }
+
+interface GetDashboardCardStatus {
+  stats: {
+    totalUser: number;
+    totalMasterPerformanceTemplate: number;
+    totalCompletedReview: number;
+  };
+}
+interface GetReviewDashboardCardStatus {
+  stats: {
+    totalMasterPerformanceTemplate: number;
+    totalCompletedReview: number;
+    totalPendingReview: number;
+  };
+}
+interface GetGoalCardStatus {
+  stats: {
+    totalGoals: number;
+    completedGoals: number;
+  };
+}
+interface GetCurrentSettings {
+  settings: {
+    kpiStartDate: string | null;
+    kpiEndDate: string | null;
+    isKpiEnabled: boolean;
+    appraisalStartDate: string | null;
+    appraisalEndDate: string | null;
+    isAppraisalEnabled: boolean;
+    currentQuarter: "Q1" | "Q2" | "Q3" | "Q4";
+    currentYear: number;
+    updatedAt: string;
+  };
+}
+
+interface GetUserReport {
+  reports: {
+    _id: string;
+    quarter: string;
+    year: number;
+    createdAt: string;
+    overAllScore: number;
+  }[];
+}
+
 export {
   UserPerformanceFormResponse,
   GetAllUserResponse,
@@ -115,4 +162,9 @@ export {
   GetCheckInById,
   GetPerformanceById,
   GetPerformanceStatus,
+  GetDashboardCardStatus,
+  GetReviewDashboardCardStatus,
+  GetGoalCardStatus,
+  GetCurrentSettings,
+  GetUserReport,
 };

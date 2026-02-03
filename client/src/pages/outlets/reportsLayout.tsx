@@ -1,16 +1,16 @@
-import Home from "@/components/home/home";
 import OutletWrapper from "@/components/mainLayout";
+import Report from "@/components/reports/reports";
 import { SiteHeader } from "@/components/site-header";
 
-function HomeOutlet() {
+const ReportsLayout = () => {
   return (
     <>
-      <SiteHeader headerName="Home" />
+      <SiteHeader headerName="My Reports" />
       <OutletWrapper>
-        <Home />
+        <Report />
       </OutletWrapper>
     </>
   );
-}
+};
 
-export default HomeOutlet;
+export default ReportsLayout;
