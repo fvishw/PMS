@@ -56,11 +56,11 @@ async function generateReport(performance: IUserPerformance) {
     );
     const parsedFormattedResponse =
       geminiResponseSchema.safeParse(parsedResponse);
-    if (parsedFormattedResponse.success) {
+    if (!parsedFormattedResponse.success) {
       console.error("Parsed response does not match schema");
       throw new Error("Invalid response format from AI model");
     }
-    return parsedResponse;
+    return parsedFormattedResponse.data;
   } catch (error) {
     throw new ApiError(500, `AI Generation Error: ${(error as Error).message}`);
   }

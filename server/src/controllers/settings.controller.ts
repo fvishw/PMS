@@ -1,4 +1,4 @@
-import Settings, { SETTINGS_ID } from "@/models/settings.model.js";
+import Settings, { SETTINGS_NAME } from "@/models/settings.model.js";
 import { SettingsSchema } from "@/types/settings.js";
 import { ApiError } from "@/utils/ApiError.js";
 import { ApiResponse } from "@/utils/ApiResponse.js";
@@ -18,7 +18,7 @@ const defaultSettings = {
 };
 
 const getCurrentSettings = asyncHandler(async (req: Request, res: Response) => {
-  const currentSettings = await Settings.findById(SETTINGS_ID).lean();
+  const currentSettings = await Settings.findOne({ settingsName: SETTINGS_NAME }).lean();
   if (!currentSettings) {
     return res
       .status(200)
@@ -36,7 +36,7 @@ const updateSettings = asyncHandler(async (req: Request, res: Response) => {
     return res.status(400).json(new ApiError(400, "Invalid settings data"));
   }
   const updatedSettings = await Settings.findOneAndUpdate(
-    { _id: SETTINGS_ID },
+    { settingsName: SETTINGS_NAME },
     { $set: parsedSettings.data },
     { new: true, upsert: true, setDefaultsOnInsert: true },
   );

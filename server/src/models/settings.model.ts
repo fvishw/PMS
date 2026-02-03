@@ -1,6 +1,7 @@
 import { Schema, model, Document, Model } from "mongoose";
 
 interface ISettings extends Document {
+  settingsName: string;
   kpiStartDate: Date | null;
   kpiEndDate: Date | null;
   isKpiEnabled: boolean;
@@ -13,7 +14,7 @@ interface ISettings extends Document {
   checkIsKpiEnabled: () => Promise<boolean>;
   checkIsAppraisalEnabled: () => Promise<boolean>;
 }
-export const SETTINGS_ID = "global";
+export const SETTINGS_NAME = "global";
 interface ISettingsStatics {
   checkIsKpiEnabled: () => Promise<boolean>;
   checkIsAppraisalEnabled: () => Promise<boolean>;
@@ -27,6 +28,7 @@ type SettingsModelType = Model<ISettings> & ISettingsStatics;
 
 const SettingsSchema = new Schema<ISettings, SettingsModelType>(
   {
+    settingsName: { type: String, required: true },
     kpiStartDate: { type: Date, default: null },
     kpiEndDate: { type: Date, default: null },
     isKpiEnabled: { type: Boolean, default: false },
@@ -64,7 +66,9 @@ SettingsSchema.statics.checkIsKpiEnabled = async function (): Promise<boolean> {
 SettingsSchema.statics.checkIsAppraisalEnabled =
   async function (): Promise<boolean> {
     const currentDate = new Date();
-    const settings = await Settings.findById(SETTINGS_ID).lean();
+    const settings = await Settings.findOne({
+      settingsName: SETTINGS_NAME,
+    }).lean();
     if (!settings) {
       return false;
     }
@@ -83,7 +87,9 @@ SettingsSchema.statics.checkIsAppraisalEnabled =
   };
 
 SettingsSchema.statics.getCurrentYearAndQuarter = async function () {
-  const settings = await Settings.findById(SETTINGS_ID).lean();
+  const settings = await Settings.findOne({
+    settingsName: SETTINGS_NAME,
+  }).lean();
   if (!settings) {
     throw new Error("Settings not found");
   }
