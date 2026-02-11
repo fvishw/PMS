@@ -2,17 +2,17 @@ import { useQuery } from "@tanstack/react-query";
 import Api from "@/api/api";
 import { CustomDataTable } from "../customTable";
 import ApiErrorMessage from "../ApiErrorMessage";
-import { GenerateReportModal } from "./generateReportModal";
 import { columns } from "./reportsTable.config";
+import ReportGenerateButton from "./reportGenerateButton";
 
 function Report() {
   const { data, error, isLoading } = useQuery({
-    queryFn: () => Api.fetchUserReport(),
+    queryFn: () => Api.fetchUserPastReports(),
     queryKey: ["reports"],
   });
   const users = data?.reports;
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="flex items-center justify-center w-full"></div>;
   }
   if (error) {
     return <ApiErrorMessage message={error.message} />;
@@ -24,7 +24,7 @@ function Report() {
   return (
     <>
       <div className="w-full flex justify-end">
-        <GenerateReportModal />
+        <ReportGenerateButton />
       </div>
       <div className="w-full ">
         <CustomDataTable data={users || []} columns={columns} />

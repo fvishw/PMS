@@ -16,18 +16,22 @@ const getPerformancePermission = ({
   adminReviewer,
   employeeId,
 }: PerformancePermissionParams): EditPermissions => {
+  const currentUserId = String(currentUser?._id ?? "");
+  const employeeUserId = String(employeeId ?? "");
+  const parentReviewerId = String(parentReviewer ?? "");
+  const adminReviewerId = String(adminReviewer ?? "");
   return {
-    canEditSelf: stage === "self_review" && employeeId === currentUser._id,
+    canEditSelf: stage === "self_review" && employeeUserId === currentUserId,
     canEditManager:
       stage === "manager_review" &&
       currentUser.role === "manager" &&
-      currentUser._id === parentReviewer,
+      currentUserId === parentReviewerId,
     canEditAdmin:
       stage === "admin_review" &&
       currentUser.role === "admin" &&
-      currentUser._id === adminReviewer,
+      currentUserId === adminReviewerId,
     canEditUserFinalComments:
-      "user_final_review" === stage && employeeId === currentUser._id,
+      "user_final_review" === stage && employeeUserId === currentUserId,
   };
 };
 export default getPerformancePermission;

@@ -25,8 +25,8 @@ import cardsRouter from "./routes/cards.route.js";
 import settingsRouter from "./routes/settings.route.js";
 import reportRouter from "./routes/report.route.js";
 
-app.use("/api/user", userRouter);
 app.use("/api/user/auth", userAuth);
+app.use("/api/user", userRouter);
 app.use("/api/performance", performanceRouter);
 app.use("/api/check-ins", CheckInsRouter);
 app.use("/api/goals", GoalRouter);
@@ -43,6 +43,7 @@ app.use(
   ) => {
     const statusCode = (error as ApiError).statusCode || 500;
     const message = error.message || "Internal Server Error";
+    console.log(error);
     res.status(statusCode).json({ message });
   },
 );

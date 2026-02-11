@@ -45,8 +45,7 @@ const login = asyncHandler(async (req: Request, res: Response) => {
   if (!email || !password) {
     throw new ApiError(400, "Email and password are required");
   }
-
-  const user = await User.findOne({ email, isSignUpComplete: true });
+  const user = await User.findOne({ email: email, isSignUpComplete: true });
 
   if (!user || !user.comparePassword(password)) {
     throw new ApiError(401, "Invalid email or password");

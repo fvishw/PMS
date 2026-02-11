@@ -24,6 +24,8 @@ import {
   GetGoalCardStatus,
   GetCurrentSettings,
   GetUserReport,
+  GetUserReports,
+  GetCurrentQuarterStatus,
 } from "@/types/apiResponse";
 import { CheckInPayload, ICheckInPayload } from "@/types/chekin";
 import { Goal } from "@/types/goal";
@@ -251,8 +253,24 @@ export class API {
   updateSettings(data: SettingsValue): Promise<GetCurrentSettings> {
     return this.request(this.instance.put("/settings/", data));
   }
-  fetchUserReport(): Promise<GetUserReport> {
-    return this.request(this.instance.get("/reports/user-report"));
+  fetchUserPastReports(): Promise<GetUserReports> {
+    return this.request(this.instance.get("/reports/user-past-reports"));
+  }
+  getCurrentQuarterReportStatus(): Promise<GetCurrentQuarterStatus> {
+    return this.request(this.instance.get("/reports/current-quarter-status"));
+  }
+  getReportById(reportId: string): Promise<GetUserReport> {
+    return this.request(
+      this.instance.get("/reports/report-by-id", {
+        params: { reportId },
+      }),
+    );
+  }
+  getCurrentQuarterReport(): Promise<GetUserReport> {
+    return this.request(this.instance.get("/reports/current-quarter-report"));
+  }
+  generateUserReport(): Promise<GetUserReport> {
+    return this.request(this.instance.post("/reports/generate-user-report"));
   }
 }
 

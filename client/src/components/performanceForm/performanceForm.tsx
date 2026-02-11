@@ -16,28 +16,36 @@ import {
 } from "./performanceApiMapper";
 import { queryClient } from "@/utils/queryClient";
 import { IUser } from "@/types/user";
+import { useEffect } from "react";
 interface PerformanceFormProps {
   performanceId?: string;
 }
 export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
-  const { user } = useAuth();
+  const { user: currentUser } = useAuth();
 
   const { isLoading, error, data } = useQuery({
-    queryKey: ["performanceForm", performanceId || user?._id],
+    queryKey: ["performanceForm", performanceId, currentUser?._id],
+    enabled: !!performanceId || !!currentUser?._id,
     queryFn: getPerformanceApi(performanceId),
   });
-  const { control, handleSubmit, reset, register, setValue } =
-    useForm<PerformanceFormValue>({
-      defaultValues: {
-        userPerformanceId: "",
-        areaOfImprovement: "",
-        areaOfStrength: "",
-        criteria: [],
-        competencies: [],
-        finalComments: {},
-      },
-    });
-  const { user: currentUser } = useAuth();
+  console.log("component rerenders", data);
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    register,
+    // formState: { errors },
+  } = useForm<PerformanceFormValue>({
+    defaultValues: {
+      userPerformanceId: "",
+      areaOfImprovement: "",
+      areaOfStrength: "",
+      criteria: [],
+      competencies: [],
+      finalComments: {},
+    },
+  });
   const stage = data?.userPerformanceRecord?.stage || "";
 
   const { mutate, isPending } = useMutation<
@@ -53,7 +61,7 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
         position: "top-right",
       });
       queryClient.invalidateQueries({
-        queryKey: ["performanceForm", user?._id],
+        queryKey: ["performanceForm", performanceId, currentUser?._id],
       });
     },
     onError: (error) => {
@@ -66,6 +74,20 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
   const onsubmit = (formData: PerformanceFormValue) => {
     mutate(formData);
   };
+
+  const record = data?.userPerformanceRecord;
+
+  useEffect(() => {
+    if (record?._id) {
+      reset({
+        userPerformanceId: record._id,
+        areaOfImprovement: record.areaOfImprovement || "",
+        areaOfStrength: record.areaOfStrength || "",
+        competencies: record.competencies || [],
+        finalComments: record.finalReview || {},
+      });
+    }
+  }, [record?._id, reset]);
 
   if (isLoading) {
     return (
@@ -80,8 +102,7 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
   }
 
   if (data) {
-    const { hasUserAcceptedKpi, userPerformanceRecord, isAppraisalEnabled } =
-      data;
+    const { hasUserAcceptedKpi, isAppraisalEnabled } = data;
     if (!isAppraisalEnabled) {
       return (
         <div>
@@ -92,7 +113,7 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
       );
     }
 
-    if (!userPerformanceRecord) {
+    if (!record) {
       return (
         <div>
           <p className="text-center  text-muted-foreground">
@@ -103,36 +124,34 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
     }
 
     const permissions: EditPermissions = getPerformancePermission({
-      stage: userPerformanceRecord?.stage || "",
+      stage: record?.stage || "",
       currentUser: currentUser as unknown as IUser,
-      parentReviewer: userPerformanceRecord?.parentReviewer || "",
-      adminReviewer: userPerformanceRecord?.adminReviewer || "",
-      employeeId: userPerformanceRecord?.user || "",
+      parentReviewer: record?.parentReviewer || "",
+      adminReviewer: record?.adminReviewer || "",
+      employeeId: record?.user || "",
     });
 
     if (
       isAppraisalEnabled &&
       hasUserAcceptedKpi &&
-      userPerformanceRecord &&
-      userPerformanceRecord._id !== ""
+      record &&
+      record._id !== ""
     ) {
-      const performanceId = userPerformanceRecord._id;
-      setValue("userPerformanceId", performanceId);
       return (
         <form className="space-y-4" onSubmit={handleSubmit(onsubmit)}>
           <KpiScoreTable
-            data={userPerformanceRecord?.kpis || []}
+            data={record?.kpis || []}
             permissions={permissions}
             register={register}
           />
           <Competencies
-            data={userPerformanceRecord?.competencies || []}
+            competenciesData={record?.competencies || []}
             permissions={permissions}
             register={register}
             control={control}
           />
           <FinalReview
-            data={userPerformanceRecord?.finalReview || {}}
+            data={record?.finalReview || {}}
             permissions={permissions}
             register={register}
             control={control}

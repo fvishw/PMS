@@ -106,6 +106,8 @@ interface UserPerformanceForm {
   user: string;
   parentReviewer: string;
   adminReviewer?: string;
+  areaOfStrength: string;
+  areaOfImprovement: string;
   stage:
     | "kpi_acceptance"
     | "self_review"

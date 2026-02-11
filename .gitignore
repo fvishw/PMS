@@ -2,3 +2,4 @@
 */dist/
 */.env
 modules.checklist.md
+.vscode/*

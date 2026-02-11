@@ -184,7 +184,13 @@ const managerReviewKpi = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(400, "Invalid payload format");
   }
 
-  const { competencies, userPerformanceId, criteria } = parsedPayload.data;
+  const {
+    competencies,
+    userPerformanceId,
+    criteria,
+    areaOfImprovement,
+    areaOfStrength,
+  } = parsedPayload.data;
 
   const userPerformance = await UserPerformance.findById(userPerformanceId);
 
@@ -212,6 +218,8 @@ const managerReviewKpi = asyncHandler(async (req: Request, res: Response) => {
   });
 
   userPerformance.stage = "admin_review";
+  userPerformance.areaOfImprovement = areaOfImprovement;
+  userPerformance.areaOfStrength = areaOfStrength;
 
   await userPerformance.save();
 
