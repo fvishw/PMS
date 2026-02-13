@@ -2,6 +2,7 @@ import {
   generateUserReport,
   getCurrentQuarterReport,
   getCurrentQuarterReportStatus,
+  getReportById,
   getUserReports,
 } from "@/controllers/report.controller.js";
 import authMiddleware from "@/middlewares/auth.middleware.js";
@@ -31,6 +32,12 @@ router.get(
   "/current-quarter-report",
   authMiddleware(["employee", "manager", "admin"]),
   getCurrentQuarterReport,
+);
+
+router.get(
+  "/by-id",
+  authMiddleware(["employee", "manager", "admin"]),
+  getReportById,
 );
 
 export default router;

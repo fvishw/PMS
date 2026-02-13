@@ -74,6 +74,29 @@ const generateUserReport = asyncHandler(async (req: Request, res: Response) => {
       ),
     );
 });
+const getReportById = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+  if (!userId) {
+    throw new ApiError(400, "User ID is required");
+  }
+  const { reportId } = req.query;
+  if (!reportId) {
+    throw new ApiError(400, "Report ID is required");
+  }
+
+  const report = await UserReportModel.findOne({
+    _id: reportId,
+    user: userId,
+  });
+
+  if (!report) {
+    throw new ApiError(404, "Report not found");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, { report }, "Report fetched successfully"));
+});
 
 const getCurrentQuarterReportStatus = asyncHandler(
   async (req: Request, res: Response) => {
@@ -146,4 +169,5 @@ export {
   generateUserReport,
   getCurrentQuarterReportStatus,
   getCurrentQuarterReport,
+  getReportById,
 };

@@ -261,9 +261,7 @@ export class API {
   }
   getReportById(reportId: string): Promise<GetUserReport> {
     return this.request(
-      this.instance.get("/reports/report-by-id", {
-        params: { reportId },
-      }),
+      this.instance.get(`/reports/by-id`, { params: { reportId } }),
     );
   }
   getCurrentQuarterReport(): Promise<GetUserReport> {

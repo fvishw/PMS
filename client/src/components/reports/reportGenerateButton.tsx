@@ -6,14 +6,16 @@ import { ReportModal } from "./reportModal";
 import { useState } from "react";
 import { queryClient } from "@/utils/queryClient";
 
+export type ReportGenerateModalType = {
+  type: "current" | "generate" | "byId";
+} | null;
+
 function ReportGenerateButton() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["currentQuarterReportStatus"],
     queryFn: () => Api.getCurrentQuarterReportStatus(),
   });
-  const [modal, setModal] = useState<{
-    type: "current" | "generate" | "byId";
-  } | null>(null);
+  const [modal, setModal] = useState<ReportGenerateModalType>(null);
   const {
     mutate: generateReport,
     isPending: isGeneratingReport,
@@ -42,7 +44,7 @@ function ReportGenerateButton() {
   }
   const hasCurrentQuarterReport = data?.hasCurrentQuarterReport;
   const isAppraisalCompleted = data?.isAppraisalCompleted;
-  
+
   const handleCloseModal = () => {
     queryClient.invalidateQueries({
       queryKey: ["reports"],
@@ -65,9 +67,7 @@ function ReportGenerateButton() {
         View Current Report
       </Button>
     ) : (
-      <Button onClick={handleGenerateReport}>
-        Generate Report
-      </Button>
+      <Button onClick={handleGenerateReport}>Generate Report</Button>
     )
   ) : null;
 
