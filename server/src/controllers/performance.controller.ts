@@ -403,14 +403,16 @@ const getUserPerformanceForm = asyncHandler(
     const isAppraisalActive = await Settings.checkIsAppraisalEnabled();
 
     if (!isAppraisalActive) {
-      throw new ApiResponse(
-        200,
-        {
-          hasUserAcceptedKpi: false,
-          performanceForm: null,
-          isAppraisalEnabled: false,
-        },
-        "Appraisal process is currently disabled",
+      return res.status(200).json(
+        new ApiResponse(
+          200,
+          {
+            hasUserAcceptedKpi: false,
+            performanceForm: null,
+            isAppraisalEnabled: false,
+          },
+          "Appraisal process is currently disabled",
+        ),
       );
     }
 

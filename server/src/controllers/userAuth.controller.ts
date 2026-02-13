@@ -4,6 +4,7 @@ import { ApiError } from "@/utils/ApiError.js";
 import { User } from "@/models/user.model.js";
 import { ApiResponse } from "@/utils/ApiResponse.js";
 import AuthService from "@/utils/AuthService.js";
+import EmailService from "@/services/emailService/email.service.js";
 
 const signUp = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -94,7 +95,7 @@ const sendResetLink = asyncHandler(async (req: Request, res: Response) => {
         new ApiResponse(
           200,
           null,
-          "If an account exists with this email, a password reset link has been sent",
+          "Email sent with password reset instructions if an account exists with this email",
         ),
       );
   }
@@ -104,8 +105,7 @@ const sendResetLink = asyncHandler(async (req: Request, res: Response) => {
   );
   user.passwordResetToken = resetToken;
   await user.save();
-
-  // need to send reset link to user's email address
+  await EmailService.sendPasswordResetEmail(user.email, resetToken);
 
   return res
     .status(200)
@@ -113,7 +113,7 @@ const sendResetLink = asyncHandler(async (req: Request, res: Response) => {
       new ApiResponse(
         200,
         null,
-        "If an account exists with this email, a password reset link has been sent",
+        "Email sent with password reset instructions if an account exists with this email",
       ),
     );
 });

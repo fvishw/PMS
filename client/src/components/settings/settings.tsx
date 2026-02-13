@@ -39,7 +39,6 @@ export interface SettingsValue {
   isAppraisalEnabled: boolean;
 }
 function settingsDtoToForm(settings: any): ISettingsForm {
-  console.log("backend Settings", settings);
   return {
     currentQuarter: settings.currentQuarter,
     currentYear: settings?.currentYear ? settings.currentYear.toString() : "",
@@ -142,7 +141,6 @@ function Settings() {
   useEffect(() => {
     if (data && data?.settings && !getSettingsLoading) {
       const defaultValues = settingsDtoToForm(data.settings);
-      // console.log(defaultValues);
       reset(defaultValues);
     }
   }, [data, getSettingsLoading, reset]);
@@ -194,7 +192,6 @@ function Settings() {
                 control={control}
                 name="currentYear"
                 render={({ field }) => {
-                  console.log("current year", field.value);
                   return (
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger className="w-full sm:w-[180px]">
@@ -324,7 +321,6 @@ function Settings() {
                   control={control}
                   name="isAppraisalEnabled"
                   render={({ field }) => {
-                    console.log("isAppraisal", field.value);
                     return (
                       <Select
                         value={field.value}

@@ -4,6 +4,7 @@ import { ApiError } from "@/utils/ApiError.js";
 import asyncHandler from "@/utils/asyncHandler.js";
 import { ApiResponse } from "@/utils/ApiResponse.js";
 import { userAddPayloadSchema } from "@/types/user.js";
+import emailService from "@/services/emailService/email.service.js";
 
 const addUser = asyncHandler(async (req: Request, res: Response) => {
   const parsedPayload = userAddPayloadSchema.safeParse(req.body);
@@ -34,7 +35,7 @@ const addUser = asyncHandler(async (req: Request, res: Response) => {
     .populate("designation")
     .select("-password -refreshToken -passwordResetToken");
 
-  //send email to user to complete signup process
+  await emailService.sendInvitationEmail(user.email);
   return res
     .status(201)
     .json(new ApiResponse(201, newUser, "User added successfully"));

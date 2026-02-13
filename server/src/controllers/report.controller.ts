@@ -64,7 +64,6 @@ const generateUserReport = asyncHandler(async (req: Request, res: Response) => {
     quarter: userPerformanceRecord.quarter,
     performance: userPerformanceRecord._id,
   });
-  console.log(newUserReport);
   res
     .status(200)
     .json(

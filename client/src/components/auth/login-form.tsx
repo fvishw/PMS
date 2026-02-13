@@ -93,12 +93,12 @@ export function LoginForm({
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a
-                    href="#"
+                  <Link
+                    to={"/forgot-password"}
                     className="ml-auto text-sm underline-offset-2 hover:underline"
                   >
                     Forgot your password?
-                  </a>
+                  </Link>
                 </div>
                 <div className="relative">
                   <Input
@@ -123,13 +123,13 @@ export function LoginForm({
                     )}
                   </button>
                 </div>
-                  <ErrorMessage
-                    errors={errors}
-                    name="password"
-                    render={({ message }) => (
-                      <p className="text-sm text-red-600">{message}</p>
-                    )}
-                  />
+                <ErrorMessage
+                  errors={errors}
+                  name="password"
+                  render={({ message }) => (
+                    <p className="text-sm text-red-600">{message}</p>
+                  )}
+                />
               </Field>
               <Field>
                 <Button type="submit" disabled={isPending}>
