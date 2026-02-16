@@ -132,8 +132,6 @@ function GoalFormDialog({ isOpen, onClose }: GoalFormDialogProps) {
             </div>
           </div>
           <DialogFooter className="mt-8">
-            <Button variant="outline">Cancel</Button>
-
             <Button variant="outline" type="button" onClick={onClose}>
               Cancel
             </Button>

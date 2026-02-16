@@ -9,6 +9,8 @@ interface IGoal extends Document {
   createdAt: Date;
   updatedAt: Date;
   isDeleted: boolean;
+  quarter: string;
+  year: number;
 }
 
 const goalSchema = new Schema<IGoal>(
@@ -34,6 +36,14 @@ const goalSchema = new Schema<IGoal>(
         },
       },
     ],
+    quarter: {
+      type: String,
+      required: true,
+    },
+    year: {
+      type: Number,
+      required: true,
+    },
     dueDate: {
       type: Date,
       required: true,

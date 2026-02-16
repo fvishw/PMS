@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { isEnabledOptions, quarterOptions } from "@/types/option";
+import { isEnabledOptions } from "@/types/option";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { useEffect, useState } from "react";
@@ -17,6 +17,7 @@ import Api from "@/api/api";
 import { toast } from "sonner";
 import ApiErrorMessage from "../ApiErrorMessage";
 import { queryClient } from "@/utils/queryClient";
+import { QuarterSelect } from "../common/quarterSelect";
 
 export interface ISettingsForm {
   currentQuarter: string;
@@ -169,23 +170,10 @@ function Settings() {
                 control={control}
                 name="currentQuarter"
                 render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="w-full sm:w-[180px]">
-                      <SelectValue placeholder="Select Quarter" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {quarterOptions.map((quarterOption) => (
-                          <SelectItem
-                            key={quarterOption.value}
-                            value={quarterOption.value}
-                          >
-                            {quarterOption.label}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+                  <QuarterSelect
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 )}
               />
               <Controller

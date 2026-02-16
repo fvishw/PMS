@@ -1,3 +1,4 @@
+import { GoalFilter } from "@/components/goalManagement/GoalManagement";
 import { ViewGoalFormValues } from "@/components/goalManagement/viewGoal/viewGoalModal";
 import { PerformanceFormValue as PerformanceTemplateFormValue } from "@/components/performanceManagement/addKpiTable.config";
 import { SettingsValue } from "@/components/settings/settings";
@@ -82,7 +83,7 @@ export class API {
     return this.request(this.instance.post("/user/add", data));
   }
 
-  fetchAllUser(): Promise<GetAllUserResponse> {
+  getAllUser(): Promise<GetAllUserResponse> {
     return this.request(this.instance.get("/user/all-user"));
   }
 
@@ -222,8 +223,10 @@ export class API {
   addGoalByAdmin(data: Goal) {
     return this.request(this.instance.post("/goals/add", data));
   }
-  getAdminGoals(): Promise<GetGoals> {
-    return this.request(this.instance.get("/goals/get-all/admin"));
+  getAdminGoals(filter: GoalFilter): Promise<GetGoals> {
+    return this.request(
+      this.instance.get("/goals/get-all/admin", { params: filter }),
+    );
   }
   getGoalById(goalId: string): Promise<GetGoal> {
     return this.request(this.instance.get(`/goals/get/${goalId}`));

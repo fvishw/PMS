@@ -1,4 +1,5 @@
 import Goal from "@/models/goal.model.js";
+import Settings from "@/models/settings.model.js";
 import { GoalSchema, markAsCompletedSchema } from "@/types/goal.js";
 import { ApiError } from "@/utils/ApiError.js";
 import { ApiResponse } from "@/utils/ApiResponse.js";
@@ -10,12 +11,16 @@ const addGoal = asyncHandler(async (req: Request, res: Response) => {
   if (!parsedPayload.success) {
     throw new ApiError(400, "Invalid Goal Payload");
   }
+  const { currentQuarter, currentYear } =
+    await Settings.getCurrentYearAndQuarter();
   const { title, subTasks, owner, dueDate } = parsedPayload.data;
   const userGoal = new Goal({
     title,
     subTasks,
     owner,
     dueDate,
+    quarter: currentQuarter,
+    year: currentYear,
   });
   await userGoal.save();
 
@@ -78,10 +83,18 @@ const deleteGoal = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const getAllGoals = asyncHandler(async (req: Request, res: Response) => {
-  const goals = await Goal.find({ isDeleted: false }).populate(
-    "owner",
-    "fullName",
-  );
+  const { userId, quarter, year } = req.query;
+  const filter: any = { isDeleted: false };
+  if (userId && userId !== "ALL") {
+    filter.owner = userId;
+  }
+  if (quarter) {
+    filter.quarter = quarter;
+  }
+  if (year) {
+    filter.year = year;
+  }
+  const goals = await Goal.find(filter).populate("owner", "fullName");
   return res
     .status(200)
     .json(new ApiResponse(200, { goals }, "Goals fetched successfully"));

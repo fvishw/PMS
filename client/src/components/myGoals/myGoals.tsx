@@ -2,13 +2,13 @@ import { useState } from "react";
 import { GoalCard } from "./goalCard";
 
 import { ViewGoalModal } from "../goalManagement/viewGoal/viewGoalModal";
-import { getTransformedGoals } from "../goalManagement/GoalManagement";
 import { GoalRow } from "../goalManagement/goalTable.config";
 import Api from "@/api/api";
 import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "../ui/spinner";
 import ApiErrorMessage from "../ApiErrorMessage";
 import { useAuth } from "@/hooks/useAuthContext";
+import { getTransformedGoals } from "../goalManagement/transformedGoals";
 
 export type IGoal = GoalRow;
 
