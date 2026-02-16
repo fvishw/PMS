@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*", "tests/**/*", "../client/src/components/reports/reportGenerateButton.tsx"],
+  "include": ["src/**/*", "tests/**/*"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "rootDir": "./src",

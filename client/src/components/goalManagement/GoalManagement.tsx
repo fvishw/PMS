@@ -10,6 +10,7 @@ import GoalsSummary from "./GoalsSummary";
 import { useAuth } from "@/hooks/useAuthContext";
 import { Spinner } from "../ui/spinner";
 import ApiErrorMessage from "../ApiErrorMessage";
+import { Button } from "../ui/button";
 
 export const getTransformedGoals = (data: Goal[]): GoalRow[] => {
   const transformedGoals: GoalRow[] = data.map((goal: Goal) => {
@@ -101,7 +102,10 @@ export const GoalManagement = () => {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-end">
-        <GoalFormDialog isOpen={isOpen} onClose={() => setIsOpen(false)} />
+        <Button onClick={() => setIsOpen(true)}>Add Goal</Button>
+        {isOpen && (
+          <GoalFormDialog isOpen={isOpen} onClose={() => setIsOpen(false)} />
+        )}
       </div>
       {contentToDisplay}
     </div>

@@ -35,9 +35,14 @@ const MyGoals = () => {
     contentToRender = <Spinner />;
   }
   if (data) {
-    contentToRender = goals.map((goal) => (
-      <GoalCard key={goal._id} goal={goal} onOpen={handleModalOpen} />
-    ));
+    contentToRender =
+      goals.length > 0 ? (
+        goals.map((goal) => (
+          <GoalCard key={goal._id} goal={goal} onOpen={handleModalOpen} />
+        ))
+      ) : (
+        <p className="text-center text-muted-foreground">No goals found.</p>
+      );
   }
   if (error) {
     contentToRender = (
