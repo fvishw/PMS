@@ -8,8 +8,32 @@ import { Button } from "../ui/button";
 import { MoreVertical } from "lucide-react";
 import { useState } from "react";
 import { ViewGoalModal } from "./viewGoal/viewGoalModal";
+import { DeleteConfirmationModal } from "./GoalModal/deleteConfirmationModal";
+import { useMutation } from "@tanstack/react-query";
+import Api from "@/api/api";
+import { toast } from "sonner";
+
+type GoalModalType = "view" | "delete" | null;
 export const GoalTableAction = ({ goalId }: { goalId: string }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [modal, setModal] = useState<GoalModalType>(null);
+  const handleCloseModal = () => {
+    setModal(null);
+  };
+  const { mutate } = useMutation({
+    mutationFn: (goalId: string) => Api.deleteGoalById(goalId),
+    onSuccess: () => {
+      handleCloseModal();
+      toast.success("Goal deleted successfully", {
+        position: "top-right",
+      });
+    },
+  });
+  const handleConfirmDelete = () => {
+    // TODO: add delete mutation call
+
+    mutate(goalId);
+  };
+
   return (
     <>
       <div className="text-center">
@@ -21,16 +45,26 @@ export const GoalTableAction = ({ goalId }: { goalId: string }) => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="center">
-            <DropdownMenuItem onClick={() => setIsOpen(true)}>
+            <DropdownMenuItem onClick={() => setModal("view")}>
               View Goal
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setModal("delete")}>
+              Delete Goal
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        {isOpen && (
+        {modal === "view" && (
           <ViewGoalModal
             goalId={goalId}
-            isOpen={isOpen}
-            onClose={() => setIsOpen(false)}
+            isOpen={modal === "view"}
+            onClose={handleCloseModal}
+          />
+        )}
+        {modal === "delete" && (
+          <DeleteConfirmationModal
+            isOpen={modal === "delete"}
+            onClose={handleCloseModal}
+            onConfirmDelete={handleConfirmDelete}
           />
         )}
       </div>

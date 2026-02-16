@@ -8,6 +8,7 @@ interface IGoal extends Document {
   status: "on_track" | "at_risk" | "completed";
   createdAt: Date;
   updatedAt: Date;
+  isDeleted: boolean;
 }
 
 const goalSchema = new Schema<IGoal>(
@@ -41,6 +42,10 @@ const goalSchema = new Schema<IGoal>(
       type: String,
       enum: ["on_track", "at_risk", "completed"],
       default: "on_track",
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true },

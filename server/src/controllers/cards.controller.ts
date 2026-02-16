@@ -125,11 +125,12 @@ const goalCardStats = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(401, "User not Authorized");
   }
   // 1: total goals
-  const totalGoals = await Goal.find().countDocuments();
+  const totalGoals = await Goal.find({ isDeleted: false }).countDocuments();
 
   // total completed goals
   const completedGoals = await Goal.find({
     status: "completed",
+    isDeleted: false,
   }).countDocuments();
 
   const result = {

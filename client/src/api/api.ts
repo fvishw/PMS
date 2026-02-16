@@ -234,6 +234,11 @@ export class API {
   getGoalsByOwner(): Promise<GetGoals> {
     return this.request(this.instance.get("/goals/get-by-owner"));
   }
+  deleteGoalById(goalId: string) {
+    return this.request(
+      this.instance.delete(`/goals/delete`, { params: { goalId } }),
+    );
+  }
   getPerformanceStatus(): Promise<GetPerformanceStatus> {
     return this.request(this.instance.get("/cards/performance-status"));
   }
