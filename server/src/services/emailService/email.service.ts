@@ -17,27 +17,9 @@ interface SendEmailPayload {
 
 class EmailService {
   private static instance: EmailService;
-  private readonly transporter: Transporter;
+  private transporter: Transporter | null = null;
 
-  private constructor() {
-    if (!SENDER_EMAIL || !GMAIL_APP_PASSWORD) {
-      throw new ApiError(
-        500,
-        "Email service is not configured. Set SENDER_EMAIL and GMAIL_APP_PASSWORD.",
-      );
-    }
-
-    this.transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: SENDER_EMAIL,
-        pass: GMAIL_APP_PASSWORD,
-      },
-      pool: true,
-      maxConnections: 5,
-      maxMessages: 100,
-    });
-  }
+  private constructor() { }
 
   static getInstance(): EmailService {
     if (!EmailService.instance) {
@@ -46,15 +28,37 @@ class EmailService {
     return EmailService.instance;
   }
 
+  private getTransporter(): Transporter {
+    if (!this.transporter) {
+      if (!SENDER_EMAIL || !GMAIL_APP_PASSWORD) {
+        throw new ApiError(
+          500,
+          "Email service is not configured. Set SENDER_EMAIL and GMAIL_APP_PASSWORD.",
+        );
+      }
+      this.transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: SENDER_EMAIL,
+          pass: GMAIL_APP_PASSWORD,
+        },
+        pool: true,
+        maxConnections: 5,
+        maxMessages: 100,
+      });
+    }
+    return this.transporter;
+  }
+
   async verifyConnection(): Promise<void> {
     if (NODE_ENV !== "production") {
       return;
     }
-    await this.transporter.verify();
+    await this.getTransporter().verify();
   }
 
   private async sendEmail(payload: SendEmailPayload): Promise<void> {
-    await this.transporter.sendMail({
+    await this.getTransporter().sendMail({
       from: `"NexPerformance" <${SENDER_EMAIL}>`,
       to: payload.to,
       subject: payload.subject,

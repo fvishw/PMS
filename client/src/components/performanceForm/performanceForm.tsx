@@ -81,6 +81,7 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
     if (record?._id) {
       reset({
         userPerformanceId: record._id,
+        criteria: record.kpis || [],
         areaOfImprovement: record.areaOfImprovement || "",
         areaOfStrength: record.areaOfStrength || "",
         competencies: record.competencies || [],

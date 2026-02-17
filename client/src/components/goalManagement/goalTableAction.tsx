@@ -12,6 +12,7 @@ import { DeleteConfirmationModal } from "./GoalModal/deleteConfirmationModal";
 import { useMutation } from "@tanstack/react-query";
 import Api from "@/api/api";
 import { toast } from "sonner";
+import { queryClient } from "@/utils/queryClient";
 
 type GoalModalType = "view" | "delete" | null;
 export const GoalTableAction = ({ goalId }: { goalId: string }) => {
@@ -26,11 +27,15 @@ export const GoalTableAction = ({ goalId }: { goalId: string }) => {
       toast.success("Goal deleted successfully", {
         position: "top-right",
       });
+      queryClient.invalidateQueries({ queryKey: ["goals"] });
+    },
+    onError: () => {
+      toast.error("Failed to delete goal", {
+        position: "top-right",
+      });
     },
   });
   const handleConfirmDelete = () => {
-    // TODO: add delete mutation call
-
     mutate(goalId);
   };
 

@@ -9,9 +9,7 @@ const __dirname = path.dirname(__filename);
 export class EmailTemplate {
   private static readTemplate(templateName: string) {
     try {
-      console.log("path", __dirname);
       const filePath = path.join(__dirname, "templates", `${templateName}.hbs`);
-      console.log(filePath);
       return fs.readFileSync(filePath, "utf-8");
     } catch (error) {
       throw new Error(`Failed to read email template: ${templateName}`);
@@ -32,6 +30,9 @@ export class EmailTemplate {
   }
 
   static getInvitationEmail(): string {
-    return this.compileTemplate("employeeOnboardingTemplate", {});
+    const appUrl = process.env.APP_URL || "http://localhost:3000";
+    return this.compileTemplate("employeeOnboardingTemplate", {
+      appUrl,
+    });
   }
 }

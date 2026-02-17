@@ -40,7 +40,7 @@ export function ReportModal({
     isLoading: reportLoading,
     error: reportError,
   } = useQuery({
-    enabled: isFetchById,
+    enabled: isFetchById && !!reportId,
     queryKey: ["reportById", reportId],
     queryFn: () => Api.getReportById(reportId!),
   });

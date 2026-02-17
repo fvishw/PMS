@@ -14,8 +14,10 @@ const TypeOptions = [
 ];
 
 const currentYear = new Date().getFullYear();
-const yearOptions = Array.from({ length: 5 }, (_, i) => currentYear - i); // last 5 years
-
+const yearOptions: IOption[] = Array.from({ length: 5 }, (_, i) => {
+  const year = (currentYear - i).toString();
+  return { label: year, value: year };
+});
 
 const monthOptions: IOption[] = [
   { label: "January", value: "1" },

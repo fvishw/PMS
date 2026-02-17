@@ -36,7 +36,7 @@ export const GoalManagement = () => {
   let contentToDisplay;
 
   const goals: GoalRow[] = useMemo(() => {
-    return data ? getTransformedGoals(data?.goals) : [];
+    return data?.goals ? getTransformedGoals(data.goals) : [];
   }, [data]);
 
   if (goalsLoading) {

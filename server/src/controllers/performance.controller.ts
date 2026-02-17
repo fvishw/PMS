@@ -481,7 +481,7 @@ const getPerformanceTemplateById = asyncHandler(
 );
 const getUserPerformanceFormById = asyncHandler(
   async (req: Request, res: Response) => {
-    const { performanceId } = req.query;
+    const performanceId = req.query.performanceId as string;
 
     const isAppraisalActive = await Settings.checkIsAppraisalEnabled();
 

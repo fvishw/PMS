@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/select";
 import { yearOptions } from "@/types/option";
 
-type UserSelectProps = {
+type YearSelectProps = {
   value?: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -19,7 +19,7 @@ export function YearSelect({
   onChange,
   placeholder = "Select year",
   allowAllOption,
-}: UserSelectProps) {
+}: YearSelectProps) {
   return (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger>
@@ -28,9 +28,9 @@ export function YearSelect({
 
       <SelectContent>
         {allowAllOption && <SelectItem value="ALL">All years</SelectItem>}
-        {yearOptions.map((year) => (
-          <SelectItem key={year} value={year.toString()}>
-            {year}
+        {yearOptions.map((option) => (
+          <SelectItem key={option.value} value={option.value}>
+            {option.label}
           </SelectItem>
         ))}
       </SelectContent>

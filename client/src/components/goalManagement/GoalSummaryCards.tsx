@@ -3,6 +3,7 @@ import { Card, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import GoalsSummary from "./GoalsSummary";
+import ApiErrorMessage from "../ApiErrorMessage";
 
 function GoalSummaryCardsSkeleton() {
   return (
@@ -23,13 +24,20 @@ function GoalSummaryCardsSkeleton() {
 }
 
 function GoalSummaryCards() {
-  const { data: cardSummary, isLoading } = useQuery({
+  const {
+    data: cardSummary,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["sectionCard"],
     queryFn: () => Api.getGoalCardStatus(),
   });
 
   if (isLoading || !cardSummary?.stats) {
     return <GoalSummaryCardsSkeleton />;
+  }
+  if (error) {
+    return <ApiErrorMessage message={error.message} />;
   }
 
   const summary = {

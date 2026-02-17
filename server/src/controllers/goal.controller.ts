@@ -5,6 +5,7 @@ import { ApiError } from "@/utils/ApiError.js";
 import { ApiResponse } from "@/utils/ApiResponse.js";
 import asyncHandler from "@/utils/asyncHandler.js";
 import type { Request, Response } from "express";
+import { Types } from "mongoose";
 
 const addGoal = asyncHandler(async (req: Request, res: Response) => {
   const parsedPayload = GoalSchema.safeParse(req.body);
@@ -65,6 +66,9 @@ const deleteGoal = asyncHandler(async (req: Request, res: Response) => {
   const { goalId } = req.query;
   if (!goalId) {
     throw new ApiError(400, "Goal Id not found.");
+  }
+  if (!Types.ObjectId.isValid(goalId as string)) {
+    throw new ApiError(400, "Invalid Goal Id format.");
   }
 
   const goal = await Goal.findByIdAndUpdate(

@@ -35,7 +35,11 @@ const addUser = asyncHandler(async (req: Request, res: Response) => {
     .populate("designation")
     .select("-password -refreshToken -passwordResetToken");
 
-  await emailService.sendInvitationEmail(user.email);
+  try {
+    await emailService.sendInvitationEmail(user.email);
+  } catch (error) {
+    console.error("Error sending invitation email:", error);
+  }
   return res
     .status(201)
     .json(new ApiResponse(201, newUser, "User added successfully"));

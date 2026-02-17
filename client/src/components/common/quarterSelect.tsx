@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/select";
 import { quarterOptions } from "@/types/option";
 
-type UserSelectProps = {
+type QuarterSelectProps = {
   value?: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -19,7 +19,7 @@ export function QuarterSelect({
   onChange,
   placeholder = "Select quarter",
   allowAllOption,
-}: UserSelectProps) {
+}: QuarterSelectProps) {
   return (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger>
