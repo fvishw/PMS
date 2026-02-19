@@ -1,12 +1,12 @@
 import useUser from "@/hooks/useUser";
 import { UserSelect } from "../common/userSelect";
-import { FilterType } from "./GoalManagement";
+import { GoalFilterType } from "./GoalManagement";
 import { QuarterSelect } from "../common/quarterSelect";
 import { YearSelect } from "../common/yearOption";
 
 type GoalFilterProps = {
-  filter: FilterType;
-  onChange: (filter: FilterType) => void;
+  filter: GoalFilterType;
+  onChange: (filter: GoalFilterType) => void;
 };
 const GoalFilter = ({ filter, onChange }: GoalFilterProps) => {
   const { data: users, isLoading } = useUser();
@@ -44,3 +44,4 @@ const GoalFilter = ({ filter, onChange }: GoalFilterProps) => {
 };
 
 export default GoalFilter;
+export type { GoalFilter };
