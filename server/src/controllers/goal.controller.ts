@@ -88,7 +88,7 @@ const deleteGoal = asyncHandler(async (req: Request, res: Response) => {
 
 const getAllGoals = asyncHandler(async (req: Request, res: Response) => {
   const { userId, quarter, year } = req.query;
-  const filter: any = { isDeleted: false };
+  const filter: Record<string, unknown> = { isDeleted: false };
   if (userId && userId !== "ALL") {
     filter.owner = userId;
   }
@@ -96,7 +96,7 @@ const getAllGoals = asyncHandler(async (req: Request, res: Response) => {
     filter.quarter = quarter;
   }
   if (year) {
-    filter.year = year;
+    filter.year = Number(year);
   }
   const goals = await Goal.find(filter).populate("owner", "fullName");
   return res

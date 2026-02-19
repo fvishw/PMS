@@ -213,8 +213,7 @@ export function ReportModal({
         <DialogHeader>
           <DialogTitle>Report Card</DialogTitle>
           <DialogDescription>
-            AI generated report card based on your performance in the current
-            quarter.
+            AI generated report card based on your performance evaluation.
           </DialogDescription>
         </DialogHeader>
         {contentToRender}

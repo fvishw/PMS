@@ -28,7 +28,6 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
     enabled: !!performanceId || !!currentUser?._id,
     queryFn: getPerformanceApi(performanceId),
   });
-  console.log("component rerenders", data);
 
   const {
     control,

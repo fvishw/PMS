@@ -20,7 +20,7 @@ export const GoalTableAction = ({ goalId }: { goalId: string }) => {
   const handleCloseModal = () => {
     setModal(null);
   };
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: (goalId: string) => Api.deleteGoalById(goalId),
     onSuccess: () => {
       handleCloseModal();
@@ -70,6 +70,7 @@ export const GoalTableAction = ({ goalId }: { goalId: string }) => {
             isOpen={modal === "delete"}
             onClose={handleCloseModal}
             onConfirmDelete={handleConfirmDelete}
+            isPending={isPending}
           />
         )}
       </div>
