@@ -18,8 +18,12 @@ const router = createBrowserRouter([
         Component: lazy(() => import("@/pages/signup")),
       },
       {
-        path: "verify-otp",
-        Component: lazy(() => import("@/pages/otp")),
+        path: "forgot-password",
+        Component: lazy(() => import("@/pages/sentEmail")),
+      },
+      {
+        path: "reset-password",
+        Component: lazy(() => import("@/pages/resetPassword")),
       },
     ],
   },

@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { isEnabledOptions, quarterOptions } from "@/types/option";
+import { isEnabledOptions } from "@/types/option";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { useEffect, useState } from "react";
@@ -17,6 +17,7 @@ import Api from "@/api/api";
 import { toast } from "sonner";
 import ApiErrorMessage from "../ApiErrorMessage";
 import { queryClient } from "@/utils/queryClient";
+import { QuarterSelect } from "../common/quarterSelect";
 
 export interface ISettingsForm {
   currentQuarter: string;
@@ -39,7 +40,6 @@ export interface SettingsValue {
   isAppraisalEnabled: boolean;
 }
 function settingsDtoToForm(settings: any): ISettingsForm {
-  console.log("backend Settings", settings);
   return {
     currentQuarter: settings.currentQuarter,
     currentYear: settings?.currentYear ? settings.currentYear.toString() : "",
@@ -142,7 +142,6 @@ function Settings() {
   useEffect(() => {
     if (data && data?.settings && !getSettingsLoading) {
       const defaultValues = settingsDtoToForm(data.settings);
-      // console.log(defaultValues);
       reset(defaultValues);
     }
   }, [data, getSettingsLoading, reset]);
@@ -171,30 +170,16 @@ function Settings() {
                 control={control}
                 name="currentQuarter"
                 render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="w-full sm:w-[180px]">
-                      <SelectValue placeholder="Select Quarter" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {quarterOptions.map((quarterOption) => (
-                          <SelectItem
-                            key={quarterOption.value}
-                            value={quarterOption.value}
-                          >
-                            {quarterOption.label}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+                  <QuarterSelect
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 )}
               />
               <Controller
                 control={control}
                 name="currentYear"
                 render={({ field }) => {
-                  console.log("current year", field.value);
                   return (
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger className="w-full sm:w-[180px]">
@@ -324,7 +309,6 @@ function Settings() {
                   control={control}
                   name="isAppraisalEnabled"
                   render={({ field }) => {
-                    console.log("isAppraisal", field.value);
                     return (
                       <Select
                         value={field.value}

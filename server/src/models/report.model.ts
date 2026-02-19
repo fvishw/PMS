@@ -12,8 +12,7 @@ interface IUserReportSchema {
   riskFlags: string[];
   recommendedActions: string[];
   overAllScore: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: Date;
   quarter: string;
   year: number;
 }

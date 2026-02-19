@@ -1,3 +1,4 @@
+import isTokenExpired from "@/utils/checkToken";
 import { Navigate } from "react-router";
 
 const ProtectedRoute: React.FC<React.PropsWithChildren<{}>> = ({
@@ -5,7 +6,9 @@ const ProtectedRoute: React.FC<React.PropsWithChildren<{}>> = ({
 }) => {
   const token = localStorage.getItem("accessToken");
 
-  if (!token) {
+  if (!token || isTokenExpired(token)) {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
     return <Navigate to="/" replace />;
   }
 

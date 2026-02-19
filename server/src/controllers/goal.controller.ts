@@ -1,21 +1,27 @@
 import Goal from "@/models/goal.model.js";
+import Settings from "@/models/settings.model.js";
 import { GoalSchema, markAsCompletedSchema } from "@/types/goal.js";
 import { ApiError } from "@/utils/ApiError.js";
 import { ApiResponse } from "@/utils/ApiResponse.js";
 import asyncHandler from "@/utils/asyncHandler.js";
 import type { Request, Response } from "express";
+import { Types } from "mongoose";
 
 const addGoal = asyncHandler(async (req: Request, res: Response) => {
   const parsedPayload = GoalSchema.safeParse(req.body);
   if (!parsedPayload.success) {
     throw new ApiError(400, "Invalid Goal Payload");
   }
+  const { currentQuarter, currentYear } =
+    await Settings.getCurrentYearAndQuarter();
   const { title, subTasks, owner, dueDate } = parsedPayload.data;
   const userGoal = new Goal({
     title,
     subTasks,
     owner,
     dueDate,
+    quarter: currentQuarter,
+    year: currentYear,
   });
   await userGoal.save();
 
@@ -57,18 +63,23 @@ const markAsComplete = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const deleteGoal = asyncHandler(async (req: Request, res: Response) => {
-  const { goalId } = req.params;
+  const { goalId } = req.query;
   if (!goalId) {
     throw new ApiError(400, "Goal Id not found.");
   }
+  if (!Types.ObjectId.isValid(goalId as string)) {
+    throw new ApiError(400, "Invalid Goal Id format.");
+  }
 
-  const goal = await Goal.findById(goalId);
+  const goal = await Goal.findByIdAndUpdate(
+    goalId,
+    { isDeleted: true },
+    { new: true },
+  );
 
   if (!goal) {
     throw new ApiError(404, "Goal with given id not found");
   }
-
-  await Goal.findByIdAndDelete(goalId);
 
   return res
     .status(200)
@@ -76,7 +87,18 @@ const deleteGoal = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const getAllGoals = asyncHandler(async (req: Request, res: Response) => {
-  const goals = await Goal.find().populate("owner", "fullName");
+  const { userId, quarter, year } = req.query;
+  const filter: Record<string, unknown> = { isDeleted: false };
+  if (userId && userId !== "ALL") {
+    filter.owner = userId;
+  }
+  if (quarter) {
+    filter.quarter = quarter;
+  }
+  if (year) {
+    filter.year = Number(year);
+  }
+  const goals = await Goal.find(filter).populate("owner", "fullName");
   return res
     .status(200)
     .json(new ApiResponse(200, { goals }, "Goals fetched successfully"));
@@ -88,7 +110,7 @@ const getGoalById = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(400, "Goal Id not found.");
   }
 
-  const goal = await Goal.findById(goalId);
+  const goal = await Goal.findOne({ _id: goalId, isDeleted: false });
 
   if (!goal) {
     throw new ApiError(404, "Goal with given id not found");
@@ -106,7 +128,7 @@ const getGoalsByOwner = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(401, "User Id not found.");
   }
 
-  const goals = await Goal.find({ owner: userId }).populate(
+  const goals = await Goal.find({ owner: userId, isDeleted: false }).populate(
     "owner",
     "fullName",
   );

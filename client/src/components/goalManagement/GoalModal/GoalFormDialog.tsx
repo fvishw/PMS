@@ -6,7 +6,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Goal } from "@/types/goal";
@@ -18,6 +17,7 @@ import { IconPlus } from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
 import Api from "@/api/api";
 import { toast } from "sonner";
+import { queryClient } from "@/utils/queryClient";
 
 interface GoalFormDialogProps {
   isOpen: boolean;
@@ -42,7 +42,10 @@ function GoalFormDialog({ isOpen, onClose }: GoalFormDialogProps) {
     mutationFn: (data: Goal) => Api.addGoalByAdmin(data),
     onSuccess: () => {
       reset();
-      toast.success("Goal Add Successfully.");
+      toast.success("Goal Add Successfully.", {
+        position: "top-right",
+      });
+      queryClient.invalidateQueries({ queryKey: ["goals"] });
       onClose();
     },
     onError: (error) => {
@@ -73,9 +76,6 @@ function GoalFormDialog({ isOpen, onClose }: GoalFormDialogProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogTrigger asChild>
-        <Button>Create goal</Button>
-      </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Create a new goal</DialogTitle>
@@ -132,8 +132,6 @@ function GoalFormDialog({ isOpen, onClose }: GoalFormDialogProps) {
             </div>
           </div>
           <DialogFooter className="mt-8">
-            <Button variant="outline">Cancel</Button>
-
             <Button variant="outline" type="button" onClick={onClose}>
               Cancel
             </Button>

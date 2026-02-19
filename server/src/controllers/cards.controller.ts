@@ -1,5 +1,6 @@
 import Goal from "@/models/goal.model.js";
 import { MasterPerformance } from "@/models/masterPerformance.js";
+import Settings from "@/models/settings.model.js";
 import { User } from "@/models/user.model.js";
 import { UserPerformance } from "@/models/userPerformance.model.js";
 import { ApiError } from "@/utils/ApiError.js";
@@ -14,8 +15,13 @@ const performanceStatus = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(401, "Unauthorized");
   }
 
+  const { currentQuarter, currentYear } =
+    await Settings.getCurrentYearAndQuarter();
+
   const userPerformanceRecord = await UserPerformance.findOne({
     user: userId,
+    year: currentYear,
+    quarter: currentQuarter,
   }).select("stage");
 
   if (!userPerformanceRecord) {
@@ -119,11 +125,12 @@ const goalCardStats = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(401, "User not Authorized");
   }
   // 1: total goals
-  const totalGoals = await Goal.find().countDocuments();
+  const totalGoals = await Goal.find({ isDeleted: false }).countDocuments();
 
   // total completed goals
   const completedGoals = await Goal.find({
     status: "completed",
+    isDeleted: false,
   }).countDocuments();
 
   const result = {

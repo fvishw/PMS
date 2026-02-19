@@ -8,6 +8,9 @@ interface IGoal extends Document {
   status: "on_track" | "at_risk" | "completed";
   createdAt: Date;
   updatedAt: Date;
+  isDeleted: boolean;
+  quarter: string;
+  year: number;
 }
 
 const goalSchema = new Schema<IGoal>(
@@ -33,6 +36,14 @@ const goalSchema = new Schema<IGoal>(
         },
       },
     ],
+    quarter: {
+      type: String,
+      required: true,
+    },
+    year: {
+      type: Number,
+      required: true,
+    },
     dueDate: {
       type: Date,
       required: true,
@@ -41,6 +52,10 @@ const goalSchema = new Schema<IGoal>(
       type: String,
       enum: ["on_track", "at_risk", "completed"],
       default: "on_track",
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true },

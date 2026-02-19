@@ -1,3 +1,4 @@
+import { GoalFilter } from "@/components/goalManagement/GoalManagement";
 import { ViewGoalFormValues } from "@/components/goalManagement/viewGoal/viewGoalModal";
 import { PerformanceFormValue as PerformanceTemplateFormValue } from "@/components/performanceManagement/addKpiTable.config";
 import { SettingsValue } from "@/components/settings/settings";
@@ -24,6 +25,8 @@ import {
   GetGoalCardStatus,
   GetCurrentSettings,
   GetUserReport,
+  GetUserReports,
+  GetCurrentQuarterStatus,
 } from "@/types/apiResponse";
 import { CheckInPayload, ICheckInPayload } from "@/types/chekin";
 import { Goal } from "@/types/goal";
@@ -80,7 +83,7 @@ export class API {
     return this.request(this.instance.post("/user/add", data));
   }
 
-  fetchAllUser(): Promise<GetAllUserResponse> {
+  getAllUser(): Promise<GetAllUserResponse> {
     return this.request(this.instance.get("/user/all-user"));
   }
 
@@ -220,8 +223,10 @@ export class API {
   addGoalByAdmin(data: Goal) {
     return this.request(this.instance.post("/goals/add", data));
   }
-  getAdminGoals(): Promise<GetGoals> {
-    return this.request(this.instance.get("/goals/get-all/admin"));
+  getAdminGoals(filter: GoalFilter): Promise<GetGoals> {
+    return this.request(
+      this.instance.get("/goals/get-all/admin", { params: filter }),
+    );
   }
   getGoalById(goalId: string): Promise<GetGoal> {
     return this.request(this.instance.get(`/goals/get/${goalId}`));
@@ -231,6 +236,11 @@ export class API {
   }
   getGoalsByOwner(): Promise<GetGoals> {
     return this.request(this.instance.get("/goals/get-by-owner"));
+  }
+  deleteGoalById(goalId: string) {
+    return this.request(
+      this.instance.delete(`/goals/delete`, { params: { goalId } }),
+    );
   }
   getPerformanceStatus(): Promise<GetPerformanceStatus> {
     return this.request(this.instance.get("/cards/performance-status"));
@@ -251,8 +261,22 @@ export class API {
   updateSettings(data: SettingsValue): Promise<GetCurrentSettings> {
     return this.request(this.instance.put("/settings/", data));
   }
-  fetchUserReport(): Promise<GetUserReport> {
-    return this.request(this.instance.get("/reports/user-report"));
+  fetchUserPastReports(): Promise<GetUserReports> {
+    return this.request(this.instance.get("/reports/user-past-reports"));
+  }
+  getCurrentQuarterReportStatus(): Promise<GetCurrentQuarterStatus> {
+    return this.request(this.instance.get("/reports/current-quarter-status"));
+  }
+  getReportById(reportId: string): Promise<GetUserReport> {
+    return this.request(
+      this.instance.get(`/reports/by-id`, { params: { reportId } }),
+    );
+  }
+  getCurrentQuarterReport(): Promise<GetUserReport> {
+    return this.request(this.instance.get("/reports/current-quarter-report"));
+  }
+  generateUserReport(): Promise<GetUserReport> {
+    return this.request(this.instance.post("/reports/generate-user-report"));
   }
 }
 

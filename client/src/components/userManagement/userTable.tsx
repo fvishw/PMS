@@ -7,7 +7,7 @@ import ApiErrorMessage from "../ApiErrorMessage";
 
 export function UserTable() {
   const { data, error, isLoading } = useQuery({
-    queryFn: () => Api.fetchAllUser(),
+    queryFn: () => Api.getAllUser(),
     queryKey: ["users"],
   });
   const users = data?.users;

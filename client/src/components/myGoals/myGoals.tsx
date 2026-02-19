@@ -2,13 +2,13 @@ import { useState } from "react";
 import { GoalCard } from "./goalCard";
 
 import { ViewGoalModal } from "../goalManagement/viewGoal/viewGoalModal";
-import { getTransformedGoals } from "../goalManagement/GoalManagement";
 import { GoalRow } from "../goalManagement/goalTable.config";
 import Api from "@/api/api";
 import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "../ui/spinner";
 import ApiErrorMessage from "../ApiErrorMessage";
 import { useAuth } from "@/hooks/useAuthContext";
+import { getTransformedGoals } from "../goalManagement/transformedGoals";
 
 export type IGoal = GoalRow;
 
@@ -35,9 +35,14 @@ const MyGoals = () => {
     contentToRender = <Spinner />;
   }
   if (data) {
-    contentToRender = goals.map((goal) => (
-      <GoalCard key={goal._id} goal={goal} onOpen={handleModalOpen} />
-    ));
+    contentToRender =
+      goals.length > 0 ? (
+        goals.map((goal) => (
+          <GoalCard key={goal._id} goal={goal} onOpen={handleModalOpen} />
+        ))
+      ) : (
+        <p className="text-center text-muted-foreground">No goals found.</p>
+      );
   }
   if (error) {
     contentToRender = (

@@ -184,7 +184,13 @@ const managerReviewKpi = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(400, "Invalid payload format");
   }
 
-  const { competencies, userPerformanceId, criteria } = parsedPayload.data;
+  const {
+    competencies,
+    userPerformanceId,
+    criteria,
+    areaOfImprovement,
+    areaOfStrength,
+  } = parsedPayload.data;
 
   const userPerformance = await UserPerformance.findById(userPerformanceId);
 
@@ -212,6 +218,8 @@ const managerReviewKpi = asyncHandler(async (req: Request, res: Response) => {
   });
 
   userPerformance.stage = "admin_review";
+  userPerformance.areaOfImprovement = areaOfImprovement;
+  userPerformance.areaOfStrength = areaOfStrength;
 
   await userPerformance.save();
 
@@ -395,14 +403,16 @@ const getUserPerformanceForm = asyncHandler(
     const isAppraisalActive = await Settings.checkIsAppraisalEnabled();
 
     if (!isAppraisalActive) {
-      throw new ApiResponse(
-        200,
-        {
-          hasUserAcceptedKpi: false,
-          performanceForm: null,
-          isAppraisalEnabled: false,
-        },
-        "Appraisal process is currently disabled",
+      return res.status(200).json(
+        new ApiResponse(
+          200,
+          {
+            hasUserAcceptedKpi: false,
+            performanceForm: null,
+            isAppraisalEnabled: false,
+          },
+          "Appraisal process is currently disabled",
+        ),
       );
     }
 
@@ -471,7 +481,7 @@ const getPerformanceTemplateById = asyncHandler(
 );
 const getUserPerformanceFormById = asyncHandler(
   async (req: Request, res: Response) => {
-    const { performanceId } = req.query;
+    const performanceId = req.query.performanceId as string;
 
     const isAppraisalActive = await Settings.checkIsAppraisalEnabled();
 

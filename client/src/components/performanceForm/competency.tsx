@@ -19,14 +19,14 @@ const ratings = [
 ];
 
 interface CompetenciesProps {
-  data: CompetenciesData;
+  competenciesData: CompetenciesData;
   permissions: EditPermissions;
   register: any;
   control: any;
 }
 
 function Competencies({
-  data,
+  competenciesData,
   permissions,
   register,
   control,
@@ -34,7 +34,7 @@ function Competencies({
   return (
     <SectionWrapper title="Section B: Competency Ratings">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ">
-        {data?.map((competency: Competency, index: number) => {
+        {competenciesData?.map((competency: Competency, index: number) => {
           return (
             <div
               className="p-4 border rounded w-full flex flex-col justify-between"
@@ -100,7 +100,11 @@ function Competencies({
             <Textarea
               placeholder="Describe the employee's strengths..."
               disabled={!permissions.canEditManager}
-              {...register("areaOfStrength", { required: true })}
+              {...register("areaOfStrength", {
+                required: permissions.canEditManager
+                  ? "This field is required"
+                  : false,
+              })}
             />
           </div>
         </div>
@@ -110,7 +114,11 @@ function Competencies({
             <Textarea
               placeholder="Describe areas where the employee can improve..."
               disabled={!permissions.canEditManager}
-              {...register("areaOfImprovement", { required: true })}
+              {...register("areaOfImprovement", {
+                required: permissions.canEditManager
+                  ? "This field is required"
+                  : false,
+              })}
             />
           </div>
         </div>

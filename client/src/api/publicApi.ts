@@ -43,18 +43,27 @@ class PublicApi {
       }),
     );
   }
-  resetPassword(email: string) {
+  verifyPasswordResetToken(token: string) {
     return this.request(
-      this.instance.post("/user/auth/reset-password", {
-        email,
+      this.instance.post("/user/auth/verify-password-reset-link", {
+        token,
       }),
     );
   }
-  verifyOtp(email: string, otp: string) {
+
+  resetPassword(token: string, newPassword: string) {
     return this.request(
-      this.instance.post("/user/auth/verify-otp", {
+      this.instance.post("/user/auth/reset-password", {
+        token,
+        newPassword,
+      }),
+    );
+  }
+
+  forgotPassword(email: string) {
+    return this.request(
+      this.instance.post("/user/auth/send-reset-link", {
         email,
-        otp,
       }),
     );
   }

@@ -126,13 +126,13 @@ export function SignupForm({
                         )}
                       </button>
                     </div>
-                      <ErrorMessage
-                        errors={errors}
-                        name="password"
-                        render={({ message }) => (
-                          <p className="text-sm text-red-600">{message}</p>
-                        )}
-                      />
+                    <ErrorMessage
+                      errors={errors}
+                      name="password"
+                      render={({ message }) => (
+                        <p className="text-sm text-red-600">{message}</p>
+                      )}
+                    />
                   </Field>
                   <Field>
                     <FieldLabel htmlFor="confirm-password">

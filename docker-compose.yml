@@ -9,7 +9,9 @@ services:
     restart: unless-stopped
   
   server:
-    build: ./server
+    build: 
+      context: ./server
+      dockerfile: ./Dockerfile
     ports:
       - "3000:3000"
     volumes:

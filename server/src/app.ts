@@ -8,7 +8,11 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+  }),
+);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use((req, res, next) => {
@@ -25,8 +29,8 @@ import cardsRouter from "./routes/cards.route.js";
 import settingsRouter from "./routes/settings.route.js";
 import reportRouter from "./routes/report.route.js";
 
-app.use("/api/user", userRouter);
 app.use("/api/user/auth", userAuth);
+app.use("/api/user", userRouter);
 app.use("/api/performance", performanceRouter);
 app.use("/api/check-ins", CheckInsRouter);
 app.use("/api/goals", GoalRouter);
@@ -43,6 +47,7 @@ app.use(
   ) => {
     const statusCode = (error as ApiError).statusCode || 500;
     const message = error.message || "Internal Server Error";
+    console.log(error);
     res.status(statusCode).json({ message });
   },
 );
