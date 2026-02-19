@@ -11,7 +11,7 @@ import { getTransformedGoals } from "./transformedGoals";
 import GoalFilter from "./GoalFilter";
 import GoalSummaryCards from "./GoalSummaryCards";
 
-export type FilterType = {
+export type GoalFilterType = {
   userId: string | null;
   quarter: string | null;
   year: string | null;
@@ -19,7 +19,7 @@ export type FilterType = {
 
 export const GoalManagement = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [filter, setFilter] = useState<FilterType>({
+  const [filter, setFilter] = useState<GoalFilterType>({
     userId: null,
     quarter: null,
     year: null,
