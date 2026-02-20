@@ -83,7 +83,7 @@ const getColumns = (
       return (
         <span className="text-center">
           <Textarea
-            className="h-5 w-[200px]"
+            className="h-5 w-[200px] sidebar-scroll"
             rows={1}
             defaultValue={row.original.selfComments ?? ""}
             disabled={!permissions.canEditSelf}
@@ -119,7 +119,7 @@ const getColumns = (
       return (
         <span className="text-center">
           <Textarea
-            className="h-5 w-[200px]"
+            className="h-5 w-[200px] sidebar-scroll"
             rows={1}
             disabled={!permissions.canEditManager}
             defaultValue={row.original.managerComments || ""}

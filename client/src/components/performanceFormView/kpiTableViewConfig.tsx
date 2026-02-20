@@ -53,6 +53,7 @@ const getColumns = (): ColumnDef<KPI>[] => [
           <Input
             className="w-13 text-center"
             defaultValue={row.original.selfScore ?? ""}
+            disabled
           />
         </span>
       );
@@ -68,6 +69,7 @@ const getColumns = (): ColumnDef<KPI>[] => [
             className="h-5 w-[200px]"
             rows={1}
             defaultValue={row.original.selfComments || ""}
+            disabled
           />
         </span>
       );
@@ -82,6 +84,7 @@ const getColumns = (): ColumnDef<KPI>[] => [
           <Input
             className="w-13"
             defaultValue={row.original.managerScore || ""}
+            disabled
           />
         </span>
       );
@@ -97,6 +100,7 @@ const getColumns = (): ColumnDef<KPI>[] => [
             className="h-5 w-[200px]"
             rows={1}
             defaultValue={row.original.managerComments || ""}
+            disabled
           />
         </span>
       );

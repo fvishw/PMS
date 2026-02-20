@@ -1,23 +1,9 @@
 import { type ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
+import { UserTableAction } from "./userTable.action";
+import { IUser } from "@/types/user";
 
-type Designation = {
-  title: string;
-};
-type Reviewer = {
-  fullName: string;
-};
-
-export type UserTableColumn = {
-  fullName: string;
-  email: string;
-  createdAt: string | Date;
-  role: string;
-  designation: Designation;
-  parentReviewer: Reviewer;
-};
-
-export const columns: ColumnDef<UserTableColumn>[] = [
+export const columns: ColumnDef<IUser>[] = [
   {
     accessorKey: "fullName",
     header: () => <div className="text-center">Full Name</div>,
@@ -36,7 +22,7 @@ export const columns: ColumnDef<UserTableColumn>[] = [
     accessorKey: "designation",
     header: () => <div className="text-center">Designation</div>,
     cell: ({ row }) => (
-      <div className="text-center">{row.original.designation.title}</div>
+      <div className="text-center">{row.original.designation?.title || "-"}</div>
     ),
   },
   {
@@ -54,5 +40,10 @@ export const columns: ColumnDef<UserTableColumn>[] = [
       const formattedDate = raw ? dayjs(raw).format("D MMM YY") : "-";
       return <div className="text-center">{formattedDate}</div>;
     },
+  },
+  {
+    id: "actions",
+    header: () => <div className="text-center">Action</div>,
+    cell: ({ row }) => <UserTableAction user={row.original} />,
   },
 ];

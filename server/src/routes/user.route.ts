@@ -4,6 +4,8 @@ import {
   fetchUsersByRole,
   getAllManagers,
   getAllUsers,
+  getUserProfile,
+  updateUser,
 } from "@/controllers/user.controller.js";
 import authMiddleware from "@/middlewares/auth.middleware.js";
 import {
@@ -15,8 +17,14 @@ import {
 const userRouter = Router();
 
 userRouter.post("/add", authMiddleware(["admin"]), addUser);
+userRouter.put("/update/:userId", authMiddleware(["admin"]), updateUser);
 
 userRouter.get("/all-user", authMiddleware(["admin"]), getAllUsers);
+userRouter.get(
+  "/profile",
+  authMiddleware(["admin", "manager", "employee"]),
+  getUserProfile,
+);
 
 userRouter.get("/all-managers", authMiddleware(["admin"]), getAllManagers);
 

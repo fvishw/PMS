@@ -11,4 +11,8 @@ const userAddPayloadSchema = z.object({
   adminReviewerId: z.string().optional(),
 });
 
-export { userAddPayloadSchema };
+const userUpdatePayloadSchema = userAddPayloadSchema.extend({
+  userId: z.string().min(1, "User ID cannot be empty"),
+});
+
+export { userAddPayloadSchema, userUpdatePayloadSchema };

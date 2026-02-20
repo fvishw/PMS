@@ -4,6 +4,7 @@ import Api from "@/api/api";
 import { CustomDataTable } from "../customTable";
 import { columns } from "./userTable.config";
 import ApiErrorMessage from "../ApiErrorMessage";
+import { Spinner } from "../ui/spinner";
 
 export function UserTable() {
   const { data, error, isLoading } = useQuery({
@@ -12,7 +13,11 @@ export function UserTable() {
   });
   const users = data?.users;
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center">
+        <Spinner />
+      </div>
+    );
   }
   if (error) {
     return <ApiErrorMessage message={error.message} />;

@@ -16,6 +16,9 @@ interface UserPerformanceFormResponse {
 interface GetAllUserResponse {
   users: IUser[];
 }
+interface GetUserProfileResponse {
+  user: IUser;
+}
 
 interface GetAllDesignationsResponse {
   designations: Designation[];
@@ -170,6 +173,7 @@ interface GetCurrentQuarterStatus {
 export {
   UserPerformanceFormResponse,
   GetAllUserResponse,
+  GetUserProfileResponse,
   GetAllDesignationsResponse,
   GetCheckInQuestionResponse,
   GetUserCheckInsResponse,

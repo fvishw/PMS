@@ -17,11 +17,14 @@ import {
 import { queryClient } from "@/utils/queryClient";
 import { IUser } from "@/types/user";
 import { useEffect } from "react";
+import { useNavigate } from "react-router";
+import { UserDetailsCard } from "./userDetailsCard";
 interface PerformanceFormProps {
   performanceId?: string;
 }
 export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
   const { user: currentUser } = useAuth();
+  const navigate = useNavigate();
 
   const { isLoading, error, data } = useQuery({
     queryKey: ["performanceForm", performanceId, currentUser?._id],
@@ -46,6 +49,7 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
     },
   });
   const stage = data?.userPerformanceRecord?.stage || "";
+  const isCompleted = stage === "completed";
 
   const { mutate, isPending } = useMutation<
     unknown,
@@ -62,6 +66,15 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
       queryClient.invalidateQueries({
         queryKey: ["performanceForm", performanceId, currentUser?._id],
       });
+
+      if (currentUser?.role === "employee") {
+        navigate("/dashboard");
+        return;
+      }
+
+      if (currentUser?.role === "manager" || currentUser?.role === "admin") {
+        navigate("/review-appraisals");
+      }
     },
     onError: (error) => {
       toast.error(error.message, {
@@ -75,6 +88,13 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
   };
 
   const record = data?.userPerformanceRecord;
+
+  const getEntityId = (
+    entity?: string | { _id: string } | null,
+  ): string => {
+    if (!entity) return "";
+    return typeof entity === "string" ? entity : entity._id;
+  };
 
   useEffect(() => {
     if (record?._id) {
@@ -126,9 +146,9 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
     const permissions: EditPermissions = getPerformancePermission({
       stage: record?.stage || "",
       currentUser: currentUser as unknown as IUser,
-      parentReviewer: record?.parentReviewer || "",
-      adminReviewer: record?.adminReviewer || "",
-      employeeId: record?.user || "",
+      parentReviewer: getEntityId(record?.parentReviewer),
+      adminReviewer: getEntityId(record?.adminReviewer),
+      employeeId: getEntityId(record?.user),
     });
 
     if (
@@ -139,6 +159,14 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
     ) {
       return (
         <form className="space-y-4" onSubmit={handleSubmit(onsubmit)}>
+          {(currentUser?.role === "manager" || currentUser?.role === "admin") && (
+            <UserDetailsCard
+              user={record?.user}
+              stage={record?.stage}
+              parentReviewer={record?.parentReviewer}
+              adminReviewer={record?.adminReviewer}
+            />
+          )}
           <KpiScoreTable
             data={record?.kpis || []}
             permissions={permissions}
@@ -157,7 +185,7 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
             control={control}
           />
           <div className="flex justify-end my-4">
-            <Button type="submit" disabled={isPending}>
+            <Button type="submit" disabled={isPending || isCompleted}>
               {isPending ? "Submitting..." : "Submit Review"}
             </Button>
           </div>

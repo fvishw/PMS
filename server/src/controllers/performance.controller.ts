@@ -502,7 +502,17 @@ const getUserPerformanceFormById = asyncHandler(
     if (!performanceId || !Types.ObjectId.isValid(performanceId)) {
       throw new ApiError(400, "Invalid performance ID");
     }
-    const userPerformanceRecord = await UserPerformance.findById(performanceId);
+    const userPerformanceRecord = await UserPerformance.findById(performanceId)
+      .populate({
+        path: "user",
+        select: "fullName email role designation",
+        populate: {
+          path: "designation",
+          select: "title role",
+        },
+      })
+      .populate("parentReviewer", "fullName email")
+      .populate("adminReviewer", "fullName email");
 
     if (!userPerformanceRecord) {
       return res.status(200).json(
