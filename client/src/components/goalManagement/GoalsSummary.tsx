@@ -8,53 +8,74 @@ import {
 } from "@/components/ui/card";
 
 type GoalsSummaryProps = {
-  totalGoals: number;
-  onTrackGoals: number;
+  notStartedGoals: number;
   completedGoals: number;
+  atRiskGoals: number;
+  onTrackGoals: number;
 };
 
 function GoalsSummary({
-  totalGoals,
-  onTrackGoals,
+  notStartedGoals,
   completedGoals,
+  atRiskGoals,
+  onTrackGoals,
 }: GoalsSummaryProps) {
   return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      <Card>
-        <CardHeader>
-          <CardDescription>Total goals</CardDescription>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl font-semibold">
-              {totalGoals}
-            </CardTitle>
-            <IconTarget className="text-primary" />
-          </div>
-        </CardHeader>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardDescription>On track</CardDescription>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl font-semibold">
-              {onTrackGoals}
-            </CardTitle>
-            <IconProgress className="text-emerald-500" />
-          </div>
-        </CardHeader>
-      </Card>
+    <>
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <Card>
+          <CardHeader>
+            <CardDescription>On Track Goals</CardDescription>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-2xl font-semibold">
+                {onTrackGoals}
+              </CardTitle>
+              <IconTarget className="text-primary" />
+            </div>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardDescription>At Risk</CardDescription>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-2xl font-semibold">
+                {atRiskGoals}
+              </CardTitle>
+              <IconProgress className="text-emerald-500" />
+            </div>
+          </CardHeader>
+        </Card>
 
-      <Card>
-        <CardHeader>
-          <CardDescription>Completed</CardDescription>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl font-semibold">
-              {completedGoals}
-            </CardTitle>
-            <IconCircleCheck className="text-sky-500" />
-          </div>
-        </CardHeader>
-      </Card>
-    </div>
+        <Card>
+          <CardHeader>
+            <CardDescription>Completed Goals</CardDescription>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-2xl font-semibold">
+                {completedGoals}
+              </CardTitle>
+              <IconCircleCheck className="text-sky-500" />
+            </div>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardDescription>Not Started Goals</CardDescription>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-2xl font-semibold">
+                {notStartedGoals}
+              </CardTitle>
+              <IconProgress className="text-amber-500" />
+            </div>
+          </CardHeader>
+        </Card>
+      </div>
+      <div>
+        <p className="text-sm text-muted-foreground">
+          * summary is based on goals with due date in the current quarter and
+          year.
+        </p>
+      </div>
+    </>
   );
 }
 

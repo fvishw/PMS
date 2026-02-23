@@ -118,8 +118,10 @@ interface GetReviewDashboardCardStatus {
 }
 interface GetGoalCardStatus {
   stats: {
-    totalGoals: number;
+    notStartedGoals: number;
     completedGoals: number;
+    atRiskGoals: number;
+    onTrackGoals: number;
   };
 }
 interface GetCurrentSettings {

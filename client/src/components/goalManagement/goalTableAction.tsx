@@ -7,14 +7,14 @@ import {
 import { Button } from "../ui/button";
 import { MoreVertical } from "lucide-react";
 import { useState } from "react";
-import { ViewGoalModal } from "./viewGoal/viewGoalModal";
 import { DeleteConfirmationModal } from "./GoalModal/deleteConfirmationModal";
 import { useMutation } from "@tanstack/react-query";
 import Api from "@/api/api";
 import { toast } from "sonner";
 import { queryClient } from "@/utils/queryClient";
+import { EditGoalModal } from "./GoalModal/EditGoalModal";
 
-type GoalModalType = "view" | "delete" | null;
+type GoalModalType = "edit" | "delete" | null;
 export const GoalTableAction = ({ goalId }: { goalId: string }) => {
   const [modal, setModal] = useState<GoalModalType>(null);
   const handleCloseModal = () => {
@@ -50,18 +50,18 @@ export const GoalTableAction = ({ goalId }: { goalId: string }) => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="center">
-            <DropdownMenuItem onClick={() => setModal("view")}>
-              View Goal
+            <DropdownMenuItem onClick={() => setModal("edit")}>
+              Edit Goal
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setModal("delete")}>
               Delete Goal
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        {modal === "view" && (
-          <ViewGoalModal
+        {modal === "edit" && (
+          <EditGoalModal
             goalId={goalId}
-            isOpen={modal === "view"}
+            isOpen={modal === "edit"}
             onClose={handleCloseModal}
           />
         )}

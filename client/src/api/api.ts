@@ -230,6 +230,9 @@ export class API {
   addGoalByAdmin(data: Goal) {
     return this.request(this.instance.post("/goals/add", data));
   }
+  updateGoalById(goalId: string, data: Goal) {
+    return this.request(this.instance.put(`/goals/update/${goalId}`, data));
+  }
   getAdminGoals(filter: GoalFilterType): Promise<GetGoals> {
     return this.request(
       this.instance.get("/goals/get-all/admin", { params: filter }),

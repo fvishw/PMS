@@ -124,25 +124,39 @@ const goalCardStats = asyncHandler(async (req: Request, res: Response) => {
   if (!userId) {
     throw new ApiError(401, "User not Authorized");
   }
+  const { currentQuarter, currentYear } =
+    await Settings.getCurrentYearAndQuarter();
   // 1: total goals
-  const totalGoals = await Goal.find({ isDeleted: false }).countDocuments();
-
-  // total completed goals
-  const completedGoals = await Goal.find({
-    status: "completed",
+  const goals = await Goal.find({
     isDeleted: false,
-  }).countDocuments();
-
-  const result = {
-    totalGoals,
-    completedGoals,
+    quarter: currentQuarter,
+    year: currentYear,
+  });
+  const goalsSummary = {
+    notStartedGoals: 0,
+    completedGoals: 0,
+    atRiskGoals: 0,
+    onTrackGoals: 0,
   };
+
+  goals.forEach((goal) => {
+    if (goal.isCompleted) {
+      goalsSummary.completedGoals += 1;
+    } else if (goal.getStatus() === "not_started") {
+      goalsSummary.notStartedGoals += 1;
+    } else if (goal.getStatus() === "at_risk") {
+      goalsSummary.atRiskGoals += 1;
+    } else if (goal.getStatus() === "on_track") {
+      goalsSummary.onTrackGoals += 1;
+    }
+  });
+
   return res
     .status(200)
     .json(
       new ApiResponse(
         200,
-        { stats: result },
+        { stats: goalsSummary },
         "Goal Card Details fetch successfully.",
       ),
     );

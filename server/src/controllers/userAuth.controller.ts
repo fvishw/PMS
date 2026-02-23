@@ -158,7 +158,7 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
 
   user.password = newPassword;
   user.postPasswordResetCleanup();
-  await user.save({ validateBeforeSave: true });
+  await user.save();
   return res
     .status(200)
     .json(new ApiResponse(200, null, "Password reset successful"));

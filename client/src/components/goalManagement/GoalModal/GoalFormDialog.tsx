@@ -73,6 +73,8 @@ function GoalFormDialog({ isOpen, onClose }: GoalFormDialogProps) {
     };
     mutate(parsedData);
   };
+  const today = new Date().toISOString().split('T')[0];
+
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -128,7 +130,9 @@ function GoalFormDialog({ isOpen, onClose }: GoalFormDialogProps) {
 
             <div className="grid gap-2">
               <span className="text-sm font-medium">Due date</span>
-              <Input type="date" {...register("dueDate", { required: true })} />
+              <Input type="date" {...register("dueDate", { required: true })} 
+                min={today}
+              />
             </div>
           </div>
           <DialogFooter className="mt-8">

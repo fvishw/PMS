@@ -1,4 +1,5 @@
 interface SubTask {
+  _id?: string;
   title: string;
   isCompleted?: boolean;
 }
@@ -12,6 +13,9 @@ interface Goal {
   dueDate: string | Date;
   subTasks: SubTask[];
   status?: "on_track" | "at_risk" | "completed";
+  isCompleted: boolean;
+  quarter: string;
+  year: number;
 }
 
 export { Goal, SubTask };

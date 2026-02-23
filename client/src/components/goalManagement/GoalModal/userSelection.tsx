@@ -5,8 +5,9 @@ import useUser from "@/hooks/useUser";
 
 interface UserSelectionProps {
   control: any;
+  disabled?: boolean;
 }
-export const UserSelection = ({ control }: UserSelectionProps) => {
+export const UserSelection = ({ control, disabled }: UserSelectionProps) => {
   const { data: users, isLoading } = useUser();
   if (!users || isLoading) {
     return (
@@ -20,15 +21,19 @@ export const UserSelection = ({ control }: UserSelectionProps) => {
     <Controller
       name={`owner`}
       control={control}
-      render={({ field }) => (
-        <UserSelect
-          users={users}
-          value={field.value}
-          onChange={field.onChange}
-          placeholder="Select owner"
-          isLoading={isLoading}
-        />
-      )}
+      render={({ field }) => {
+        console.log(field.value);
+        return (
+          <UserSelect
+            users={users}
+            value={field.value}
+            onChange={field.onChange}
+            placeholder="Select owner"
+            isLoading={isLoading}
+            disabled={disabled}
+          />
+        );
+      }}
     />
   );
 };

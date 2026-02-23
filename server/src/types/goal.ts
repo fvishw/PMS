@@ -11,6 +11,23 @@ const GoalSchema = z.object({
   dueDate: z.coerce.date(),
 });
 
+const updateGoalSchema = z.object({
+  title: z.string(),
+  subTasks: z.array(
+    z.object({
+      _id: z.string().optional(),
+      title: z.string(),
+    }),
+  ),
+  owner: z.union([
+    z.string(),
+    z.object({
+      _id: z.string(),
+    }),
+  ]),
+  dueDate: z.coerce.date(),
+});
+
 const markAsCompletedSchema = z.object({
   goalId: z.string(),
   subTasks: z.array(
@@ -21,4 +38,4 @@ const markAsCompletedSchema = z.object({
   ),
 });
 
-export { GoalSchema, markAsCompletedSchema };
+export { GoalSchema, updateGoalSchema, markAsCompletedSchema };

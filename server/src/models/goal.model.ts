@@ -4,13 +4,15 @@ interface IGoal extends Document {
   title: string;
   owner: Types.ObjectId;
   dueDate: Date;
-  subTasks: { _id: string; title: string; isCompleted: boolean }[];
-  status: "on_track" | "at_risk" | "completed";
+  subTasks: { _id?: Types.ObjectId; title: string; isCompleted: boolean }[];
+  isCompleted: boolean;
   createdAt: Date;
   updatedAt: Date;
   isDeleted: boolean;
   quarter: string;
   year: number;
+  getDueDateDifference(): number;
+  getStatus(): "on_track" | "at_risk" | "completed" | "not_started";
 }
 
 const goalSchema = new Schema<IGoal>(
@@ -48,10 +50,9 @@ const goalSchema = new Schema<IGoal>(
       type: Date,
       required: true,
     },
-    status: {
-      type: String,
-      enum: ["on_track", "at_risk", "completed"],
-      default: "on_track",
+    isCompleted: {
+      type: Boolean,
+      default: false,
     },
     isDeleted: {
       type: Boolean,
@@ -62,6 +63,38 @@ const goalSchema = new Schema<IGoal>(
 );
 
 goalSchema.index({ owner: 1 });
+
+goalSchema.methods.getDueDateDifference = function (): number {
+  const currentDate = new Date();
+  const timeDiff = this.dueDate.getTime() - currentDate.getTime();
+  return Math.ceil(timeDiff / (1000 * 3600 * 24));
+};
+
+goalSchema.methods.getStatus = function ():
+  | "on_track"
+  | "at_risk"
+  | "completed"
+  | "not_started" {
+  const goal = this;
+  if (goal.isCompleted) {
+    return "completed";
+  }
+  const totalSubTasks = goal.subTasks.length;
+  const completedSubTasks = goal.subTasks.filter(
+    (task: any) => task.isCompleted,
+  ).length;
+  const dayDiff = goal.getDueDateDifference();
+  if (completedSubTasks === totalSubTasks && totalSubTasks > 0) {
+    return "completed";
+  }
+  if (completedSubTasks > 0 && completedSubTasks < totalSubTasks) {
+    return "on_track";
+  }
+  if (completedSubTasks < totalSubTasks && dayDiff <= 3) {
+    return "at_risk";
+  }
+  return "not_started";
+};
 
 const Goal = model<IGoal>("Goal", goalSchema);
 

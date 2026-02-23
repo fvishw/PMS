@@ -26,6 +26,7 @@ const statusMapping: Record<string, string> = {
   on_track: "On Track",
   at_risk: "At Risk",
   completed: "Completed",
+  not_started: "Not Started",
 };
 
 export const columns: ColumnDef<GoalRow>[] = [
