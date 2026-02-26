@@ -15,6 +15,7 @@ type UserSelectProps = {
   placeholder?: string;
   isLoading?: boolean;
   allowAllOption?: boolean;
+  disabled?: boolean;
 };
 
 export function UserSelect({
@@ -24,11 +25,12 @@ export function UserSelect({
   placeholder = "Select user",
   isLoading,
   allowAllOption,
+  disabled,
 }: UserSelectProps) {
   if (isLoading) return <Spinner />;
 
   return (
-    <Select value={value} onValueChange={onChange}>
+    <Select value={value} onValueChange={onChange} disabled={disabled}>
       <SelectTrigger>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>

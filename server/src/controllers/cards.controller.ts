@@ -120,29 +120,41 @@ const reviewDashboardStats = asyncHandler(
 );
 
 const goalCardStats = asyncHandler(async (req: Request, res: Response) => {
-  const userId = new Types.ObjectId(req.user?.id!);
-  if (!userId) {
-    throw new ApiError(401, "User not Authorized");
-  }
+ 
+  const { currentQuarter, currentYear } =
+    await Settings.getCurrentYearAndQuarter();
   // 1: total goals
-  const totalGoals = await Goal.find({ isDeleted: false }).countDocuments();
-
-  // total completed goals
-  const completedGoals = await Goal.find({
-    status: "completed",
+  const goals = await Goal.find({
     isDeleted: false,
-  }).countDocuments();
-
-  const result = {
-    totalGoals,
-    completedGoals,
+    quarter: currentQuarter,
+    year: currentYear,
+  });
+  const goalsSummary = {
+    notStartedGoals: 0,
+    completedGoals: 0,
+    atRiskGoals: 0,
+    onTrackGoals: 0,
   };
+
+  goals.forEach((goal) => {
+    const status = goal.getStatus();
+    if (status === "completed") {
+      goalsSummary.completedGoals += 1;
+    } else if (status === "not_started") {
+      goalsSummary.notStartedGoals += 1;
+    } else if (status === "at_risk") {
+      goalsSummary.atRiskGoals += 1;
+    } else if (status === "on_track") {
+      goalsSummary.onTrackGoals += 1;
+    }
+  });
+
   return res
     .status(200)
     .json(
       new ApiResponse(
         200,
-        { stats: result },
+        { stats: goalsSummary },
         "Goal Card Details fetch successfully.",
       ),
     );

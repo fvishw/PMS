@@ -5,6 +5,7 @@ import {
   getGoalById,
   getGoalsByOwner,
   markAsComplete,
+  updateGoal,
 } from "@/controllers/goal.controller.js";
 import authMiddleware from "@/middlewares/auth.middleware.js";
 import { Router } from "express";
@@ -15,9 +16,11 @@ router.post("/add", authMiddleware(["admin", "employee", "manager"]), addGoal);
 
 router.put(
   "/mark-as-complete",
-  authMiddleware(["admin", "employee", "manager"]),
+  authMiddleware(["employee", "manager"]),
   markAsComplete
 );
+
+router.put("/update/:goalId", authMiddleware(["admin"]), updateGoal);
 
 router.delete(
   "/delete",

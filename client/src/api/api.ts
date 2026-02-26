@@ -4,6 +4,7 @@ import { PerformanceFormValue as PerformanceTemplateFormValue } from "@/componen
 import { SettingsValue } from "@/components/settings/settings";
 import {
   GetAllUserResponse,
+  GetUserProfileResponse,
   GetAllDesignationsResponse,
   UserPerformanceFormResponse,
   GetCheckInQuestionResponse,
@@ -82,9 +83,15 @@ export class API {
   addUser(data: IUserFormData) {
     return this.request(this.instance.post("/user/add", data));
   }
+  updateUser(userId: string, data: IUserFormData) {
+    return this.request(this.instance.put(`/user/update/${userId}`, data));
+  }
 
   getAllUser(): Promise<GetAllUserResponse> {
     return this.request(this.instance.get("/user/all-user"));
+  }
+  getUserProfile(): Promise<GetUserProfileResponse> {
+    return this.request(this.instance.get("/user/profile"));
   }
 
   fetchAllDesignations(role?: string): Promise<GetAllDesignationsResponse> {
@@ -222,6 +229,9 @@ export class API {
   }
   addGoalByAdmin(data: Goal) {
     return this.request(this.instance.post("/goals/add", data));
+  }
+  updateGoalById(goalId: string, data: Goal) {
+    return this.request(this.instance.put(`/goals/update/${goalId}`, data));
   }
   getAdminGoals(filter: GoalFilterType): Promise<GetGoals> {
     return this.request(

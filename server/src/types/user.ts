@@ -11,4 +11,6 @@ const userAddPayloadSchema = z.object({
   adminReviewerId: z.string().optional(),
 });
 
-export { userAddPayloadSchema };
+const userUpdatePayloadSchema = userAddPayloadSchema.omit({ email: true });
+
+export { userAddPayloadSchema, userUpdatePayloadSchema };

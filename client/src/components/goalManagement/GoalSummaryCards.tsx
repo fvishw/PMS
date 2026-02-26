@@ -24,35 +24,29 @@ function GoalSummaryCardsSkeleton() {
 }
 
 function GoalSummaryCards() {
-  const {
-    data: cardSummary,
-    isLoading,
-    error,
-  } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["sectionCard"],
     queryFn: () => Api.getGoalCardStatus(),
   });
+  let summaryData;
 
-  if (isLoading || !cardSummary?.stats) {
-    return <GoalSummaryCardsSkeleton />;
-  }
   if (error) {
     return <ApiErrorMessage message={error.message} />;
   }
+  if (isLoading || !data?.stats) {
+    return <GoalSummaryCardsSkeleton />;
+  }
+  if (data?.stats) {
+    summaryData = data.stats;
+  }
 
-  const summary = {
-    totalGoals: cardSummary?.stats?.totalGoals ?? 0,
-    completedGoals: cardSummary?.stats?.completedGoals ?? 0,
-    onTrackGoals:
-      (cardSummary?.stats?.totalGoals ?? 0) -
-      (cardSummary?.stats?.completedGoals ?? 0),
-  };
   return (
     <>
       <GoalsSummary
-        totalGoals={summary.totalGoals}
-        onTrackGoals={summary.onTrackGoals}
-        completedGoals={summary.completedGoals}
+        notStartedGoals={summaryData?.notStartedGoals ?? 0}
+        completedGoals={summaryData?.completedGoals ?? 0}
+        atRiskGoals={summaryData?.atRiskGoals ?? 0}
+        onTrackGoals={summaryData?.onTrackGoals ?? 0}
       />
     </>
   );

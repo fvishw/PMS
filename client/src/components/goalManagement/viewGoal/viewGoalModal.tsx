@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useEffect } from "react";
+import getDueDateDifference from "@/utils/goal";
 
 interface ViewGoalModalProps {
   goalId: string;
@@ -86,6 +87,8 @@ export const ViewGoalModal = ({
     );
   }
   if (data) {
+    const isGoalUpdateDisabled =
+      getDueDateDifference(data.goal) < 0 || data.goal.isCompleted;
     const goal = data?.goal;
     contentToRender = (
       <div>
@@ -106,6 +109,7 @@ export const ViewGoalModal = ({
                   control={control}
                   render={({ field }) => (
                     <Checkbox
+                      disabled={isGoalUpdateDisabled}
                       id={`subTasks.${index}.isCompleted`}
                       checked={field.value}
                       onCheckedChange={(v) => field.onChange(Boolean(v))}

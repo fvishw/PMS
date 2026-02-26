@@ -1,12 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-
-interface IUser {
-  _id: string;
-  fullName: string;
-  email: string;
-  role: string;
-  designation: { title: string };
-}
+import type { IUser } from "@/types/user";
 
 interface AuthContextType {
   user: IUser | null;

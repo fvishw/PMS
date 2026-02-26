@@ -16,8 +16,8 @@ import { IconPlus } from "@tabler/icons-react";
 import { useState } from "react";
 import { AddDesignationModal } from "./addDesignationModal";
 import { Controller, UseFormSetValue } from "react-hook-form";
-import { AddUserModalProps } from "./addUserModal";
 import { ErrorMessage } from "@hookform/error-message";
+import { IUserFormData } from "@/types/user";
 
 export const DesignationSelection = ({
   role,
@@ -27,7 +27,7 @@ export const DesignationSelection = ({
 }: {
   role: string;
   control: any;
-  setValue: UseFormSetValue<AddUserModalProps>;
+  setValue: UseFormSetValue<IUserFormData>;
   errors: any;
 }) => {
   const { data: designationsData, isLoading } = useQuery({

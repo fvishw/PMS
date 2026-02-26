@@ -11,14 +11,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Controller, UseFormSetValue } from "react-hook-form";
-import { AddUserModalProps } from "./addUserModal";
+import { IUserFormData } from "@/types/user";
 
 export const AdminReviewerSelection = ({
   control,
   setValue,
 }: {
   control: any;
-  setValue: UseFormSetValue<AddUserModalProps>;
+  setValue: UseFormSetValue<IUserFormData>;
 }) => {
   const { data, isLoading } = useQuery({
     queryKey: ["designations", "admin"],

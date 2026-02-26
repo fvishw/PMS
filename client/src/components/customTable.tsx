@@ -50,7 +50,7 @@ export function CustomDataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <div className="overflow-hidden rounded-lg border">
+      <div className="overflow-hidden rounded-lg border sidebar-scroll">
         <DndContext
           collisionDetection={closestCenter}
           modifiers={[restrictToVerticalAxis]}
@@ -66,7 +66,7 @@ export function CustomDataTable<TData, TValue>({
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                       </TableHead>
                     );
@@ -85,7 +85,7 @@ export function CustomDataTable<TData, TValue>({
                       <TableCell key={cell.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
-                          cell.getContext()
+                          cell.getContext(),
                         )}
                       </TableCell>
                     ))}

@@ -77,7 +77,7 @@ export function AddPerformanceFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto overflow-x-hidden">
+      <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto overflow-x-hidden sidebar-scroll">
         <form
           onSubmit={handleSubmit((data) => addPerformanceRecord(data))}
           className="max-h-[80vh]"

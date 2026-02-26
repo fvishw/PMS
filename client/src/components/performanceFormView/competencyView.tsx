@@ -41,6 +41,7 @@ function CompetenciesView({ data }: CompetenciesProps) {
                     <RadioGroupItem
                       value={rating.value}
                       id={`${competency.title}-${rating.value}`}
+                      disabled
                     />
                     <Label
                       htmlFor={`${competency.title}-${rating.value}`}
@@ -63,13 +64,19 @@ function CompetenciesView({ data }: CompetenciesProps) {
             Employee Area of strength
           </Label>
           <div>
-            <Textarea placeholder="Describe the employee's strengths..." />
+            <Textarea
+              placeholder="Describe the employee's strengths..."
+              disabled
+            />
           </div>
         </div>
         <div className="rounded border p-4">
           <Label className="pb-4 font-semibold">Areas for Improvement</Label>
           <div>
-            <Textarea placeholder="Describe areas where the employee can improve..." />
+            <Textarea
+              placeholder="Describe areas where the employee can improve..."
+              disabled
+            />
           </div>
         </div>
       </div>

@@ -103,9 +103,33 @@ interface UserPerformanceForm {
   finalReview: IFinalReview;
   createdAt: Date;
   createdBy: string;
-  user: string;
-  parentReviewer: string;
-  adminReviewer?: string;
+  user:
+    | string
+    | {
+        _id: string;
+        fullName?: string;
+        email?: string;
+        role?: string;
+        designation?: {
+          _id: string;
+          title: string;
+          role?: string;
+        } | null;
+      };
+  parentReviewer:
+    | string
+    | {
+        _id: string;
+        fullName?: string;
+        email?: string;
+      };
+  adminReviewer?:
+    | string
+    | {
+        _id: string;
+        fullName?: string;
+        email?: string;
+      };
   areaOfStrength: string;
   areaOfImprovement: string;
   stage:

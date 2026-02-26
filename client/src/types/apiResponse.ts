@@ -16,6 +16,9 @@ interface UserPerformanceFormResponse {
 interface GetAllUserResponse {
   users: IUser[];
 }
+interface GetUserProfileResponse {
+  user: IUser;
+}
 
 interface GetAllDesignationsResponse {
   designations: Designation[];
@@ -115,8 +118,10 @@ interface GetReviewDashboardCardStatus {
 }
 interface GetGoalCardStatus {
   stats: {
-    totalGoals: number;
+    notStartedGoals: number;
     completedGoals: number;
+    atRiskGoals: number;
+    onTrackGoals: number;
   };
 }
 interface GetCurrentSettings {
@@ -170,6 +175,7 @@ interface GetCurrentQuarterStatus {
 export {
   UserPerformanceFormResponse,
   GetAllUserResponse,
+  GetUserProfileResponse,
   GetAllDesignationsResponse,
   GetCheckInQuestionResponse,
   GetUserCheckInsResponse,
