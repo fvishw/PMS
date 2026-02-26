@@ -101,11 +101,11 @@ goalSchema.methods.getStatus = function ():
   if (completedSubTasks === totalSubTasks && totalSubTasks > 0) {
     return "completed";
   }
-  if (completedSubTasks > 0 && completedSubTasks < totalSubTasks) {
-    return "on_track";
-  }
   if (completedSubTasks < totalSubTasks && dayDiff <= 3) {
     return "at_risk";
+  }
+  if (completedSubTasks > 0 && completedSubTasks < totalSubTasks) {
+    return "on_track";
   }
   return "not_started";
 };

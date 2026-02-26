@@ -120,10 +120,7 @@ const reviewDashboardStats = asyncHandler(
 );
 
 const goalCardStats = asyncHandler(async (req: Request, res: Response) => {
-  const userId = new Types.ObjectId(req.user?.id!);
-  if (!userId) {
-    throw new ApiError(401, "User not Authorized");
-  }
+ 
   const { currentQuarter, currentYear } =
     await Settings.getCurrentYearAndQuarter();
   // 1: total goals

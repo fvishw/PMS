@@ -116,6 +116,9 @@ const updateUser = asyncHandler(async (req: Request, res: Response) => {
   if (!userId) {
     throw new ApiError(400, "User ID is required");
   }
+  if (!Types.ObjectId.isValid(userId)) {
+    throw new ApiError(400, "Invalid user id format.");
+  }
   const parsedPayload = userUpdatePayloadSchema.safeParse({
     ...req.body,
   });
