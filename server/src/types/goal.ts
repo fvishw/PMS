@@ -16,7 +16,7 @@ const updateGoalSchema = z.object({
   subTasks: z.array(
     z.object({
       _id: z.string().optional(),
-      title: z.string(),
+      title: z.string().min(1, "Subtask title cannot be empty"),
     }),
   ),
   owner: z.union([

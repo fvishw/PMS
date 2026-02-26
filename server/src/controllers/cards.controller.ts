@@ -141,7 +141,7 @@ const goalCardStats = asyncHandler(async (req: Request, res: Response) => {
 
   goals.forEach((goal) => {
     const status = goal.getStatus();
-    if (goal.isCompleted) {
+    if (status === "completed") {
       goalsSummary.completedGoals += 1;
     } else if (status === "not_started") {
       goalsSummary.notStartedGoals += 1;

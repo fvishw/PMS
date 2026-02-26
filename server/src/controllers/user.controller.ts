@@ -126,6 +126,16 @@ const updateUser = asyncHandler(async (req: Request, res: Response) => {
   const { fullName, role, designationId, parentReviewerId, adminReviewerId } =
     parsedPayload.data;
 
+  if (!Types.ObjectId.isValid(designationId)) {
+    throw new ApiError(400, "Invalid designation id format.");
+  }
+  if (parentReviewerId && !Types.ObjectId.isValid(parentReviewerId)) {
+    throw new ApiError(400, "Invalid parent reviewer id format.");
+  }
+  if (adminReviewerId && !Types.ObjectId.isValid(adminReviewerId)) {
+    throw new ApiError(400, "Invalid admin reviewer id format.");
+  }
+
   const user = await User.findById(userId);
   if (!user) {
     throw new ApiError(404, "User not found");

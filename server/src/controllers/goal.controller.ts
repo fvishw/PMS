@@ -138,12 +138,26 @@ const updateGoal = asyncHandler(async (req: Request, res: Response) => {
   goal.title = title;
   goal.owner = new Types.ObjectId(ownerId);
   goal.dueDate = dueDate;
-  goal.subTasks = subTasks.map((task) => ({
-    title: task.title,
-    isCompleted: task._id
-      ? Boolean(existingSubTasksMap.get(String(task._id)))
-      : false,
-  }));
+  const normalizedSubTasks: {
+    _id: Types.ObjectId;
+    title: string;
+    isCompleted: boolean;
+  }[] = subTasks.map((task) => {
+    if (task._id && !Types.ObjectId.isValid(task._id)) {
+      throw new ApiError(400, "Invalid subtask id format.");
+    }
+
+    const subTaskId = task._id
+      ? new Types.ObjectId(task._id)
+      : new Types.ObjectId();
+
+    return {
+      _id: subTaskId,
+      title: task.title,
+      isCompleted: task._id ? Boolean(existingSubTasksMap.get(task._id)) : false,
+    };
+  });
+  goal.subTasks = normalizedSubTasks;
   goal.isCompleted = isGoalCompletedFromSubTasks(goal.subTasks);
 
   await goal.save();

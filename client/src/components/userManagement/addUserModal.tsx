@@ -80,8 +80,13 @@ export function AddUserModal({
   }, [isEditMode, reset, user]);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (data: IUserFormData) =>
-      isEditMode && user ? Api.updateUser(user._id, data) : Api.addUser(data),
+    mutationFn: (data: IUserFormData) => {
+      if (isEditMode) {
+        if (!user) throw new Error("Edit mode requires a user");
+        return Api.updateUser(user._id, data);
+      }
+      return Api.addUser(data);
+    },
     onSuccess: () => {
       toast.success(
         isEditMode ? "User updated successfully" : "User added successfully",
@@ -91,6 +96,7 @@ export function AddUserModal({
         onOpenChange?.(false);
       } else {
         reset();
+        setSelectedRole("");
       }
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
@@ -176,7 +182,9 @@ export function AddUserModal({
               name="role"
               render={({ field }) => (
                 <Select
-                  onValueChange={(value) => handleRoleChange(value, field.onChange)}
+                  onValueChange={(value) =>
+                    handleRoleChange(value, field.onChange)
+                  }
                   value={field.value}
                 >
                   <SelectTrigger className="w-[200px]">
@@ -223,13 +231,7 @@ export function AddUserModal({
         </div>
         <DialogFooter className="mt-4">
           <Button type="submit" disabled={isPending}>
-            {isPending ? (
-              <Spinner />
-            ) : isEditMode ? (
-              "Save Changes"
-            ) : (
-              "Add User"
-            )}
+            {isPending ? <Spinner /> : isEditMode ? "Save Changes" : "Add User"}
           </Button>
         </DialogFooter>
       </form>

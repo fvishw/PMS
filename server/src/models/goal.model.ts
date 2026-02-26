@@ -4,7 +4,7 @@ interface IGoal extends Document {
   title: string;
   owner: Types.ObjectId;
   dueDate: Date;
-  subTasks: { _id?: Types.ObjectId; title: string; isCompleted: boolean }[];
+  subTasks: { _id: Types.ObjectId; title: string; isCompleted: boolean }[];
   isCompleted: boolean;
   createdAt: Date;
   updatedAt: Date;
