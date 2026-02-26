@@ -62,7 +62,7 @@ const goalSchema = new Schema<IGoal>(
   { timestamps: true },
 );
 
-goalSchema.index({ owner: 1 });
+goalSchema.index({ isDeleted: 1, quarter: 1, year: 1 });
 
 const toLocalDateStart = (value: Date | string): Date => {
   if (typeof value === "string") {
@@ -95,7 +95,7 @@ goalSchema.methods.getStatus = function ():
   }
   const totalSubTasks = goal.subTasks.length;
   const completedSubTasks = goal.subTasks.filter(
-    (task: any) => task.isCompleted,
+    (task) => task.isCompleted,
   ).length;
   const dayDiff = goal.getDueDateDifference();
   if (completedSubTasks === totalSubTasks && totalSubTasks > 0) {
