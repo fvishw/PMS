@@ -81,7 +81,7 @@ export function NavUser({
                     setOpenMobile(false);
                   }
                 } catch (e) {
-                  console.log(e);
+                  console.error(e);
                 }
                 logout();
                 navigate("/");

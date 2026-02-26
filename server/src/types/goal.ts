@@ -12,7 +12,7 @@ const GoalSchema = z.object({
 });
 
 const updateGoalSchema = z.object({
-  title: z.string(),
+  title: z.string().min(1, "Title cannot be empty"),
   subTasks: z.array(
     z.object({
       _id: z.string().optional(),
@@ -34,7 +34,7 @@ const markAsCompletedSchema = z.object({
     z.object({
       _id: z.string(),
       isCompleted: z.boolean(),
-    })
+    }),
   ),
 });
 

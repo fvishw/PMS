@@ -30,11 +30,11 @@ function GoalSummaryCards() {
   });
   let summaryData;
 
-  if (isLoading || !data?.stats) {
-    return <GoalSummaryCardsSkeleton />;
-  }
   if (error) {
     return <ApiErrorMessage message={error.message} />;
+  }
+  if (isLoading || !data?.stats) {
+    return <GoalSummaryCardsSkeleton />;
   }
   if (data?.stats) {
     summaryData = data.stats;

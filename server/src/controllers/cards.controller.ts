@@ -140,13 +140,14 @@ const goalCardStats = asyncHandler(async (req: Request, res: Response) => {
   };
 
   goals.forEach((goal) => {
+    const status = goal.getStatus();
     if (goal.isCompleted) {
       goalsSummary.completedGoals += 1;
-    } else if (goal.getStatus() === "not_started") {
+    } else if (status === "not_started") {
       goalsSummary.notStartedGoals += 1;
-    } else if (goal.getStatus() === "at_risk") {
+    } else if (status === "at_risk") {
       goalsSummary.atRiskGoals += 1;
-    } else if (goal.getStatus() === "on_track") {
+    } else if (status === "on_track") {
       goalsSummary.onTrackGoals += 1;
     }
   });

@@ -104,6 +104,19 @@ export function AddUserModal({
     },
   });
 
+  const handleRoleChange = (
+    role: string,
+    onChange: (value: string) => void,
+  ) => {
+    setSelectedRole(role);
+    onChange(role);
+    setValue("parentReviewerId", "");
+
+    if (role !== "employee") {
+      setValue("adminReviewerId", "");
+    }
+  };
+
   const modalContent = (
     <DialogContent className="sm:max-w-[425px]">
       <form
@@ -163,10 +176,7 @@ export function AddUserModal({
               name="role"
               render={({ field }) => (
                 <Select
-                  onValueChange={(value) => {
-                    setSelectedRole(value);
-                    field.onChange(value);
-                  }}
+                  onValueChange={(value) => handleRoleChange(value, field.onChange)}
                   value={field.value}
                 >
                   <SelectTrigger className="w-[200px]">

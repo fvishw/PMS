@@ -30,12 +30,14 @@ export const UserTableAction = ({ user }: { user: IUser }) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <AddUserModal
-        mode="edit"
-        user={user}
-        open={isEditOpen}
-        onOpenChange={setIsEditOpen}
-      />
+      {isEditOpen && (
+        <AddUserModal
+          mode="edit"
+          user={user}
+          open={isEditOpen}
+          onOpenChange={setIsEditOpen}
+        />
+      )}
     </>
   );
 };

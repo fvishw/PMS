@@ -11,15 +11,43 @@ import asyncHandler from "@/utils/asyncHandler.js";
 import type { Request, Response } from "express";
 import { Types } from "mongoose";
 
+const isGoalCompletedFromSubTasks = (
+  subTasks: { isCompleted: boolean }[],
+): boolean => subTasks.length > 0 && subTasks.every((task) => task.isCompleted);
+
+const toLocalDateStart = (value: unknown): Date => {
+  if (typeof value === "string") {
+    const dateOnlyMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})(?:$|T)/);
+    if (dateOnlyMatch) {
+      const [, year, month, day] = dateOnlyMatch;
+      return new Date(Number(year), Number(month) - 1, Number(day));
+    }
+  }
+
+  const parsedDate = value instanceof Date ? value : new Date(String(value));
+  return new Date(
+    parsedDate.getFullYear(),
+    parsedDate.getMonth(),
+    parsedDate.getDate(),
+  );
+};
+
+const ensureDueDateIsTodayOrFuture = (dueDate: unknown): void => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const dueDateForValidation = toLocalDateStart(dueDate);
+  if (dueDateForValidation < today) {
+    throw new ApiError(400, "Due date cannot be in the past.");
+  }
+};
+
 const addGoal = asyncHandler(async (req: Request, res: Response) => {
   const parsedPayload = GoalSchema.safeParse(req.body);
   if (!parsedPayload.success) {
     throw new ApiError(400, "Invalid Goal Payload");
   }
-  const today = new Date();
-  if (parsedPayload.data.dueDate < today) {
-    throw new ApiError(400, "Due date cannot be in the past.");
-  }
+  ensureDueDateIsTodayOrFuture(req.body?.dueDate ?? parsedPayload.data.dueDate);
 
   const { currentQuarter, currentYear } =
     await Settings.getCurrentYearAndQuarter();
@@ -57,21 +85,16 @@ const markAsComplete = asyncHandler(async (req: Request, res: Response) => {
   if (isDueDatePassed) {
     throw new ApiError(400, "Cannot update goal after due date has passed.");
   }
-  let totalCompleted = 0;
-
-  subTasks.map((subTask) => {
+  subTasks.forEach((subTask) => {
     const userTask = goal.subTasks.find(
       (task) => String(task._id) === subTask._id.toString(),
     );
     if (userTask) {
       userTask.isCompleted = subTask.isCompleted;
-      if (userTask.isCompleted) {
-        totalCompleted++;
-      }
     }
   });
 
-  goal.isCompleted = totalCompleted === goal.subTasks.length;
+  goal.isCompleted = isGoalCompletedFromSubTasks(goal.subTasks);
   await goal.save();
 
   return res
@@ -95,6 +118,7 @@ const updateGoal = asyncHandler(async (req: Request, res: Response) => {
   if (!parsedPayload.success) {
     throw new ApiError(400, "Invalid Goal Payload");
   }
+  ensureDueDateIsTodayOrFuture(req.body?.dueDate ?? parsedPayload.data.dueDate);
 
   const goal = await Goal.findOne({ _id: goalId, isDeleted: false });
   if (!goal) {
@@ -120,6 +144,7 @@ const updateGoal = asyncHandler(async (req: Request, res: Response) => {
       ? Boolean(existingSubTasksMap.get(String(task._id)))
       : false,
   }));
+  goal.isCompleted = isGoalCompletedFromSubTasks(goal.subTasks);
 
   await goal.save();
 

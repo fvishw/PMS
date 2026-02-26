@@ -3,6 +3,7 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { EditPermissions } from "@/types/performance";
+import { UseFormRegister } from "react-hook-form";
 
 export type KPI = {
   _id: string;
@@ -17,7 +18,7 @@ export type KPI = {
 
 const getColumns = (
   permissions: EditPermissions,
-  register: any,
+  register: UseFormRegister<any>,
 ): ColumnDef<KPI>[] => [
   {
     id: "sr.no",

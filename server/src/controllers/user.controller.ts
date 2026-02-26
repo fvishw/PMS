@@ -112,23 +112,19 @@ const getUserProfile = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const updateUser = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+  if (!userId) {
+    throw new ApiError(400, "User ID is required");
+  }
   const parsedPayload = userUpdatePayloadSchema.safeParse({
     ...req.body,
-    userId: req.params.userId,
   });
   if (!parsedPayload.success) {
     throw new ApiError(400, "Invalid request payload");
   }
 
-  const {
-    userId,
-    fullName,
-    email,
-    role,
-    designationId,
-    parentReviewerId,
-    adminReviewerId,
-  } = parsedPayload.data;
+  const { fullName, role, designationId, parentReviewerId, adminReviewerId } =
+    parsedPayload.data;
 
   const user = await User.findById(userId);
   if (!user) {
@@ -136,7 +132,6 @@ const updateUser = asyncHandler(async (req: Request, res: Response) => {
   }
 
   user.fullName = fullName;
-  user.email = email;
   user.role = role;
   user.designation = new Types.ObjectId(designationId);
   user.parentReviewer = parentReviewerId

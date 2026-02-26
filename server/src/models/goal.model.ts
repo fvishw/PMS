@@ -64,9 +64,23 @@ const goalSchema = new Schema<IGoal>(
 
 goalSchema.index({ owner: 1 });
 
+const toLocalDateStart = (value: Date | string): Date => {
+  if (typeof value === "string") {
+    const dateOnlyMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})(?:$|T)/);
+    if (dateOnlyMatch) {
+      const [, year, month, day] = dateOnlyMatch;
+      return new Date(Number(year), Number(month) - 1, Number(day));
+    }
+  }
+
+  const parsed = value instanceof Date ? value : new Date(value);
+  return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+};
+
 goalSchema.methods.getDueDateDifference = function (): number {
-  const currentDate = new Date();
-  const timeDiff = this.dueDate.getTime() - currentDate.getTime();
+  const currentDate = toLocalDateStart(new Date());
+  const dueDate = toLocalDateStart(this.dueDate);
+  const timeDiff = dueDate.getTime() - currentDate.getTime();
   return Math.ceil(timeDiff / (1000 * 3600 * 24));
 };
 

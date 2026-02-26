@@ -17,7 +17,11 @@ interface IUser {
   fullName: string;
   email: string;
   role: "admin" | "employee" | "manager";
-  designation?: { _id: string; title: string; role?: string } | null;
+  designation?: {
+    _id: string;
+    title: string;
+    role: "employee" | "manager" | "admin";
+  } | null;
   parentReviewer?: { _id: string; fullName: string; email?: string } | null;
   adminReviewer?: { _id: string; fullName: string; email?: string } | null;
   createdAt: Date | string;
