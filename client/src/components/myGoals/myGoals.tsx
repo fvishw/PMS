@@ -9,14 +9,25 @@ import { Spinner } from "../ui/spinner";
 import ApiErrorMessage from "../ApiErrorMessage";
 import { useAuth } from "@/hooks/useAuthContext";
 import { getTransformedGoals } from "../goalManagement/transformedGoals";
+import { QuarterSelect } from "../common/quarterSelect";
+import { YearSelect } from "../common/yearOption";
 
 export type IGoal = GoalRow;
 
+type MyGoalFilter = {
+  quarter: string | null;
+  year: string | null;
+};
+
 const MyGoals = () => {
   const { user } = useAuth();
+  const [filter, setFilter] = useState<MyGoalFilter>({
+    quarter: null,
+    year: null,
+  });
   const { data, isLoading, error } = useQuery({
-    queryKey: ["goals", user?._id],
-    queryFn: async () => Api.getGoalsByOwner(),
+    queryKey: ["goals", user?._id, filter],
+    queryFn: async () => Api.getGoalsByOwner(filter),
   });
 
   const goals: GoalRow[] = data ? getTransformedGoals(data?.goals) : [];
@@ -51,15 +62,31 @@ const MyGoals = () => {
   }
 
   return (
-    <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4  *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs  @xl/main:grid-cols-2 @5xl/main:grid-cols-3">
-      {contentToRender}
-      {selectedGoalId && (
-        <ViewGoalModal
-          goalId={selectedGoalId}
-          isOpen={isOpen}
-          onClose={() => setIsOpen(false)}
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-end gap-4">
+        <QuarterSelect
+          onChange={(value) => setFilter({ ...filter, quarter: value })}
+          value={filter.quarter || undefined}
+          placeholder="Filter by quarter"
+          allowAllOption
         />
-      )}
+        <YearSelect
+          onChange={(value) => setFilter({ ...filter, year: value })}
+          value={filter.year || undefined}
+          placeholder="Filter by year"
+          allowAllOption
+        />
+      </div>
+      <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4  *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs  @xl/main:grid-cols-2 @5xl/main:grid-cols-3">
+        {contentToRender}
+        {selectedGoalId && (
+          <ViewGoalModal
+            goalId={selectedGoalId}
+            isOpen={isOpen}
+            onClose={() => setIsOpen(false)}
+          />
+        )}
+      </div>
     </div>
   );
 };

@@ -28,6 +28,7 @@ import GoalRouter from "./routes/goal.router.js";
 import cardsRouter from "./routes/cards.route.js";
 import settingsRouter from "./routes/settings.route.js";
 import reportRouter from "./routes/report.route.js";
+import meetingRouter from "./routes/meeting.route.js";
 
 app.use("/api/user/auth", userAuth);
 app.use("/api/user", userRouter);
@@ -37,6 +38,7 @@ app.use("/api/goals", GoalRouter);
 app.use("/api/cards", cardsRouter);
 app.use("/api/settings", settingsRouter);
 app.use("/api/reports", reportRouter);
+app.use("/api/meetings", meetingRouter);
 
 app.use(
   (

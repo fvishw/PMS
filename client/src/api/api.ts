@@ -28,6 +28,8 @@ import {
   GetUserReport,
   GetUserReports,
   GetCurrentQuarterStatus,
+  GetAllMeetings,
+  GetMeeting,
 } from "@/types/apiResponse";
 import { CheckInPayload, ICheckInPayload } from "@/types/chekin";
 import { Goal } from "@/types/goal";
@@ -244,8 +246,13 @@ export class API {
   markGoalAsComplete(data: ViewGoalFormValues) {
     return this.request(this.instance.put("/goals/mark-as-complete", data));
   }
-  getGoalsByOwner(): Promise<GetGoals> {
-    return this.request(this.instance.get("/goals/get-by-owner"));
+  getGoalsByOwner(filter?: {
+    quarter?: string | null;
+    year?: string | null;
+  }): Promise<GetGoals> {
+    return this.request(
+      this.instance.get("/goals/get-by-owner", { params: filter }),
+    );
   }
   deleteGoalById(goalId: string) {
     return this.request(
@@ -287,6 +294,39 @@ export class API {
   }
   generateUserReport(): Promise<GetUserReport> {
     return this.request(this.instance.post("/reports/generate-user-report"));
+  }
+  createMeeting(data: {
+    title: string;
+    employee: string;
+    meetingDate: string;
+  }) {
+    return this.request(this.instance.post("/meetings/add", data));
+  }
+  updateMeeting(
+    meetingId: string,
+    data: { title?: string; meetingDate?: string; notes?: string; status?: string },
+  ) {
+    return this.request(
+      this.instance.put(`/meetings/update/${meetingId}`, data),
+    );
+  }
+  deleteMeeting(meetingId: string) {
+    return this.request(
+      this.instance.delete("/meetings/delete", { params: { meetingId } }),
+    );
+  }
+  getAllMeetings(filters: {
+    employeeId?: string | null;
+    quarter?: string | null;
+    year?: string | null;
+    status?: string | null;
+  }): Promise<GetAllMeetings> {
+    return this.request(
+      this.instance.get("/meetings/get-all", { params: filters }),
+    );
+  }
+  getMeetingById(meetingId: string): Promise<GetMeeting> {
+    return this.request(this.instance.get(`/meetings/get/${meetingId}`));
   }
 }
 

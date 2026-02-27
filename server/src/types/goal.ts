@@ -1,11 +1,11 @@
 import z from "zod";
 
 const subTask = z.object({
-  title: z.string(),
+  title: z.string().min(1, "Subtask title cannot be empty"),
 });
 
 const GoalSchema = z.object({
-  title: z.string(),
+  title: z.string().min(1, "Title cannot be empty"),
   subTasks: z.array(subTask),
   owner: z.string(),
   dueDate: z.coerce.date(),
