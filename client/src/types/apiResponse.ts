@@ -172,6 +172,30 @@ interface GetCurrentQuarterStatus {
   isAppraisalCompleted: boolean;
 }
 
+interface Meeting {
+  _id: string;
+  title: string;
+  admin: { _id: string; fullName: string };
+  employee: { _id: string; fullName: string; email: string };
+  meetingDate: string;
+  notes: string;
+  status: "scheduled" | "completed" | "cancelled";
+  quarter: string;
+  year: number;
+  employeeName: string;
+  adminName: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface GetAllMeetings {
+  meetings: Meeting[];
+}
+
+interface GetMeeting {
+  meeting: Meeting;
+}
+
 export {
   UserPerformanceFormResponse,
   GetAllUserResponse,
@@ -199,4 +223,7 @@ export {
   GetUserReports,
   GetUserReport,
   GetCurrentQuarterStatus,
+  Meeting,
+  GetAllMeetings,
+  GetMeeting,
 };

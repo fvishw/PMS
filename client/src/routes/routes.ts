@@ -113,6 +113,10 @@ const router = createBrowserRouter([
         path: "reports",
         Component: lazy(() => import("@/pages/outlets/reportsLayout")),
       },
+      {
+        path: "meetings",
+        Component: lazy(() => import("@/pages/outlets/meetingsLayout")),
+      },
     ],
   },
 ]);

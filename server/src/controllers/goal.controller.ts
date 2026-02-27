@@ -249,10 +249,17 @@ const getGoalsByOwner = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(401, "User Id not found.");
   }
 
-  const goals = await Goal.find({ owner: userId, isDeleted: false }).populate(
-    "owner",
-    "fullName",
-  );
+  const { quarter, year } = req.query;
+  const filter: Record<string, unknown> = { owner: userId, isDeleted: false };
+
+  if (quarter && quarter !== "ALL") {
+    filter.quarter = quarter;
+  }
+  if (year && year !== "ALL") {
+    filter.year = Number(year);
+  }
+
+  const goals = await Goal.find(filter).populate("owner", "fullName");
 
   return res
     .status(200)

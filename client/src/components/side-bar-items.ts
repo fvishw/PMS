@@ -5,6 +5,7 @@ import {
   IconEyeEdit,
   IconListCheck,
   IconListDetails,
+  IconMessageCircle,
   IconTargetArrow,
   IconTrophy,
   IconUser,
@@ -49,6 +50,11 @@ export const sidebarItems: Record<role, SidebarItem[]> = {
       title: "Review Appraisals",
       url: "review-appraisals",
       icon: IconEyeEdit,
+    },
+    {
+      title: "1:1 Meetings",
+      url: "meetings",
+      icon: IconMessageCircle,
     },
     {
       title: "Personal Details",
