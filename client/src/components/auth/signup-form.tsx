@@ -15,7 +15,7 @@ import { useState } from "react";
 import { IconEye, IconEyeClosed } from "@tabler/icons-react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
-import Logo from "@/assets/nf-logo.svg";
+import NexforgeLogo from "@/assets/nexforge.png";
 import { ErrorMessage } from "@hookform/error-message";
 import { Spinner } from "@/components/ui/spinner";
 interface SignupFormValues {
@@ -189,11 +189,11 @@ export function SignupForm({
               </FieldDescription>
             </FieldGroup>
           </form>
-          <div className="bg-muted relative hidden md:block">
+          <div className="bg-muted relative hidden items-center justify-center p-8 dark:bg-white md:flex">
             <img
-              src={Logo}
-              alt="Image"
-              className="absolute inset-0 h-full w-full object-contains  "
+              src={NexforgeLogo}
+              alt="NexForge logo"
+              className="max-h-64 w-full object-contain"
             />
           </div>
         </CardContent>

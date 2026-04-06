@@ -12,7 +12,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-import NFLogo from "../assets/nf-logo.svg";
+import NexforgeLogo from "@/assets/nexforge.png";
 import { useAuth } from "@/hooks/useAuthContext";
 import { sidebarItems } from "./side-bar-items";
 
@@ -52,11 +52,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="#">
-                <img
-                  src={NFLogo}
-                  alt="NexForge Logo"
-                  className="!h-8 !w-8 object-contain"
-                />
+                <span className="flex h-9 w-9 items-center justify-center rounded-md bg-white p-1 shadow-sm">
+                  <img
+                    src={NexforgeLogo}
+                    alt="NexForge Logo"
+                    className="!h-7 !w-7 object-contain"
+                  />
+                </span>
                 <span className="text-base font-semibold mt-1.5">NexForge</span>
               </a>
             </SidebarMenuButton>

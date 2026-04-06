@@ -18,6 +18,7 @@ import { IconEye, IconEyeClosed } from "@tabler/icons-react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
+import NexforgeLogo from "@/assets/nexforge.png";
 
 interface LoginFormValues {
   email: string;
@@ -147,11 +148,11 @@ export function LoginForm({
               </FieldDescription>
             </FieldGroup>
           </form>
-          <div className="bg-muted relative hidden md:block">
+          <div className="bg-muted relative hidden items-center justify-center p-8 dark:bg-white md:flex">
             <img
-              src="/placeholder.svg"
-              alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+              src={NexforgeLogo}
+              alt="NexForge logo"
+              className="max-h-64 w-full object-contain"
             />
           </div>
         </CardContent>

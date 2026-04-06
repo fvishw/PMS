@@ -4,6 +4,7 @@ function getDynamicApiUrl(): string {
   const prodEnvUrl = import.meta.env.VITE_SERVER_PROD_URL!;
 
   const url = isProdEnv ? prodEnvUrl : localApiURL;
+  console.log(url);
   return url;
 }
 
