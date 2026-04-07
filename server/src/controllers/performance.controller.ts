@@ -68,9 +68,10 @@ const createPerformanceRecord = asyncHandler(
 
 const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
+  const isAdmin = req.user?.role === "admin";
   const isKpiActive = await Settings.checkIsKpiEnabled();
 
-  if (!isKpiActive) {
+  if (!isKpiActive && !isAdmin) {
     throw new ApiError(400, "KPI process is currently disabled");
   }
 
@@ -308,6 +309,7 @@ const getReviewAppraisalData = asyncHandler(
 
 const getUserKpiDetails = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id!;
+  const isAdmin = req.user?.role === "admin";
   const isKpiActive = await Settings.checkIsKpiEnabled();
 
   const user = await User.findById(userId);
@@ -316,7 +318,7 @@ const getUserKpiDetails = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(404, "User not found");
   }
 
-  if (!isKpiActive) {
+  if (!isKpiActive && !isAdmin) {
     return res.status(200).json({
       isKpiEnabled: false,
       hasKpiTemplate: false,
@@ -399,10 +401,11 @@ const getAllPerformanceTemplates = asyncHandler(
 const getUserPerformanceForm = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.id!;
+    const isAdmin = req.user?.role === "admin";
 
     const isAppraisalActive = await Settings.checkIsAppraisalEnabled();
 
-    if (!isAppraisalActive) {
+    if (!isAppraisalActive && !isAdmin) {
       return res.status(200).json(
         new ApiResponse(
           200,
@@ -482,10 +485,11 @@ const getPerformanceTemplateById = asyncHandler(
 const getUserPerformanceFormById = asyncHandler(
   async (req: Request, res: Response) => {
     const performanceId = req.query.performanceId as string;
+    const isAdmin = req.user?.role === "admin";
 
     const isAppraisalActive = await Settings.checkIsAppraisalEnabled();
 
-    if (!isAppraisalActive) {
+    if (!isAppraisalActive && !isAdmin) {
       return res.status(200).json(
         new ApiResponse(
           200,
