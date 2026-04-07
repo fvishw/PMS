@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router";
 import { lazy } from "react";
 import PublicRoute from "./PublicRoute";
 import ProtectedDashboard from "./protectedDashboard";
-import HomeOutlet from "@/pages/outlets/homeOutlet";
+import DashboardOutlet from "../pages/outlets/dashboardOutlet";
 
 const router = createBrowserRouter([
   {
@@ -33,7 +33,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "dashboard",
-        Component: HomeOutlet,
+        Component: DashboardOutlet,
       },
       {
         path: "profile",

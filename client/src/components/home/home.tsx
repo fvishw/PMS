@@ -7,11 +7,12 @@ import UserDashboard from "../userDashboard/userDashboard";
 export const Home = () => {
   const { user } = useAuth();
   const role = user?.role || "employee";
+  const showProgressBar = role === "manager" || role === "employee";
 
   return (
     <>
       {role === "admin" && <SectionCards />}
-      <UserDashboard />
+      {showProgressBar && <UserDashboard />}
       <CustomDataTable data={[]} columns={columns} />
     </>
   );
