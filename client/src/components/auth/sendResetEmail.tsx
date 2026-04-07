@@ -15,7 +15,8 @@ import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
-import Logo from "@/assets/nf-logo.svg";
+import NexforgeDarkLogo from "@/assets/nexforge-dark.png";
+import NexforgeLogo from "@/assets/nexforge.png";
 
 interface ResetPasswordFormValues {
   email: string;
@@ -92,11 +93,16 @@ export function SendRestPasswordEmail({
               </FieldDescription>
             </FieldGroup>
           </form>
-          <div className="bg-muted relative hidden md:block">
+          <div className="bg-muted relative hidden items-center justify-center p-8 md:flex">
             <img
-              src={Logo}
+              src={NexforgeLogo}
               alt="NexForge logo"
-              className="absolute inset-0 h-full w-full object-contain"
+              className="max-h-64 w-full object-contain dark:hidden"
+            />
+            <img
+              src={NexforgeDarkLogo}
+              alt="NexForge logo dark"
+              className="hidden max-h-64 w-full object-contain dark:block"
             />
           </div>
         </CardContent>

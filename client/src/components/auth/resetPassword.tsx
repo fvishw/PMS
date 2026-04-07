@@ -15,9 +15,10 @@ import { useEffect, useState } from "react";
 import { IconEye, IconEyeClosed } from "@tabler/icons-react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
-import Logo from "@/assets/nf-logo.svg";
 import { ErrorMessage } from "@hookform/error-message";
 import { Spinner } from "@/components/ui/spinner";
+import NexforgeDarkLogo from "@/assets/nexforge-dark.png";
+import NexforgeLogo from "@/assets/nexforge.png";
 interface ResetFormValues {
   password: string;
   repeatPassword: string;
@@ -71,7 +72,8 @@ export function ResetPasswordForm({
   });
 
   const verifyTokenMutation = useMutation({
-    mutationFn: (resetToken: string) => publicApi.verifyPasswordResetToken(resetToken),
+    mutationFn: (resetToken: string) =>
+      publicApi.verifyPasswordResetToken(resetToken),
     onSuccess: () => {
       setIsTokenVerified(true);
       setTokenError("");
@@ -134,7 +136,9 @@ export function ResetPasswordForm({
           <CardContent className="grid p-6">
             <FieldGroup className="items-center text-center">
               <h1 className="text-2xl font-bold">Invalid Reset Link</h1>
-              <FieldDescription>{tokenError || "Invalid or expired reset link."}</FieldDescription>
+              <FieldDescription>
+                {tokenError || "Invalid or expired reset link."}
+              </FieldDescription>
               <Button asChild>
                 <Link to="/forgot-password">Request New Link</Link>
               </Button>
@@ -177,9 +181,15 @@ export function ResetPasswordForm({
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                     onClick={() => setIsPasswordShow((prev) => !prev)}
                     type="button"
-                    aria-label={isPasswordShow ? "Hide password" : "Show password"}
+                    aria-label={
+                      isPasswordShow ? "Hide password" : "Show password"
+                    }
                   >
-                    {isPasswordShow ? <IconEye size={18} /> : <IconEyeClosed size={18} />}
+                    {isPasswordShow ? (
+                      <IconEye size={18} />
+                    ) : (
+                      <IconEyeClosed size={18} />
+                    )}
                   </button>
                 </div>
                 <ErrorMessage
@@ -191,7 +201,9 @@ export function ResetPasswordForm({
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor="repeatPassword">Repeat Password</FieldLabel>
+                <FieldLabel htmlFor="repeatPassword">
+                  Repeat Password
+                </FieldLabel>
                 <div className="relative">
                   <Input
                     id="repeatPassword"
@@ -207,10 +219,16 @@ export function ResetPasswordForm({
                     onClick={() => setIsConfirmPasswordShow((prev) => !prev)}
                     type="button"
                     aria-label={
-                      isConfirmPasswordShow ? "Hide repeated password" : "Show repeated password"
+                      isConfirmPasswordShow
+                        ? "Hide repeated password"
+                        : "Show repeated password"
                     }
                   >
-                    {isConfirmPasswordShow ? <IconEye size={18} /> : <IconEyeClosed size={18} />}
+                    {isConfirmPasswordShow ? (
+                      <IconEye size={18} />
+                    ) : (
+                      <IconEyeClosed size={18} />
+                    )}
                   </button>
                 </div>
                 <ErrorMessage
@@ -223,7 +241,11 @@ export function ResetPasswordForm({
               </Field>
               <Field>
                 <Button type="submit" disabled={isPending}>
-                  {isPending ? <Spinner className="size-4" /> : "Reset Password"}
+                  {isPending ? (
+                    <Spinner className="size-4" />
+                  ) : (
+                    "Reset Password"
+                  )}
                 </Button>
               </Field>
               <FieldDescription className="text-center">
@@ -231,11 +253,16 @@ export function ResetPasswordForm({
               </FieldDescription>
             </FieldGroup>
           </form>
-          <div className="bg-muted relative hidden md:block">
+          <div className="bg-muted relative hidden items-center justify-center p-8 md:flex">
             <img
-              src={Logo}
-              alt="Image"
-              className="absolute inset-0 h-full w-full object-contains  "
+              src={NexforgeLogo}
+              alt="NexForge logo"
+              className="max-h-64 w-full object-contain dark:hidden"
+            />
+            <img
+              src={NexforgeDarkLogo}
+              alt="NexForge logo dark"
+              className="hidden max-h-64 w-full object-contain dark:block"
             />
           </div>
         </CardContent>
