@@ -25,6 +25,13 @@ export const PerformanceTableAction = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="center">
             <DropdownMenuItem
+              onClick={() =>
+                navigate(`/manage-performance/${performanceId}?mode=edit`)
+              }
+            >
+              Edit Template
+            </DropdownMenuItem>
+            <DropdownMenuItem
               onClick={() => navigate(`/manage-performance/${performanceId}`)}
             >
               View Template

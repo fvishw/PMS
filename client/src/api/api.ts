@@ -132,6 +132,14 @@ export class API {
   addPerformanceRecord(data: PerformanceTemplateFormValue) {
     return this.request(this.instance.post("/performance/add", data));
   }
+  updatePerformanceRecord(
+    performanceId: string,
+    data: PerformanceTemplateFormValue,
+  ) {
+    return this.request(
+      this.instance.put(`/performance/update/${performanceId}`, data),
+    );
+  }
   // Admin API to fetch all performance Templates
   fetchAllPerformanceRecords(): Promise<GetAllPerformanceRecordsResponse> {
     return this.request(

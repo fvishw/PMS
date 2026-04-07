@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createPerformanceRecord,
+  updatePerformanceRecord,
   managerReviewKpi,
   selfReviewKpi,
   updateKpiStatus,
@@ -20,6 +21,11 @@ const router = Router();
 
 // need to add admin auth middleware
 router.post("/add", authMiddleware(["admin"]), createPerformanceRecord);
+router.put(
+  "/update/:performanceId",
+  authMiddleware(["admin"]),
+  updatePerformanceRecord,
+);
 
 router.put(
   "/accept-kpi",

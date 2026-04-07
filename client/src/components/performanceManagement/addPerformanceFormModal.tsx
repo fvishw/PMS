@@ -22,16 +22,23 @@ import CompetencyItem from "./copetencyItem";
 import { toast } from "sonner";
 import { queryClient } from "@/utils/queryClient";
 import DesignationSelection from "./designationSelection";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 export function AddPerformanceFormModal({
   isOpen,
   onClose,
+  mode = "add",
+  performanceId,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  mode?: "add" | "edit";
+  performanceId?: string;
 }) {
-  const { control, handleSubmit } = useForm<PerformanceFormValue>({
+  const isEditMode = mode === "edit";
+
+  const { control, handleSubmit, reset } = useForm<PerformanceFormValue>({
     defaultValues: {
       kpis: [{ objective: "", indicator: "", weight: 0 }],
       designationId: "",
@@ -57,19 +64,72 @@ export function AddPerformanceFormModal({
     name: "competencies",
   });
 
-  const { mutate: addPerformanceRecord } = useMutation({
-    mutationFn: (data: PerformanceFormValue) => Api.addPerformanceRecord(data),
+  const { data: existingTemplate } = useQuery({
+    queryKey: ["performanceDetails", performanceId],
+    queryFn: () => Api.fetchMasterPerformanceById(performanceId as string),
+    enabled: isEditMode && !!performanceId && isOpen,
+  });
+
+  useEffect(() => {
+    if (!isEditMode || !existingTemplate?.performanceTemplate) {
+      return;
+    }
+
+    const template = existingTemplate.performanceTemplate;
+    const designationId =
+      typeof template.designation === "string"
+        ? template.designation
+        : template.designation?._id || "";
+
+    reset({
+      designationId,
+      kpis: (template.kpis || []).map((kpi) => ({
+        objective: kpi.objective,
+        indicator: kpi.indicator,
+        weight: kpi.weight,
+      })),
+      competencies: (template.competencies || []).map((competency) => ({
+        title: competency.title,
+        indicators: competency.indicators || [],
+      })),
+    });
+  }, [isEditMode, existingTemplate?.performanceTemplate, reset]);
+
+  const { mutate: savePerformanceRecord, isPending } = useMutation({
+    mutationFn: (data: PerformanceFormValue) => {
+      if (isEditMode && performanceId) {
+        return Api.updatePerformanceRecord(performanceId, data);
+      }
+
+      return Api.addPerformanceRecord(data);
+    },
     onSuccess: () => {
-      toast.success("Performance Record Added Successfully", {
-        position: "top-right",
-      });
+      toast.success(
+        isEditMode
+          ? "Performance Record Updated Successfully"
+          : "Performance Record Added Successfully",
+        {
+          position: "top-right",
+        },
+      );
       queryClient.invalidateQueries({ queryKey: ["performanceList"] });
+      if (performanceId) {
+        queryClient.invalidateQueries({
+          queryKey: ["performanceDetails", performanceId],
+        });
+      }
       onClose();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to add Performance Record", {
-        position: "top-right",
-      });
+      toast.error(
+        error.message ||
+          (isEditMode
+            ? "Failed to update Performance Record"
+            : "Failed to add Performance Record"),
+        {
+          position: "top-right",
+        },
+      );
     },
   });
 
@@ -79,19 +139,25 @@ export function AddPerformanceFormModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto overflow-x-hidden sidebar-scroll">
         <form
-          onSubmit={handleSubmit((data) => addPerformanceRecord(data))}
+          onSubmit={handleSubmit((data) => savePerformanceRecord(data))}
           className="max-h-[80vh]"
         >
           <DialogHeader>
-            <DialogTitle>Create Performance Record</DialogTitle>
+            <DialogTitle>
+              {isEditMode
+                ? "Edit Performance Record"
+                : "Create Performance Record"}
+            </DialogTitle>
             <DialogDescription>
-              Fill the form below to add a new Performance record.
+              {isEditMode
+                ? "Update the template details below."
+                : "Fill the form below to add a new Performance record."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid space-y-4">
             <div className="grid gap-3">
               <Label>Designation</Label>
-              <DesignationSelection control={control} />
+              <DesignationSelection control={control} disabled={isEditMode} />
             </div>
 
             <h1 className="font-bold text-lg dark:text-white text-black">
@@ -142,7 +208,9 @@ export function AddPerformanceFormModal({
             ))}
           </div>
           <DialogFooter className=" p-4">
-            <Button type="submit">Create Record</Button>
+            <Button type="submit" disabled={isPending}>
+              {isEditMode ? "Update Record" : "Create Record"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

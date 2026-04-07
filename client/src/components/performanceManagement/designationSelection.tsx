@@ -15,9 +15,10 @@ import { Controller } from "react-hook-form";
 
 interface DesignationProps {
   control: any;
+  disabled?: boolean;
 }
 
-function DesignationSelection({ control }: DesignationProps) {
+function DesignationSelection({ control, disabled = false }: DesignationProps) {
   const { data: designationsData, isPending: designationLoader } = useQuery({
     queryKey: ["designations"],
     queryFn: () => Api.fetchAllDesignations(),
@@ -35,7 +36,11 @@ function DesignationSelection({ control }: DesignationProps) {
           control={control}
           name="designationId"
           render={({ field }) => (
-            <Select value={field.value} onValueChange={field.onChange}>
+            <Select
+              value={field.value}
+              onValueChange={field.onChange}
+              disabled={disabled}
+            >
               <SelectTrigger className="w-[250px]">
                 <SelectValue placeholder="Select a designation" />
               </SelectTrigger>

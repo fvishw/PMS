@@ -66,6 +66,68 @@ const createPerformanceRecord = asyncHandler(
   },
 );
 
+const updatePerformanceRecord = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { performanceId } = req.params;
+    const parsedPayload = MasterPerformancePayload.safeParse(req.body);
+
+    if (!performanceId || !Types.ObjectId.isValid(performanceId)) {
+      throw new ApiError(400, "Invalid performance ID");
+    }
+
+    if (!parsedPayload.success) {
+      throw new ApiError(400, "Invalid Performance Payload");
+    }
+
+    const { competencies, designationId, kpis } = parsedPayload.data;
+
+    const masterPerformance = await MasterPerformance.findById(performanceId);
+
+    if (!masterPerformance) {
+      throw new ApiError(404, "Performance template not found");
+    }
+
+    if (masterPerformance.designation.toString() !== designationId) {
+      throw new ApiError(400, "Designation cannot be changed for a template");
+    }
+
+    let totalWeight = 0;
+    kpis.forEach((c) => {
+      totalWeight += c.weight;
+    });
+
+    if (totalWeight !== 100) {
+      throw new ApiError(400, "Sum of Kpi's Weight must be 100");
+    }
+
+    const { currentYear, currentQuarter } =
+      await Settings.getCurrentYearAndQuarter();
+
+    const hasQuarterPerformance = await UserPerformance.exists({
+      designation: masterPerformance.designation,
+      year: currentYear,
+      quarter: currentQuarter,
+    });
+
+    if (hasQuarterPerformance) {
+      throw new ApiError(
+        400,
+        "Performance template cannot be edited because users have already filled performance for the current quarter",
+      );
+    }
+
+    masterPerformance.kpis = kpis as any;
+    masterPerformance.competencies = competencies as any;
+    await masterPerformance.save();
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, null, "Performance template updated successfully"),
+      );
+  },
+);
+
 const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
   const isAdmin = req.user?.role === "admin";
@@ -571,6 +633,7 @@ const getManagerReviewAppraisalData = asyncHandler(
 
 export {
   createPerformanceRecord,
+  updatePerformanceRecord,
   updateKpiStatus,
   selfReviewKpi,
   managerReviewKpi,
