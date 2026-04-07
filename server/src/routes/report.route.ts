@@ -1,4 +1,5 @@
 import {
+  getAdminReports,
   generateUserReport,
   getCurrentQuarterReport,
   getCurrentQuarterReportStatus,
@@ -15,6 +16,8 @@ router.get(
   authMiddleware(["employee", "manager", "admin"]),
   getUserReports,
 );
+
+router.get("/admin-all", authMiddleware(["admin"]), getAdminReports);
 
 router.post(
   "/generate-user-report",

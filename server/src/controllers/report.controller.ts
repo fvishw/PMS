@@ -2,6 +2,7 @@ import generateReport from "@/config/aiEngine/geminiEngine.js";
 import { UserReportModel } from "@/models/report.model.js";
 import Settings from "@/models/settings.model.js";
 import { UserPerformance } from "@/models/userPerformance.model.js";
+import { User } from "@/models/user.model.js";
 import { ApiError } from "@/utils/ApiError.js";
 import { ApiResponse } from "@/utils/ApiResponse.js";
 import asyncHandler from "@/utils/asyncHandler.js";
@@ -76,6 +77,7 @@ const generateUserReport = asyncHandler(async (req: Request, res: Response) => {
 });
 const getReportById = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
+  const userRole = req.user?.role;
   if (!userId) {
     throw new ApiError(400, "User ID is required");
   }
@@ -84,10 +86,15 @@ const getReportById = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(400, "Report ID is required");
   }
 
-  const report = await UserReportModel.findOne({
+  const reportQuery: any = {
     _id: reportId,
-    user: userId,
-  });
+  };
+
+  if (userRole !== "admin") {
+    reportQuery.user = userId;
+  }
+
+  const report = await UserReportModel.findOne(reportQuery);
 
   if (!report) {
     throw new ApiError(404, "Report not found");
@@ -96,6 +103,73 @@ const getReportById = asyncHandler(async (req: Request, res: Response) => {
   res
     .status(200)
     .json(new ApiResponse(200, { report }, "Report fetched successfully"));
+});
+
+const getAdminReports = asyncHandler(async (req: Request, res: Response) => {
+  const { quarter, year, role, search } = req.query;
+
+  const reportFilter: any = {};
+
+  if (typeof quarter === "string" && quarter.trim()) {
+    reportFilter.quarter = quarter.trim();
+  }
+
+  if (typeof year === "string" && year.trim()) {
+    const parsedYear = Number(year);
+    if (!Number.isNaN(parsedYear)) {
+      reportFilter.year = parsedYear;
+    }
+  }
+
+  const userFilter: {
+    role?: string;
+    $or?: Array<{
+      fullName?: { $regex: string; $options: string };
+      email?: { $regex: string; $options: string };
+    }>;
+  } = {};
+
+  if (typeof role === "string" && role.trim()) {
+    userFilter.role = role.trim();
+  }
+
+  if (typeof search === "string" && search.trim()) {
+    const q = search.trim();
+    userFilter.$or = [
+      { fullName: { $regex: q, $options: "i" } },
+      { email: { $regex: q, $options: "i" } },
+    ];
+  }
+
+  if (Object.keys(userFilter).length > 0) {
+    const users = await User.find(userFilter).select("_id");
+    const userIds = users.map((u) => u._id);
+
+    if (!userIds.length) {
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            { reports: [] },
+            "Admin reports fetched successfully",
+          ),
+        );
+    }
+
+    reportFilter.user = { $in: userIds };
+  }
+
+  const reports = await UserReportModel.find(reportFilter)
+    .select("quarter year overAllScore createdAt user")
+    .populate("user", "fullName email role")
+    .sort({ createdAt: -1 });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, { reports }, "Admin reports fetched successfully"),
+    );
 });
 
 const getCurrentQuarterReportStatus = asyncHandler(
@@ -166,6 +240,7 @@ const getCurrentQuarterReport = asyncHandler(
 
 export {
   getUserReports,
+  getAdminReports,
   generateUserReport,
   getCurrentQuarterReportStatus,
   getCurrentQuarterReport,

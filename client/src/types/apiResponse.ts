@@ -148,6 +148,22 @@ interface GetUserReports {
   }[];
 }
 
+interface GetAdminReports {
+  reports: {
+    _id: string;
+    quarter: string;
+    year: number;
+    createdAt: string;
+    overAllScore: number;
+    user: {
+      _id: string;
+      fullName: string;
+      email: string;
+      role: "admin" | "manager" | "employee";
+    };
+  }[];
+}
+
 interface GetUserReport {
   report: {
     user: string;
@@ -197,6 +213,7 @@ export {
   GetGoalCardStatus,
   GetCurrentSettings,
   GetUserReports,
+  GetAdminReports,
   GetUserReport,
   GetCurrentQuarterStatus,
 };

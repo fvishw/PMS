@@ -4,8 +4,17 @@ import { CustomDataTable } from "../customTable";
 import ApiErrorMessage from "../ApiErrorMessage";
 import { columns } from "./reportsTable.config";
 import ReportGenerateButton from "./reportGenerateButton";
+import { useAuth } from "@/hooks/useAuthContext";
+import AdminReports from "./adminReports";
 
 function Report() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
+
+  if (isAdmin) {
+    return <AdminReports />;
+  }
+
   const { data, error, isLoading } = useQuery({
     queryFn: () => Api.fetchUserPastReports(),
     queryKey: ["reports"],

@@ -51,6 +51,11 @@ export const sidebarItems: Record<role, SidebarItem[]> = {
       icon: IconEyeEdit,
     },
     {
+      title: "Reports",
+      url: "reports",
+      icon: IconDatabaseCog,
+    },
+    {
       title: "Personal Details",
       url: "me",
       icon: IconUser,

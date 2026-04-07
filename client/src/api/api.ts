@@ -25,6 +25,7 @@ import {
   GetReviewDashboardCardStatus,
   GetGoalCardStatus,
   GetCurrentSettings,
+  GetAdminReports,
   GetUserReport,
   GetUserReports,
   GetCurrentQuarterStatus,
@@ -273,6 +274,16 @@ export class API {
   }
   fetchUserPastReports(): Promise<GetUserReports> {
     return this.request(this.instance.get("/reports/user-past-reports"));
+  }
+  fetchAdminReports(filters?: {
+    quarter?: string;
+    year?: string;
+    role?: string;
+    search?: string;
+  }): Promise<GetAdminReports> {
+    return this.request(
+      this.instance.get("/reports/admin-all", { params: filters }),
+    );
   }
   getCurrentQuarterReportStatus(): Promise<GetCurrentQuarterStatus> {
     return this.request(this.instance.get("/reports/current-quarter-status"));

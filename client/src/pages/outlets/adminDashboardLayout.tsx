@@ -1,8 +1,7 @@
-import { CustomDataTable } from "@/components/customTable";
 import OutletWrapper from "@/components/mainLayout";
 import { SectionCards } from "@/components/section-cards";
 import { SiteHeader } from "@/components/site-header";
-import { columns } from "@/components/performanceManagement/kpiTable.config";
+import AdminDashboardPerformanceRecords from "@/components/admin/adminDashboardPerformanceRecords";
 
 export default function AdminDashboardLayout() {
   return (
@@ -10,7 +9,7 @@ export default function AdminDashboardLayout() {
       <SiteHeader headerName="Admin Dashboard" />
       <OutletWrapper>
         <SectionCards />
-        <CustomDataTable data={[]} columns={columns} />
+        <AdminDashboardPerformanceRecords />
       </OutletWrapper>
     </>
   );
