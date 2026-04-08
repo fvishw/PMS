@@ -1,6 +1,7 @@
 import {
   AllPerformanceTemplate,
   GetPerformanceTableData,
+  MasterPerformance,
   UserPerformanceForm,
 } from "@/types/performance";
 import { Designation, IUser } from "./user";
@@ -46,7 +47,7 @@ interface GetUserKPiDetails {
 type GetPastCheckIns = UserPastCheckIn;
 
 interface GetPerformanceById {
-  performanceTemplate: UserPerformanceForm;
+  performanceTemplate: MasterPerformance;
 }
 
 interface GetCheckInQuestions {
