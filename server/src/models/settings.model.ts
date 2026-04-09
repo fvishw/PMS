@@ -1,3 +1,5 @@
+import type { Quarter } from "@/constants/quarter.js";
+import { QUARTERS } from "@/constants/quarter.js";
 import { Schema, model, Document, Model } from "mongoose";
 
 interface ISettings extends Document {
@@ -8,7 +10,7 @@ interface ISettings extends Document {
   appraisalStartDate: Date | null;
   appraisalEndDate: Date | null;
   isAppraisalEnabled: boolean;
-  currentQuarter: "Q1" | "Q2" | "Q3" | "Q4";
+  currentQuarter: Quarter;
   currentYear: number;
   updatedAt: Date;
   checkIsKpiEnabled: () => Promise<boolean>;
@@ -20,7 +22,7 @@ interface ISettingsStatics {
   checkIsAppraisalEnabled: () => Promise<boolean>;
   getCurrentYearAndQuarter: () => Promise<{
     currentYear: number;
-    currentQuarter: "Q1" | "Q2" | "Q3" | "Q4";
+    currentQuarter: Quarter;
   }>;
 }
 
@@ -37,7 +39,7 @@ const SettingsSchema = new Schema<ISettings, SettingsModelType>(
     isAppraisalEnabled: { type: Boolean, default: false },
     currentQuarter: {
       type: String,
-      enum: ["Q1", "Q2", "Q3", "Q4"],
+      enum: QUARTERS,
       required: true,
     },
     currentYear: { type: Number, required: true },

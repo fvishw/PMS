@@ -4,6 +4,7 @@ import {
   MasterPerformance,
   UserPerformanceForm,
 } from "@/types/performance";
+import type { Quarter } from "./quarter";
 import { Designation, IUser } from "./user";
 import { ICheckInQuestion, UserCheckIn, UserPastCheckIn } from "./chekin";
 import { KpiCriteria } from "./criteria";
@@ -133,7 +134,7 @@ interface GetCurrentSettings {
     appraisalStartDate: string | null;
     appraisalEndDate: string | null;
     isAppraisalEnabled: boolean;
-    currentQuarter: "Q1" | "Q2" | "Q3" | "Q4";
+    currentQuarter: Quarter;
     currentYear: number;
     updatedAt: string;
   };

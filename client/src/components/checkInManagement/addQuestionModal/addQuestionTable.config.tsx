@@ -11,10 +11,15 @@ import {
 } from "@/components/ui/select";
 import { TypeOptions } from "@/types/option";
 import { Textarea } from "../../ui/textarea";
+import { RowDragHandle } from "../../customTable";
 
 type QuestionRow = {
   question: string;
   type: "rating" | "text";
+};
+
+type QuestionFieldRow = QuestionRow & {
+  id: string;
 };
 
 type QuestionForm = {
@@ -30,7 +35,12 @@ type QuestionFormPayload = {
 export const getColumns = (
   control: Control<QuestionFormPayload>,
   remove: (index: number) => void,
-): ColumnDef<QuestionRow>[] => [
+): ColumnDef<QuestionFieldRow>[] => [
+  {
+    id: "drag",
+    header: () => <div className="w-8" />,
+    cell: () => <RowDragHandle />,
+  },
   {
     id: "sr.no",
     header: () => <div className="text-center">Sr.No</div>,
@@ -77,6 +87,7 @@ export const getColumns = (
     header: "Actions",
     cell: ({ row }) => (
       <Button
+        type="button"
         variant="ghost"
         className="text-red-600"
         onClick={() => remove(row.index)}
@@ -87,4 +98,4 @@ export const getColumns = (
   },
 ];
 
-export { QuestionFormPayload, QuestionForm, QuestionRow };
+export { QuestionFormPayload, QuestionForm, QuestionRow, QuestionFieldRow };

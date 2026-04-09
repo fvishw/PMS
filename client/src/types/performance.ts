@@ -1,4 +1,5 @@
 import { KPI } from "@/components/performanceForm/kpiTableConfig";
+import type { Quarter } from "./quarter";
 
 type Kpi = {
   objective: string;
@@ -139,7 +140,7 @@ interface UserPerformanceForm {
     | "admin_review"
     | "user_final_review"
     | "completed";
-  quarter: "Q1" | "Q2" | "Q3" | "Q4";
+  quarter: Quarter;
   year: number;
 }
 
@@ -175,7 +176,7 @@ interface GetPerformanceTableData {
     | "user_final_review"
     | "completed";
   interval?: {
-    quarterly: "Q1" | "Q2" | "Q3" | "Q4";
+    quarterly: Quarter;
     year: number;
   };
 }

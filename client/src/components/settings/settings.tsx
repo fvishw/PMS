@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import ApiErrorMessage from "../ApiErrorMessage";
 import { queryClient } from "@/utils/queryClient";
 import { QuarterSelect } from "../common/quarterSelect";
+import type { Quarter } from "@/types/quarter";
 
 export interface ISettingsForm {
   currentQuarter: string;
@@ -30,7 +31,7 @@ export interface ISettingsForm {
   isAppraisalEnabled: string;
 }
 export interface SettingsValue {
-  currentQuarter: "Q1" | "Q2" | "Q3" | "Q4";
+  currentQuarter: Quarter;
   currentYear: number;
   kpiStartDate: string | null;
   kpiEndDate: string | null;

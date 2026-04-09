@@ -1,3 +1,5 @@
+import { QUARTERS } from "./quarter";
+
 interface IOption {
   label: string;
   value: string;
@@ -34,12 +36,10 @@ const monthOptions: IOption[] = [
   { label: "December", value: "12" },
 ];
 
-const quarterOptions: IOption[] = [
-  { label: "Q1", value: "Q1" },
-  { label: "Q2", value: "Q2" },
-  { label: "Q3", value: "Q3" },
-  { label: "Q4", value: "Q4" },
-];
+const quarterOptions: IOption[] = QUARTERS.map((quarter) => ({
+  label: quarter,
+  value: quarter,
+}));
 
 const isEnabledOptions: IOption[] = [
   { label: "Enabled", value: "enabled" },

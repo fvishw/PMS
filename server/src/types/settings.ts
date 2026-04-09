@@ -1,3 +1,4 @@
+import { QUARTERS } from "@/constants/quarter.js";
 import z from "zod";
 
 const SettingsSchema = z.object({
@@ -7,7 +8,7 @@ const SettingsSchema = z.object({
   appraisalStartDate: z.iso.datetime(),
   appraisalEndDate: z.iso.datetime(),
   isAppraisalEnabled: z.boolean(),
-  currentQuarter: z.enum(["Q1", "Q2", "Q3", "Q4"]),
+  currentQuarter: z.enum(QUARTERS),
   currentYear: z.number().int(),
 });
 

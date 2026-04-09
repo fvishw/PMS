@@ -10,8 +10,8 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import {
   getColumns,
+  QuestionFieldRow,
   QuestionFormPayload,
-  QuestionRow,
 } from "./addQuestionTable.config";
 import { useFieldArray, useForm } from "react-hook-form";
 import { CustomDataTable } from "../../customTable";
@@ -22,6 +22,7 @@ import Api from "@/api/api";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/utils/queryClient";
 import DesignationSelection from "@/components/performanceManagement/designationSelection";
+import { CirclePlus } from "lucide-react";
 
 export function AddCheckInQuestionModal({
   isOpen,
@@ -39,12 +40,12 @@ export function AddCheckInQuestionModal({
       },
     });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, move } = useFieldArray({
     control,
     name: "questions",
   });
 
-  const columns: ColumnDef<QuestionRow>[] = getColumns(control, remove);
+  const columns: ColumnDef<QuestionFieldRow>[] = getColumns(control, remove);
 
   const { mutate } = useMutation({
     mutationFn: (data: QuestionFormPayload) => Api.addCheckInQuestions(data),
@@ -75,7 +76,7 @@ export function AddCheckInQuestionModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[900px] h-[900px] overflow-y-auto">
+      <DialogContent className="sm:max-w-[900px] h-[80vh] overflow-y-auto">
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
             <DialogTitle>Add Questions</DialogTitle>
@@ -97,15 +98,40 @@ export function AddCheckInQuestionModal({
               <Label>Designation</Label>
               <DesignationSelection control={control} />
             </div>
-            <div className="ml-auto">
-              <Button
-                type="button"
-                onClick={() => append({ question: "", type: "text" })}
-              >
-                Add Question
-              </Button>
-            </div>
-            <CustomDataTable columns={columns} data={fields} />
+            <CustomDataTable
+              columns={columns}
+              data={fields}
+              showPagination={false}
+              footerContent={
+                <div
+                  className="flex justify-center items-center gap-2 text-primary cursor-pointer"
+                  onClick={() => append({ question: "", type: "text" })}
+                >
+                  <span>
+                    <CirclePlus className="h-4" />
+                  </span>
+                  <span onClick={() => append({ question: "", type: "text" })}>
+                    Add Question
+                  </span>
+                </div>
+              }
+              rowDrag={{
+                getRowId: (row) => row.id,
+                onRowOrderChange: (activeId, overId) => {
+                  const activeIndex = fields.findIndex(
+                    (field) => field.id === activeId,
+                  );
+                  const overIndex = fields.findIndex(
+                    (field) => field.id === overId,
+                  );
+
+                  if (activeIndex === -1 || overIndex === -1) {
+                    return;
+                  }
+                  move(activeIndex, overIndex);
+                },
+              }}
+            />
           </div>
           <DialogFooter>
             <Button type="submit">Submit</Button>

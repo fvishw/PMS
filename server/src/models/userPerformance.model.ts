@@ -1,3 +1,5 @@
+import type { Quarter } from "@/constants/quarter.js";
+import { QUARTERS } from "@/constants/quarter.js";
 import { Schema, model, Types } from "mongoose";
 import type { IMasterPerformance } from "./masterPerformance.js";
 
@@ -12,7 +14,7 @@ export interface IUserPerformance extends IMasterPerformance {
     | "admin_review"
     | "user_final_review"
     | "completed";
-  quarter: "Q1" | "Q2" | "Q3" | "Q4";
+  quarter: Quarter;
   year: number;
 }
 
@@ -66,7 +68,7 @@ const UserPerformanceSchema = new Schema<IUserPerformance>(
     },
     quarter: {
       type: String,
-      enum: ["Q1", "Q2", "Q3", "Q4"],
+      enum: QUARTERS,
       required: true,
     },
     year: {
