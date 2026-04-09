@@ -6,6 +6,8 @@ interface IDesignationOption {
 interface IUserFormData {
   fullName: string;
   email: string;
+  phoneNumber: string;
+  joiningDate: string;
   role: string;
   designationId: string;
   parentReviewerId?: string;
@@ -16,6 +18,8 @@ interface IUser {
   _id: string;
   fullName: string;
   email: string;
+  phoneNumber?: string | null;
+  joiningDate?: Date | string | null;
   role: "admin" | "employee" | "manager";
   designation?: {
     _id: string;

@@ -15,6 +15,7 @@ const signUp = asyncHandler(async (req: Request, res: Response) => {
   const existingUser = await User.findOne({
     email,
     isSignUpComplete: false,
+    isDeleted: { $ne: true },
   });
 
   if (!existingUser) {
@@ -46,7 +47,11 @@ const login = asyncHandler(async (req: Request, res: Response) => {
   if (!email || !password) {
     throw new ApiError(400, "Email and password are required");
   }
-  const user = await User.findOne({ email: email, isSignUpComplete: true });
+  const user = await User.findOne({
+    email: email,
+    isSignUpComplete: true,
+    isDeleted: { $ne: true },
+  });
 
   if (!user || !user.comparePassword(password)) {
     throw new ApiError(401, "Invalid email or password");
@@ -87,13 +92,13 @@ const sendResetLink = asyncHandler(async (req: Request, res: Response) => {
   if (!email) {
     throw new ApiError(400, "Email is required");
   }
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email, isDeleted: { $ne: true } });
   if (!user) {
     return res
-      .status(200)
+      .status(400)
       .json(
         new ApiResponse(
-          200,
+          400,
           null,
           "Email sent with password reset instructions if an account exists with this email",
         ),

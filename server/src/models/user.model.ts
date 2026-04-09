@@ -5,6 +5,9 @@ import AuthService from "@/utils/AuthService.js";
 interface IUser extends Document {
   fullName: string;
   email: string;
+  phoneNumber: string;
+  joiningDate: Date;
+  isDeleted: boolean;
   password: string;
   role: "admin" | "employee" | "manager";
   designation: Types.ObjectId;
@@ -24,6 +27,9 @@ const UserSchema = new Schema<IUser>(
   {
     fullName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
+    phoneNumber: { type: String, required: false },
+    joiningDate: { type: Date, required: false },
+    isDeleted: { type: Boolean, default: false, index: true },
     password: { type: String },
     role: {
       type: String,

@@ -30,6 +30,7 @@ import { ErrorMessage } from "@hookform/error-message";
 import { toast } from "sonner";
 import toasterPosition from "@/utils/toaster";
 import { IUser, IUserFormData } from "@/types/user";
+import dayjs from "dayjs";
 
 export function AddUserModal({
   mode = "add",
@@ -57,6 +58,10 @@ export function AddUserModal({
     defaultValues: {
       fullName: user?.fullName || "",
       email: user?.email || "",
+      phoneNumber: user?.phoneNumber || "",
+      joiningDate: user?.joiningDate
+        ? dayjs(user.joiningDate).format("YYYY-MM-DD")
+        : "",
       role: user?.role || "",
       designationId: user?.designation?._id || "",
       parentReviewerId: user?.parentReviewer?._id || "",
@@ -72,6 +77,10 @@ export function AddUserModal({
     reset({
       fullName: user.fullName,
       email: user.email,
+      phoneNumber: user.phoneNumber || "",
+      joiningDate: user.joiningDate
+        ? dayjs(user.joiningDate).format("YYYY-MM-DD")
+        : "",
       role: user.role,
       designationId: user.designation?._id || "",
       parentReviewerId: user.parentReviewer?._id || "",
@@ -168,6 +177,38 @@ export function AddUserModal({
             <ErrorMessage
               errors={errors}
               name="email"
+              as="p"
+              className="text-red-500 text-sm"
+            />
+          </div>
+          <div className="grid gap-3">
+            <Label htmlFor="phoneNumber">Phone Number</Label>
+            <Input
+              id="phoneNumber"
+              placeholder="+91 9876543210"
+              {...register("phoneNumber", {
+                required: "Phone Number is required",
+              })}
+            />
+            <ErrorMessage
+              errors={errors}
+              name="phoneNumber"
+              as="p"
+              className="text-red-500 text-sm"
+            />
+          </div>
+          <div className="grid gap-3">
+            <Label htmlFor="joiningDate">Joining Date</Label>
+            <Input
+              id="joiningDate"
+              type="date"
+              {...register("joiningDate", {
+                required: "Joining Date is required",
+              })}
+            />
+            <ErrorMessage
+              errors={errors}
+              name="joiningDate"
               as="p"
               className="text-red-500 text-sm"
             />

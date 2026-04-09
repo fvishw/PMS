@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   addUser,
+  deleteUser,
   fetchUsersByRole,
   getAllManagers,
   getAllUsers,
@@ -18,6 +19,7 @@ const userRouter = Router();
 
 userRouter.post("/add", authMiddleware(["admin"]), addUser);
 userRouter.put("/update/:userId", authMiddleware(["admin"]), updateUser);
+userRouter.delete("/delete/:userId", authMiddleware(["admin"]), deleteUser);
 
 userRouter.get("/all-user", authMiddleware(["admin"]), getAllUsers);
 userRouter.get(

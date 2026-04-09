@@ -87,6 +87,9 @@ export class API {
   updateUser(userId: string, data: IUserFormData) {
     return this.request(this.instance.put(`/user/update/${userId}`, data));
   }
+  deleteUserById(userId: string) {
+    return this.request(this.instance.delete(`/user/delete/${userId}`));
+  }
 
   getAllUser(): Promise<GetAllUserResponse> {
     return this.request(this.instance.get("/user/all-user"));

@@ -33,6 +33,22 @@ export const columns: ColumnDef<IUser>[] = [
     ),
   },
   {
+    accessorKey: "phoneNumber",
+    header: () => <div className="text-center">Phone Number</div>,
+    cell: ({ row }) => (
+      <div className="text-center">{row.original.phoneNumber || "-"}</div>
+    ),
+  },
+  {
+    accessorKey: "joiningDate",
+    header: () => <div className="text-center">Joining Date</div>,
+    cell: ({ row }) => {
+      const raw = row.original.joiningDate;
+      const formattedDate = raw ? dayjs(raw).format("D MMM YY") : "-";
+      return <div className="text-center">{formattedDate}</div>;
+    },
+  },
+  {
     accessorKey: "createdAt",
     header: () => <div className="text-center">Created At</div>,
     cell: ({ row }) => {

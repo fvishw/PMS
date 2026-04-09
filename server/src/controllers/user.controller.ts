@@ -16,6 +16,8 @@ const addUser = asyncHandler(async (req: Request, res: Response) => {
   const {
     fullName,
     email,
+    phoneNumber,
+    joiningDate,
     role,
     designationId,
     parentReviewerId,
@@ -25,6 +27,8 @@ const addUser = asyncHandler(async (req: Request, res: Response) => {
   const user = new User({
     fullName,
     email,
+    phoneNumber,
+    joiningDate: new Date(joiningDate),
     role,
     designation: designationId,
     parentReviewer: parentReviewerId,
@@ -46,9 +50,34 @@ const addUser = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(201, newUser, "User added successfully"));
 });
 
+const deleteUser = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+  if (!userId) {
+    throw new ApiError(400, "User ID is required");
+  }
+  if (!Types.ObjectId.isValid(userId)) {
+    throw new ApiError(400, "Invalid user id format.");
+  }
+
+  const user = await User.findOneAndUpdate(
+    { _id: userId, isDeleted: { $ne: true } },
+    { $set: { isDeleted: true } },
+    { new: true },
+  );
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "User deleted successfully"));
+});
+
 const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
   const users = await User.find({
     role: { $ne: "admin" },
+    isDeleted: { $ne: true },
   })
     .select("-password -refreshToken -passwordResetToken")
     .populate({ path: "designation", select: "title" })
@@ -61,9 +90,10 @@ const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const getAllManagers = asyncHandler(async (req: Request, res: Response) => {
-  const managers = await User.find({ role: "manager" }).select(
-    "-password -refreshToken -passwordResetToken",
-  );
+  const managers = await User.find({
+    role: "manager",
+    isDeleted: { $ne: true },
+  }).select("-password -refreshToken -passwordResetToken");
 
   return res
     .status(200)
@@ -81,7 +111,7 @@ const fetchUsersByRole = asyncHandler(async (req: Request, res: Response) => {
     );
   }
 
-  const users = await User.find({ role })
+  const users = await User.find({ role, isDeleted: { $ne: true } })
     .select("-password -refreshToken -passwordResetToken")
     .populate({ path: "designation", select: "title role" });
 
@@ -96,7 +126,7 @@ const getUserProfile = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(401, "Unauthorized");
   }
 
-  const user = await User.findById(userId)
+  const user = await User.findOne({ _id: userId, isDeleted: { $ne: true } })
     .select("-password -refreshToken -passwordResetToken")
     .populate({ path: "designation", select: "title role" })
     .populate({ path: "parentReviewer", select: "fullName email" })
@@ -126,8 +156,15 @@ const updateUser = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(400, "Invalid request payload");
   }
 
-  const { fullName, role, designationId, parentReviewerId, adminReviewerId } =
-    parsedPayload.data;
+  const {
+    fullName,
+    phoneNumber,
+    joiningDate,
+    role,
+    designationId,
+    parentReviewerId,
+    adminReviewerId,
+  } = parsedPayload.data;
 
   if (!Types.ObjectId.isValid(designationId)) {
     throw new ApiError(400, "Invalid designation id format.");
@@ -139,12 +176,14 @@ const updateUser = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(400, "Invalid admin reviewer id format.");
   }
 
-  const user = await User.findById(userId);
+  const user = await User.findOne({ _id: userId, isDeleted: { $ne: true } });
   if (!user) {
     throw new ApiError(404, "User not found");
   }
 
   user.fullName = fullName;
+  user.phoneNumber = phoneNumber;
+  user.joiningDate = new Date(joiningDate);
   user.role = role;
   user.designation = new Types.ObjectId(designationId);
   user.parentReviewer = parentReviewerId
@@ -176,4 +215,5 @@ export {
   fetchUsersByRole,
   getUserProfile,
   updateUser,
+  deleteUser,
 };

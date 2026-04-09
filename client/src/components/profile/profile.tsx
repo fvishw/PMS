@@ -15,12 +15,15 @@ import { useQuery } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import {
   IconBriefcase,
+  IconCalendarEvent,
   IconMail,
+  IconPhone,
   IconRosetteDiscountCheck,
   IconShieldCheck,
   IconUser,
   IconUsersGroup,
 } from "@tabler/icons-react";
+import dayjs from "dayjs";
 
 function getInitials(name?: string) {
   if (!name) return "NA";
@@ -86,6 +89,9 @@ function Profile() {
 
   const role = formatRole(user?.role);
   const designation = user?.designation?.title || "Not assigned";
+  const joiningDate = user?.joiningDate
+    ? dayjs(user.joiningDate).format("D MMM YYYY")
+    : "Not available";
 
   return (
     <div className="w-full space-y-4">
@@ -137,6 +143,11 @@ function Profile() {
               value={user?.email || "-"}
             />
             <ProfileField
+              icon={<IconPhone size={16} />}
+              title="Phone Number"
+              value={user?.phoneNumber || "Not available"}
+            />
+            <ProfileField
               icon={<IconShieldCheck size={16} />}
               title="Role"
               value={role}
@@ -151,6 +162,11 @@ function Profile() {
               icon={<IconBriefcase size={16} />}
               title="Designation"
               value={designation}
+            />
+            <ProfileField
+              icon={<IconCalendarEvent size={16} />}
+              title="Joining Date"
+              value={joiningDate}
             />
             <ProfileField
               icon={<IconUsersGroup size={16} />}
