@@ -7,12 +7,21 @@ import Api from "@/api/api";
 import { Spinner } from "@/components/ui/spinner";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import type { PaginationState } from "@tanstack/react-table";
 
 function QuestionManagement() {
   const [isOpen, setIsOpen] = useState(false);
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
   const { data, isLoading } = useQuery({
-    queryKey: ["checkInQuestionsByVersion"],
-    queryFn: async () => Api.getAllQuestionByVersion(),
+    queryKey: ["checkInQuestionsByVersion", pagination.pageIndex, pagination.pageSize],
+    queryFn: async () =>
+      Api.getAllQuestionByVersion({
+        page: pagination.pageIndex + 1,
+        limit: pagination.pageSize,
+      }),
   });
 
   if (isLoading) {
@@ -36,7 +45,15 @@ function QuestionManagement() {
           <Button onClick={() => setIsOpen(true)}>Add Question set</Button>
         </div>
       </Dialog>
-      <CustomDataTable columns={columns} data={data?.questionSet || []} />
+      <CustomDataTable
+        columns={columns}
+        data={data?.questionSet || []}
+        pagination={{
+          ...pagination,
+          totalItems: data?.pagination.totalItems || 0,
+          onPaginationChange: setPagination,
+        }}
+      />
     </>
   );
 }

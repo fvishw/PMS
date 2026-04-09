@@ -6,6 +6,7 @@ import { ApiResponse } from "@/utils/ApiResponse.js";
 import { userAddPayloadSchema, userUpdatePayloadSchema } from "@/types/user.js";
 import emailService from "@/services/emailService/email.service.js";
 import { Types } from "mongoose";
+import { getPaginationMeta, getPaginationParams } from "@/utils/pagination.js";
 
 const addUser = asyncHandler(async (req: Request, res: Response) => {
   const parsedPayload = userAddPayloadSchema.safeParse(req.body);
@@ -75,18 +76,34 @@ const deleteUser = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
-  const users = await User.find({
+  const { page, limit, skip } = getPaginationParams(req.query);
+  const userFilter = {
     role: { $ne: "admin" },
     isDeleted: { $ne: true },
-  })
-    .select("-password -refreshToken -passwordResetToken")
-    .populate({ path: "designation", select: "title" })
-    .populate({ path: "parentReviewer", select: "fullName" })
-    .populate({ path: "adminReviewer", select: "fullName" });
+  };
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, { users }, "Users fetched successfully"));
+  const [users, totalItems] = await Promise.all([
+    User.find(userFilter)
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 })
+      .select("-password -refreshToken -passwordResetToken")
+      .populate({ path: "designation", select: "title" })
+      .populate({ path: "parentReviewer", select: "fullName" })
+      .populate({ path: "adminReviewer", select: "fullName" }),
+    User.countDocuments(userFilter),
+  ]);
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        users,
+        pagination: getPaginationMeta({ totalItems, page, limit }),
+      },
+      "Users fetched successfully",
+    ),
+  );
 });
 
 const getAllManagers = asyncHandler(async (req: Request, res: Response) => {

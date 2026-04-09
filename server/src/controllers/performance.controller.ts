@@ -16,6 +16,7 @@ import {
 import { MasterPerformance, type IKpis } from "@/models/masterPerformance.js";
 import { Types } from "mongoose";
 import Settings from "@/models/settings.model.js";
+import { getPaginationMeta, getPaginationParams } from "@/utils/pagination.js";
 
 const createPerformanceRecord = asyncHandler(
   async (req: Request, res: Response) => {
@@ -352,17 +353,27 @@ const userFinalReview = asyncHandler(async (req: Request, res: Response) => {
 
 const getReviewAppraisalData = asyncHandler(
   async (req: Request, res: Response) => {
-    const performances = await UserPerformance.find()
-      .select("-kpis -competencies -finalReview")
-      .populate("user", "fullName email role")
-      .populate("designation", "title");
+    const { page, limit, skip } = getPaginationParams(req.query);
+    const [performances, totalItems] = await Promise.all([
+      UserPerformance.find()
+        .select("-kpis -competencies -finalReview")
+        .populate("user", "fullName email role")
+        .populate("designation", "title")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      UserPerformance.countDocuments(),
+    ]);
 
     return res
       .status(200)
       .json(
         new ApiResponse(
           200,
-          { performances },
+          {
+            performances,
+            pagination: getPaginationMeta({ totalItems, page, limit }),
+          },
           "Performance records fetched successfully",
         ),
       );
@@ -443,17 +454,27 @@ const getUserKpiDetails = asyncHandler(async (req: Request, res: Response) => {
 
 const getAllPerformanceTemplates = asyncHandler(
   async (req: Request, res: Response) => {
-    const performanceTemplates = await MasterPerformance.find()
-      .select("-kpis -competencies")
-      .populate("designation", "title role")
-      .populate("createdBy", "fullName");
+    const { page, limit, skip } = getPaginationParams(req.query);
+    const [performanceTemplates, totalItems] = await Promise.all([
+      MasterPerformance.find()
+        .select("-kpis -competencies")
+        .populate("designation", "title role")
+        .populate("createdBy", "fullName")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      MasterPerformance.countDocuments(),
+    ]);
 
     return res
       .status(200)
       .json(
         new ApiResponse(
           200,
-          { performanceTemplates },
+          {
+            performanceTemplates,
+            pagination: getPaginationMeta({ totalItems, page, limit }),
+          },
           "Performance templates fetched successfully",
         ),
       );
@@ -611,20 +632,28 @@ const getUserPerformanceFormById = asyncHandler(
 const getManagerReviewAppraisalData = asyncHandler(
   async (req: Request, res: Response) => {
     const managerId = req.user?.id!;
-
-    const performances = await UserPerformance.find({
-      parentReviewer: managerId,
-    })
-      .select("-kpis -competencies -finalReview")
-      .populate("user", "fullName email role")
-      .populate("designation", "title");
+    const { page, limit, skip } = getPaginationParams(req.query);
+    const performanceFilter = { parentReviewer: managerId };
+    const [performances, totalItems] = await Promise.all([
+      UserPerformance.find(performanceFilter)
+        .select("-kpis -competencies -finalReview")
+        .populate("user", "fullName email role")
+        .populate("designation", "title")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      UserPerformance.countDocuments(performanceFilter),
+    ]);
 
     return res
       .status(200)
       .json(
         new ApiResponse(
           200,
-          { performances },
+          {
+            performances,
+            pagination: getPaginationMeta({ totalItems, page, limit }),
+          },
           "Performance records fetched successfully",
         ),
       );

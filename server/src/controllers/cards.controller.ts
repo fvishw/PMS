@@ -134,6 +134,7 @@ const goalCardStats = asyncHandler(async (req: Request, res: Response) => {
     completedGoals: 0,
     atRiskGoals: 0,
     onTrackGoals: 0,
+    incompleteGoals: 0,
   };
 
   goals.forEach((goal) => {
@@ -144,6 +145,8 @@ const goalCardStats = asyncHandler(async (req: Request, res: Response) => {
       goalsSummary.notStartedGoals += 1;
     } else if (status === "at_risk") {
       goalsSummary.atRiskGoals += 1;
+    } else if (status === "incomplete") {
+      goalsSummary.incompleteGoals += 1;
     } else if (status === "on_track") {
       goalsSummary.onTrackGoals += 1;
     }

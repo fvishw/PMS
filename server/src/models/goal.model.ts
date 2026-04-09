@@ -12,7 +12,12 @@ interface IGoal extends Document {
   quarter: string;
   year: number;
   getDueDateDifference(): number;
-  getStatus(): "on_track" | "at_risk" | "completed" | "not_started";
+  getStatus():
+    | "on_track"
+    | "at_risk"
+    | "completed"
+    | "not_started"
+    | "incomplete";
 }
 
 const goalSchema = new Schema<IGoal>(
@@ -88,16 +93,20 @@ goalSchema.methods.getStatus = function ():
   | "on_track"
   | "at_risk"
   | "completed"
-  | "not_started" {
+  | "not_started"
+  | "incomplete" {
   const goal = this;
   if (goal.isCompleted) {
     return "completed";
   }
   const totalSubTasks = goal.subTasks.length;
   const completedSubTasks = goal.subTasks.filter(
-    (task) => task.isCompleted,
+    (task: { isCompleted: boolean }) => task.isCompleted,
   ).length;
   const dayDiff = goal.getDueDateDifference();
+  if (dayDiff < 0) {
+    return "incomplete";
+  }
   if (completedSubTasks === totalSubTasks && totalSubTasks > 0) {
     return "completed";
   }

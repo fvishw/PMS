@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Api from "@/api/api";
 import ApiErrorMessage from "../ApiErrorMessage";
@@ -15,6 +15,7 @@ import { QuarterSelect } from "../common/quarterSelect";
 import { YearSelect } from "../common/yearOption";
 import { adminReportsColumns } from "./adminReportsTable.config";
 import { Spinner } from "../ui/spinner";
+import type { PaginationState } from "@tanstack/react-table";
 
 type AdminReportFilter = {
   search: string;
@@ -34,37 +35,28 @@ const defaultFilter: AdminReportFilter = {
 
 function AdminReports() {
   const [filters, setFilters] = useState<AdminReportFilter>(defaultFilter);
-
-  const queryFilters = useMemo(
-    () => ({
-      search: filters.search.trim() || undefined,
-      quarter: filters.quarter === "ALL" ? undefined : filters.quarter,
-      year: filters.year === "ALL" ? undefined : filters.year,
-      role: filters.role === "ALL" ? undefined : filters.role,
-    }),
-    [filters],
-  );
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["adminReports", queryFilters],
-    queryFn: () => Api.fetchAdminReports(queryFilters),
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
   });
 
-  const reports = useMemo(() => data?.reports ?? [], [data?.reports]);
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, [filters.search, filters.quarter, filters.year, filters.role, filters.overallScoreSort]);
 
-  const sortedReports = useMemo(() => {
-    if (filters.overallScoreSort === "none") {
-      return reports;
-    }
-
-    return [...reports].sort((a, b) => {
-      if (filters.overallScoreSort === "asc") {
-        return a.overAllScore - b.overAllScore;
-      }
-
-      return b.overAllScore - a.overAllScore;
-    });
-  }, [reports, filters.overallScoreSort]);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["adminReports", filters, pagination.pageIndex, pagination.pageSize],
+    queryFn: () =>
+      Api.fetchAdminReports({
+        search: filters.search.trim() || undefined,
+        quarter: filters.quarter === "ALL" ? undefined : filters.quarter,
+        year: filters.year === "ALL" ? undefined : filters.year,
+        role: filters.role === "ALL" ? undefined : filters.role,
+        overallScoreSort: filters.overallScoreSort,
+        page: pagination.pageIndex + 1,
+        limit: pagination.pageSize,
+      }),
+  });
 
   if (isLoading) {
     return (
@@ -153,7 +145,15 @@ function AdminReports() {
         </div>
       </div>
 
-      <CustomDataTable data={sortedReports} columns={adminReportsColumns} />
+      <CustomDataTable
+        data={data?.reports ?? []}
+        columns={adminReportsColumns}
+        pagination={{
+          ...pagination,
+          totalItems: data?.pagination.totalItems || 0,
+          onPaginationChange: setPagination,
+        }}
+      />
     </div>
   );
 }

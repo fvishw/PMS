@@ -8,6 +8,7 @@ import ApiErrorMessage from "../ApiErrorMessage";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { AllPerformanceTemplate } from "@/types/performance";
+import type { PaginationState } from "@tanstack/react-table";
 
 const transformPerformanceData = (data: AllPerformanceTemplate[]) => {
   return data.map((item) => ({
@@ -21,10 +22,18 @@ const transformPerformanceData = (data: AllPerformanceTemplate[]) => {
 
 function Performance() {
   const [isOpen, setIsOpen] = useState(false);
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   const { isLoading, error, data } = useQuery({
-    queryKey: ["performanceList"],
-    queryFn: () => Api.fetchAllPerformanceRecords(),
+    queryKey: ["performanceList", pagination.pageIndex, pagination.pageSize],
+    queryFn: () =>
+      Api.fetchAllPerformanceRecords({
+        page: pagination.pageIndex + 1,
+        limit: pagination.pageSize,
+      }),
   });
 
   let contentToRender;
@@ -43,7 +52,15 @@ function Performance() {
   if (data) {
     const transformedData = transformPerformanceData(data.performanceTemplates);
     contentToRender = (
-      <CustomDataTable columns={columns} data={transformedData} />
+      <CustomDataTable
+        columns={columns}
+        data={transformedData}
+        pagination={{
+          ...pagination,
+          totalItems: data?.pagination.totalItems || 0,
+          onPaginationChange: setPagination,
+        }}
+      />
     );
   }
   return (

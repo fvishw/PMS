@@ -4,6 +4,8 @@ import {
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
+  OnChangeFn,
+  PaginationState,
   Row,
   useReactTable,
 } from "@tanstack/react-table";
@@ -69,6 +71,12 @@ type DataTableProps<TData, TValue> = {
   showPagination?: boolean;
   rowDrag?: RowDragConfig<TData>;
   footerContent?: ReactNode;
+  pagination?: {
+    pageIndex: number;
+    pageSize: number;
+    totalItems: number;
+    onPaginationChange: OnChangeFn<PaginationState>;
+  };
 };
 
 export function CustomDataTable<TData, TValue>({
@@ -77,6 +85,7 @@ export function CustomDataTable<TData, TValue>({
   showPagination = true,
   rowDrag,
   footerContent,
+  pagination,
 }: DataTableProps<TData, TValue>) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -93,12 +102,25 @@ export function CustomDataTable<TData, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    ...(pagination
+      ? {
+          manualPagination: true,
+          rowCount: pagination.totalItems,
+          onPaginationChange: pagination.onPaginationChange,
+          state: {
+            pagination: {
+              pageIndex: pagination.pageIndex,
+              pageSize: pagination.pageSize,
+            },
+          },
+        }
+      : {}),
     ...(rowDrag
       ? {
           getRowId: rowDrag.getRowId,
         }
       : {}),
-    ...(showPagination
+    ...(showPagination && !pagination
       ? {
           getPaginationRowModel: getPaginationRowModel(),
         }
@@ -227,7 +249,7 @@ export function CustomDataTable<TData, TValue>({
             </div>
             <div className="flex w-fit items-center justify-center text-sm font-medium">
               Page {table.getState().pagination.pageIndex + 1} of{" "}
-              {table.getPageCount()}
+              {Math.max(table.getPageCount(), 1)}
             </div>
             <div className="ml-auto flex items-center gap-2 lg:ml-0">
               <Button

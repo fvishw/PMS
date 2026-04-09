@@ -10,6 +10,7 @@ import { ApiResponse } from "@/utils/ApiResponse.js";
 import asyncHandler from "@/utils/asyncHandler.js";
 import type { Request, Response } from "express";
 import { Types } from "mongoose";
+import { getPaginationMeta, getPaginationParams } from "@/utils/pagination.js";
 
 const isGoalCompletedFromSubTasks = (
   subTasks: { isCompleted: boolean }[],
@@ -193,6 +194,7 @@ const deleteGoal = asyncHandler(async (req: Request, res: Response) => {
 
 const getAllGoals = asyncHandler(async (req: Request, res: Response) => {
   const { userId, quarter, year } = req.query;
+  const { page, limit, skip } = getPaginationParams(req.query);
   const filter: Record<string, unknown> = { isDeleted: false };
   if (userId && userId !== "ALL") {
     filter.owner = userId;
@@ -203,10 +205,17 @@ const getAllGoals = asyncHandler(async (req: Request, res: Response) => {
   if (year) {
     filter.year = Number(year);
   }
-  const goals = await Goal.find(filter).populate({
-    path: "owner",
-    select: "fullName",
-  });
+  const [goals, totalItems] = await Promise.all([
+    Goal.find(filter)
+      .populate({
+        path: "owner",
+        select: "fullName",
+      })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+    Goal.countDocuments(filter),
+  ]);
 
   const formattedGoals = goals.map((goal) => ({
     ...goal.toObject(),
@@ -219,7 +228,10 @@ const getAllGoals = asyncHandler(async (req: Request, res: Response) => {
     .json(
       new ApiResponse(
         200,
-        { goals: formattedGoals },
+        {
+          goals: formattedGoals,
+          pagination: getPaginationMeta({ totalItems, page, limit }),
+        },
         "Goals fetched successfully",
       ),
     );

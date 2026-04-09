@@ -10,6 +10,7 @@ import {
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User, type IUser } from "../models/user.model.js";
 import UserCheckIns from "../models/userCheckIns.model.js";
+import { getPaginationMeta, getPaginationParams } from "@/utils/pagination.js";
 
 const addCheckIns = asyncHandler(async (req: Request, res: Response) => {
   const { checkIns } = req.body;
@@ -152,10 +153,17 @@ const getPastCheckIns = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const getAllUserCheckIns = asyncHandler(async (req: Request, res: Response) => {
-  const userCheckIns = await UserCheckIns.find()
-    .select("-answers")
-    .populate("user", "fullName email ")
-    .lean();
+  const { page, limit, skip } = getPaginationParams(req.query);
+  const [userCheckIns, totalItems] = await Promise.all([
+    UserCheckIns.find()
+      .select("-answers")
+      .populate("user", "fullName email ")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    UserCheckIns.countDocuments(),
+  ]);
 
   const flattenedCheckIns = userCheckIns.map((checkIn) => ({
     _id: checkIn._id,
@@ -171,7 +179,10 @@ const getAllUserCheckIns = asyncHandler(async (req: Request, res: Response) => {
     .json(
       new ApiResponse(
         200,
-        { checkIns: flattenedCheckIns },
+        {
+          checkIns: flattenedCheckIns,
+          pagination: getPaginationMeta({ totalItems, page, limit }),
+        },
         "User Check-ins fetched",
       ),
     );
@@ -216,41 +227,69 @@ const getUserCheckInById = asyncHandler(async (req: Request, res: Response) => {
 
 const getAllCheckInQuestions = asyncHandler(
   async (req: Request, res: Response) => {
-    const checkInQuestions = await CheckInQuestions.aggregate([
-      {
-        $group: {
-          _id: "$designation",
-          version: { $first: "$version" },
-          createdAt: { $first: "$createdAt" },
-          isActive: { $first: "$isActive" },
-          designation: { $first: "$designation" },
+    const { page, limit, skip } = getPaginationParams(req.query);
+    const [checkInQuestions, countResult] = await Promise.all([
+      CheckInQuestions.aggregate([
+        {
+          $sort: {
+            createdAt: -1,
+          },
         },
-      },
-      {
-        $lookup: {
-          from: "designations",
-          localField: "designation",
-          foreignField: "_id",
-          as: "designationDetails",
+        {
+          $group: {
+            _id: "$designation",
+            version: { $first: "$version" },
+            createdAt: { $first: "$createdAt" },
+            isActive: { $first: "$isActive" },
+            designation: { $first: "$designation" },
+          },
         },
-      },
-      {
-        $project: {
-          _id: 0,
-          version: 1,
-          createdAt: 1,
-          isActive: 1,
-          designation: { $arrayElemAt: ["$designationDetails", 0] },
+        {
+          $lookup: {
+            from: "designations",
+            localField: "designation",
+            foreignField: "_id",
+            as: "designationDetails",
+          },
         },
-      },
+        {
+          $project: {
+            _id: 0,
+            version: 1,
+            createdAt: 1,
+            isActive: 1,
+            designation: { $arrayElemAt: ["$designationDetails", 0] },
+          },
+        },
+        {
+          $skip: skip,
+        },
+        {
+          $limit: limit,
+        },
+      ]),
+      CheckInQuestions.aggregate([
+        {
+          $group: {
+            _id: "$designation",
+          },
+        },
+        {
+          $count: "totalItems",
+        },
+      ]),
     ]);
+    const totalItems = countResult[0]?.totalItems ?? 0;
 
     return res
       .status(200)
       .json(
         new ApiResponse(
           200,
-          { questionSet: checkInQuestions },
+          {
+            questionSet: checkInQuestions,
+            pagination: getPaginationMeta({ totalItems, page, limit }),
+          },
           "Check-in questions fetched",
         ),
       );

@@ -5,11 +5,21 @@ import { CustomDataTable } from "../customTable";
 import { columns } from "./userTable.config";
 import ApiErrorMessage from "../ApiErrorMessage";
 import { Spinner } from "../ui/spinner";
+import { useState } from "react";
+import type { PaginationState } from "@tanstack/react-table";
 
 export function UserTable() {
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
   const { data, error, isLoading } = useQuery({
-    queryFn: () => Api.getAllUser(),
-    queryKey: ["users"],
+    queryFn: () =>
+      Api.getAllUser({
+        page: pagination.pageIndex + 1,
+        limit: pagination.pageSize,
+      }),
+    queryKey: ["users", pagination.pageIndex, pagination.pageSize],
   });
   const users = data?.users;
   if (isLoading) {
@@ -32,7 +42,15 @@ export function UserTable() {
         <AddUserModal />
       </div>
       <div className="w-full ">
-        <CustomDataTable data={users || []} columns={columns} />
+        <CustomDataTable
+          data={users || []}
+          columns={columns}
+          pagination={{
+            ...pagination,
+            totalItems: data?.pagination.totalItems || 0,
+            onPaginationChange: setPagination,
+          }}
+        />
       </div>
     </>
   );

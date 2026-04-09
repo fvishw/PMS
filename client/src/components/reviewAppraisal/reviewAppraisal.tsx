@@ -6,14 +6,29 @@ import { columns } from "./reviewAppraisalTable.config";
 import ApiErrorMessage from "../ApiErrorMessage";
 import { useAuth } from "@/hooks/useAuthContext";
 import { getReviewAppraisalApi } from "./reviewAppraisalApiMapper";
+import { useState } from "react";
+import type { PaginationState } from "@tanstack/react-table";
 
 export const ReviewAppraisal = () => {
   const { user } = useAuth();
   const role = user?.role || "";
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["reviewAppraisalData", role, user?._id],
-    queryFn: getReviewAppraisalApi(role),
+    queryKey: [
+      "reviewAppraisalData",
+      role,
+      user?._id,
+      pagination.pageIndex,
+      pagination.pageSize,
+    ],
+    queryFn: getReviewAppraisalApi(role, {
+      page: pagination.pageIndex + 1,
+      limit: pagination.pageSize,
+    }),
   });
   if (isLoading) {
     return (
@@ -30,7 +45,15 @@ export const ReviewAppraisal = () => {
     return (
       <>
         <ReviewAppraisalCard />
-        <CustomDataTable data={performances} columns={columns} />
+        <CustomDataTable
+          data={performances}
+          columns={columns}
+          pagination={{
+            ...pagination,
+            totalItems: data?.pagination.totalItems || 0,
+            onPaginationChange: setPagination,
+          }}
+        />
       </>
     );
   }

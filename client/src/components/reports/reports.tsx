@@ -6,18 +6,28 @@ import { columns } from "./reportsTable.config";
 import ReportGenerateButton from "./reportGenerateButton";
 import { useAuth } from "@/hooks/useAuthContext";
 import AdminReports from "./adminReports";
+import { useState } from "react";
+import type { PaginationState } from "@tanstack/react-table";
 
 function Report() {
   const { user } = useAuth();
   const isAdmin = user?.role === "admin";
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   if (isAdmin) {
     return <AdminReports />;
   }
 
   const { data, error, isLoading } = useQuery({
-    queryFn: () => Api.fetchUserPastReports(),
-    queryKey: ["reports"],
+    queryFn: () =>
+      Api.fetchUserPastReports({
+        page: pagination.pageIndex + 1,
+        limit: pagination.pageSize,
+      }),
+    queryKey: ["reports", pagination.pageIndex, pagination.pageSize],
   });
   const users = data?.reports;
   if (isLoading) {
@@ -36,7 +46,15 @@ function Report() {
         <ReportGenerateButton />
       </div>
       <div className="w-full ">
-        <CustomDataTable data={users || []} columns={columns} />
+        <CustomDataTable
+          data={users || []}
+          columns={columns}
+          pagination={{
+            ...pagination,
+            totalItems: data?.pagination.totalItems || 0,
+            onPaginationChange: setPagination,
+          }}
+        />
       </div>
     </>
   );

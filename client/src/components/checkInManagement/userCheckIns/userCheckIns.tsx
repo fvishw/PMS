@@ -4,11 +4,21 @@ import { columns } from "../checkInManagement/checkInTable.config";
 import { Spinner } from "../../ui/spinner";
 import { CustomDataTable } from "../../customTable";
 import ApiErrorMessage from "@/components/ApiErrorMessage";
+import { useState } from "react";
+import type { PaginationState } from "@tanstack/react-table";
 
 export const UserCheckIns = () => {
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
   const { data, isLoading, error } = useQuery({
-    queryKey: ["userCheckIns"],
-    queryFn: () => Api.fetchAllUserCheckIns(),
+    queryKey: ["userCheckIns", pagination.pageIndex, pagination.pageSize],
+    queryFn: () =>
+      Api.fetchAllUserCheckIns({
+        page: pagination.pageIndex + 1,
+        limit: pagination.pageSize,
+      }),
   });
 
   if (isLoading) {
@@ -23,7 +33,15 @@ export const UserCheckIns = () => {
   }
   return (
     <div className="w-full py-4">
-      <CustomDataTable data={data?.checkIns || []} columns={columns} />
+      <CustomDataTable
+        data={data?.checkIns || []}
+        columns={columns}
+        pagination={{
+          ...pagination,
+          totalItems: data?.pagination.totalItems || 0,
+          onPaginationChange: setPagination,
+        }}
+      />
     </div>
   );
 };

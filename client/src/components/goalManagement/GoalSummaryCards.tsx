@@ -47,6 +47,7 @@ function GoalSummaryCards() {
         completedGoals={summaryData?.completedGoals ?? 0}
         atRiskGoals={summaryData?.atRiskGoals ?? 0}
         onTrackGoals={summaryData?.onTrackGoals ?? 0}
+        incompleteGoals={summaryData?.incompleteGoals ?? 0}
       />
     </>
   );

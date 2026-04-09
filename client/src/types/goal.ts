@@ -12,7 +12,7 @@ interface Goal {
   owner: IUser | string;
   dueDate: string | Date;
   subTasks: SubTask[];
-  status?: "on_track" | "at_risk" | "completed";
+  status?: "on_track" | "at_risk" | "completed" | "not_started" | "incomplete";
   isCompleted: boolean;
   quarter: string;
   year: number;

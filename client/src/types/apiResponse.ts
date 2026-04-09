@@ -10,6 +10,13 @@ import { ICheckInQuestion, UserCheckIn, UserPastCheckIn } from "./chekin";
 import { KpiCriteria } from "./criteria";
 import { Goal } from "./goal";
 
+interface PaginationMeta {
+  page: number;
+  limit: number;
+  totalItems: number;
+  totalPages: number;
+}
+
 interface UserPerformanceFormResponse {
   isAppraisalEnabled: boolean;
   hasUserAcceptedKpi: boolean;
@@ -17,6 +24,7 @@ interface UserPerformanceFormResponse {
 }
 interface GetAllUserResponse {
   users: IUser[];
+  pagination: PaginationMeta;
 }
 interface GetUserProfileResponse {
   user: IUser;
@@ -32,10 +40,12 @@ interface GetCheckInQuestionResponse {
 
 interface GetUserCheckInsResponse {
   checkIns: UserCheckIn[];
+  pagination: PaginationMeta;
 }
 
 interface GetAllPerformanceRecordsResponse {
   performanceTemplates: AllPerformanceTemplate[];
+  pagination: PaginationMeta;
 }
 
 interface GetUserKPiDetails {
@@ -67,6 +77,7 @@ interface GetCheckInQuestionSets {
       role: string;
     };
   }[];
+  pagination: PaginationMeta;
 }
 
 interface GetUserByRole {
@@ -75,10 +86,12 @@ interface GetUserByRole {
 
 interface GetMasterPerformance {
   performances: GetPerformanceTableData[];
+  pagination: PaginationMeta;
 }
 
 interface GetGoals {
   goals: Goal[];
+  pagination: PaginationMeta;
 }
 
 interface GetGoal {
@@ -124,6 +137,7 @@ interface GetGoalCardStatus {
     completedGoals: number;
     atRiskGoals: number;
     onTrackGoals: number;
+    incompleteGoals: number;
   };
 }
 interface GetCurrentSettings {
@@ -148,6 +162,7 @@ interface GetUserReports {
     createdAt: string;
     overAllScore: number;
   }[];
+  pagination: PaginationMeta;
 }
 
 interface GetAdminReports {
@@ -164,6 +179,7 @@ interface GetAdminReports {
       role: "admin" | "manager" | "employee";
     };
   }[];
+  pagination: PaginationMeta;
 }
 
 interface GetUserReport {
@@ -218,4 +234,5 @@ export {
   GetAdminReports,
   GetUserReport,
   GetCurrentQuarterStatus,
+  PaginationMeta,
 };

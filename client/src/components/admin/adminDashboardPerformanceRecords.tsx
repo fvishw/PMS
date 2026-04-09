@@ -40,25 +40,18 @@ export default function AdminDashboardPerformanceRecords() {
   );
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["adminDashboardPerformanceRecords", quarter, year],
+    queryKey: ["adminDashboardPerformanceRecords", quarter, year, scoreSort],
     queryFn: () =>
       Api.fetchAdminReports({
         quarter: quarter === "ALL" ? undefined : quarter,
         year: year === "ALL" ? undefined : year,
+        overallScoreSort: scoreSort,
+        page: 1,
+        limit: 10,
       }),
   });
 
-  const reports = useMemo(() => {
-    const filteredReports = data?.reports ?? [];
-    const sortedReports = [...filteredReports].sort((a, b) => {
-      if (scoreSort === "asc") {
-        return a.overAllScore - b.overAllScore;
-      }
-      return b.overAllScore - a.overAllScore;
-    });
-
-    return sortedReports.slice(0, 10);
-  }, [data?.reports, scoreSort]);
+  const reports = useMemo(() => data?.reports ?? [], [data?.reports]);
 
   if (isLoading) {
     return (
@@ -116,7 +109,11 @@ export default function AdminDashboardPerformanceRecords() {
         </div>
       </div>
 
-      <CustomDataTable data={reports} columns={dashboardColumns} />
+      <CustomDataTable
+        data={reports}
+        columns={dashboardColumns}
+        showPagination={false}
+      />
     </div>
   );
 }

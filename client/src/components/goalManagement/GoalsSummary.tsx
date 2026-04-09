@@ -1,4 +1,9 @@
-import { IconCircleCheck, IconProgress, IconTarget } from "@tabler/icons-react";
+import {
+  IconAlertCircle,
+  IconCircleCheck,
+  IconProgress,
+  IconTarget,
+} from "@tabler/icons-react";
 
 import {
   Card,
@@ -12,6 +17,7 @@ type GoalsSummaryProps = {
   completedGoals: number;
   atRiskGoals: number;
   onTrackGoals: number;
+  incompleteGoals: number;
 };
 
 function GoalsSummary({
@@ -19,10 +25,11 @@ function GoalsSummary({
   completedGoals,
   atRiskGoals,
   onTrackGoals,
+  incompleteGoals,
 }: GoalsSummaryProps) {
   return (
     <>
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         <Card>
           <CardHeader>
             <CardDescription>On Track Goals</CardDescription>
@@ -46,6 +53,17 @@ function GoalsSummary({
           </CardHeader>
         </Card>
 
+        <Card>
+          <CardHeader>
+            <CardDescription>Incomplete Goals</CardDescription>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-2xl font-semibold">
+                {incompleteGoals}
+              </CardTitle>
+              <IconAlertCircle className="text-destructive" />
+            </div>
+          </CardHeader>
+        </Card>
         <Card>
           <CardHeader>
             <CardDescription>Completed Goals</CardDescription>

@@ -36,6 +36,7 @@ import { PerformanceFormValue } from "@/types/performance";
 import { IUserFormData } from "@/types/user";
 import { getDynamicApiUrl } from "@/utils/url";
 import axios, { AxiosInstance } from "axios";
+import type { PaginationParams } from "./types";
 
 export class API {
   instance: AxiosInstance;
@@ -91,8 +92,8 @@ export class API {
     return this.request(this.instance.delete(`/user/delete/${userId}`));
   }
 
-  getAllUser(): Promise<GetAllUserResponse> {
-    return this.request(this.instance.get("/user/all-user"));
+  getAllUser(params?: PaginationParams): Promise<GetAllUserResponse> {
+    return this.request(this.instance.get("/user/all-user", { params }));
   }
   getUserProfile(): Promise<GetUserProfileResponse> {
     return this.request(this.instance.get("/user/profile"));
@@ -144,14 +145,18 @@ export class API {
     );
   }
   // Admin API to fetch all performance Templates
-  fetchAllPerformanceRecords(): Promise<GetAllPerformanceRecordsResponse> {
+  fetchAllPerformanceRecords(
+    params?: PaginationParams,
+  ): Promise<GetAllPerformanceRecordsResponse> {
     return this.request(
-      this.instance.get("/performance/all-performance-templates"),
+      this.instance.get("/performance/all-performance-templates", { params }),
     );
   }
 
-  fetchAllUserCheckIns(): Promise<GetUserCheckInsResponse> {
-    return this.request(this.instance.get("/check-ins/user-checkins"));
+  fetchAllUserCheckIns(
+    params?: PaginationParams,
+  ): Promise<GetUserCheckInsResponse> {
+    return this.request(this.instance.get("/check-ins/user-checkins", { params }));
   }
   fetchUserKpiDetails(): Promise<GetUserKPiDetails> {
     return this.request(this.instance.get("/performance/user-kpi-details"));
@@ -163,8 +168,10 @@ export class API {
     );
   }
 
-  getAllQuestionByVersion(): Promise<GetCheckInQuestionSets> {
-    return this.request(this.instance.get("/check-ins/question-sets"));
+  getAllQuestionByVersion(
+    params?: PaginationParams,
+  ): Promise<GetCheckInQuestionSets> {
+    return this.request(this.instance.get("/check-ins/question-sets", { params }));
   }
   setActiveQuestionSet(version: string, designationId: string) {
     return this.request(
@@ -202,14 +209,20 @@ export class API {
     );
   }
 
-  getAdminReviewAppraisalData(): Promise<GetMasterPerformance> {
+  getAdminReviewAppraisalData(
+    params?: PaginationParams,
+  ): Promise<GetMasterPerformance> {
     return this.request(
-      this.instance.get("/performance/review-appraisal-data"),
+      this.instance.get("/performance/review-appraisal-data", { params }),
     );
   }
-  getManagerReviewAppraisalData(): Promise<GetMasterPerformance> {
+  getManagerReviewAppraisalData(
+    params?: PaginationParams,
+  ): Promise<GetMasterPerformance> {
     return this.request(
-      this.instance.get("/performance/manager-review-appraisal-data"),
+      this.instance.get("/performance/manager-review-appraisal-data", {
+        params,
+      }),
     );
   }
   addSelfPerformanceForm(data: PerformanceFormValue) {
@@ -245,7 +258,9 @@ export class API {
   updateGoalById(goalId: string, data: Goal) {
     return this.request(this.instance.put(`/goals/update/${goalId}`, data));
   }
-  getAdminGoals(filter: GoalFilterType): Promise<GetGoals> {
+  getAdminGoals(
+    filter: GoalFilterType & PaginationParams,
+  ): Promise<GetGoals> {
     return this.request(
       this.instance.get("/goals/get-all/admin", { params: filter }),
     );
@@ -283,14 +298,17 @@ export class API {
   updateSettings(data: SettingsValue): Promise<GetCurrentSettings> {
     return this.request(this.instance.put("/settings/", data));
   }
-  fetchUserPastReports(): Promise<GetUserReports> {
-    return this.request(this.instance.get("/reports/user-past-reports"));
+  fetchUserPastReports(params?: PaginationParams): Promise<GetUserReports> {
+    return this.request(this.instance.get("/reports/user-past-reports", { params }));
   }
   fetchAdminReports(filters?: {
     quarter?: string;
     year?: string;
     role?: string;
     search?: string;
+    overallScoreSort?: "none" | "asc" | "desc";
+    page?: number;
+    limit?: number;
   }): Promise<GetAdminReports> {
     return this.request(
       this.instance.get("/reports/admin-all", { params: filters }),

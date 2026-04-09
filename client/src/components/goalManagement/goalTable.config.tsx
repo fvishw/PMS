@@ -12,7 +12,7 @@ export type GoalRow = {
   owner: string;
   dueDate: string;
   progress: number;
-  status: "on_track" | "at_risk" | "completed";
+  status: "on_track" | "at_risk" | "completed" | "not_started" | "incomplete";
   subTasks: SubTask[];
 };
 
@@ -20,6 +20,8 @@ const statusStyles: Record<string, string> = {
   "On Track": "secondary",
   "At Risk": "destructive",
   Completed: "default",
+  Incomplete: "destructive",
+  "Not Started": "outline",
 };
 
 const statusMapping: Record<string, string> = {
@@ -27,6 +29,7 @@ const statusMapping: Record<string, string> = {
   at_risk: "At Risk",
   completed: "Completed",
   not_started: "Not Started",
+  incomplete: "Incomplete",
 };
 
 export const columns: ColumnDef<GoalRow>[] = [

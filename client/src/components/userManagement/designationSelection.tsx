@@ -80,9 +80,12 @@ export const DesignationSelection = ({
         />
 
         <Button
+          type="button"
           className="flex items-center"
           variant="outline"
-          onClick={() => setIsOpen(true)}
+          onClick={() => {
+            setIsOpen(true);
+          }}
         >
           <span>
             <IconPlus size={15} />

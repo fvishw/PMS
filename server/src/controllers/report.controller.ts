@@ -7,22 +7,34 @@ import { ApiError } from "@/utils/ApiError.js";
 import { ApiResponse } from "@/utils/ApiResponse.js";
 import asyncHandler from "@/utils/asyncHandler.js";
 import type { Request, Response } from "express";
+import { getPaginationMeta, getPaginationParams } from "@/utils/pagination.js";
 
 const getUserReports = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
   if (!userId) {
     throw new ApiError(400, "User ID is required");
   }
-  const userReports = await UserReportModel.find({
-    user: userId,
-  }).select("quarter year overAllScore createdAt");
+  const { page, limit, skip } = getPaginationParams(req.query);
+  const reportFilter = { user: userId };
+
+  const [userReports, totalItems] = await Promise.all([
+    UserReportModel.find(reportFilter)
+      .select("quarter year overAllScore createdAt")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+    UserReportModel.countDocuments(reportFilter),
+  ]);
 
   res
     .status(200)
     .json(
       new ApiResponse(
         200,
-        { reports: userReports },
+        {
+          reports: userReports,
+          pagination: getPaginationMeta({ totalItems, page, limit }),
+        },
         "User reports fetched successfully",
       ),
     );
@@ -106,7 +118,8 @@ const getReportById = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const getAdminReports = asyncHandler(async (req: Request, res: Response) => {
-  const { quarter, year, role, search } = req.query;
+  const { quarter, year, role, search, overallScoreSort } = req.query;
+  const { page, limit, skip } = getPaginationParams(req.query);
 
   const reportFilter: any = {};
 
@@ -122,12 +135,15 @@ const getAdminReports = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const userFilter: {
+    isDeleted?: { $ne: boolean };
     role?: string;
     $or?: Array<{
       fullName?: { $regex: string; $options: string };
       email?: { $regex: string; $options: string };
     }>;
   } = {};
+
+  userFilter.isDeleted = { $ne: true };
 
   if (typeof role === "string" && role.trim()) {
     userFilter.role = role.trim();
@@ -146,29 +162,49 @@ const getAdminReports = asyncHandler(async (req: Request, res: Response) => {
     const userIds = users.map((u) => u._id);
 
     if (!userIds.length) {
-      return res
-        .status(200)
-        .json(
-          new ApiResponse(
-            200,
-            { reports: [] },
-            "Admin reports fetched successfully",
-          ),
-        );
+      return res.status(200).json(
+        new ApiResponse(
+          200,
+          {
+            reports: [],
+            pagination: getPaginationMeta({ totalItems: 0, page, limit }),
+          },
+          "Admin reports fetched successfully",
+        ),
+      );
     }
 
     reportFilter.user = { $in: userIds };
   }
 
-  const reports = await UserReportModel.find(reportFilter)
-    .select("quarter year overAllScore createdAt user")
-    .populate("user", "fullName email role")
-    .sort({ createdAt: -1 });
+  const sort =
+    overallScoreSort === "asc"
+      ? { overAllScore: 1 as const, createdAt: -1 as const }
+      : overallScoreSort === "desc"
+        ? { overAllScore: -1 as const, createdAt: -1 as const }
+        : { createdAt: -1 as const };
+
+  const [reports, totalItems] = await Promise.all([
+    UserReportModel.find(reportFilter)
+      .select("quarter year overAllScore createdAt user")
+      .populate("user", "fullName email role")
+      .sort(sort)
+      .skip(skip)
+      .limit(limit),
+    UserReportModel.countDocuments(reportFilter),
+  ]);
 
   return res
     .status(200)
     .json(
-      new ApiResponse(200, { reports }, "Admin reports fetched successfully"),
+      new ApiResponse(
+        200,
+        {
+          reports,
+          pagination: getPaginationMeta({ totalItems, page, limit }),
+        },
+        "Admin reports fetched successfully",
+      ),
     );
 });
 

@@ -10,6 +10,7 @@ import { Button } from "../ui/button";
 import { getTransformedGoals } from "./transformedGoals";
 import GoalFilter from "./GoalFilter";
 import GoalSummaryCards from "./GoalSummaryCards";
+import type { PaginationState } from "@tanstack/react-table";
 
 export type GoalFilterType = {
   userId: string | null;
@@ -24,13 +25,22 @@ export const GoalManagement = () => {
     quarter: null,
     year: null,
   });
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
   const {
     data,
     isLoading: goalsLoading,
     error: goalsError,
   } = useQuery({
-    queryKey: ["goals", filter],
-    queryFn: async () => Api.getAdminGoals(filter),
+    queryKey: ["goals", filter, pagination.pageIndex, pagination.pageSize],
+    queryFn: async () =>
+      Api.getAdminGoals({
+        ...filter,
+        page: pagination.pageIndex + 1,
+        limit: pagination.pageSize,
+      }),
   });
 
   let contentToDisplay;
@@ -55,9 +65,20 @@ export const GoalManagement = () => {
         <GoalSummaryCards />
         <GoalFilter
           filter={filter}
-          onChange={(newFilter) => setFilter(newFilter)}
+          onChange={(newFilter) => {
+            setFilter(newFilter);
+            setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+          }}
         />
-        <CustomDataTable columns={columns} data={goals} />
+        <CustomDataTable
+          columns={columns}
+          data={goals}
+          pagination={{
+            ...pagination,
+            totalItems: data?.pagination.totalItems || 0,
+            onPaginationChange: setPagination,
+          }}
+        />
       </div>
     );
   }
