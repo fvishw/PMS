@@ -2,6 +2,7 @@ import { type ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import { UserTableAction } from "./userTable.action";
 import { IUser } from "@/types/user";
+import { Badge } from "../ui/badge";
 
 export const columns: ColumnDef<IUser>[] = [
   {
@@ -46,6 +47,21 @@ export const columns: ColumnDef<IUser>[] = [
       const raw = row.original.joiningDate;
       const formattedDate = raw ? dayjs(raw).format("D MMM YY") : "-";
       return <div className="text-center">{formattedDate}</div>;
+    },
+  },
+  {
+    accessorKey: "isActive",
+    header: () => <div className="text-center">Status</div>,
+    cell: ({ row }) => {
+      const isActive = row.original.isActive !== false;
+
+      return (
+        <div className="text-center">
+          <Badge variant={isActive ? "default" : "destructive"}>
+            {isActive ? "Active" : "Inactive"}
+          </Badge>
+        </div>
+      );
     },
   },
   {

@@ -49,7 +49,9 @@ const performanceStatus = asyncHandler(async (req: Request, res: Response) => {
 
 const dashBoardStats = asyncHandler(async (req: Request, res: Response) => {
   // 1: total user
-  const totalUser = await User.find().countDocuments();
+  const totalUser = await User.countDocuments({
+    isActive: { $ne: false },
+  });
 
   // 2: active kpi
   const totalPerformanceTemplate =

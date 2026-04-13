@@ -135,15 +135,12 @@ const getAdminReports = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const userFilter: {
-    isDeleted?: { $ne: boolean };
     role?: string;
     $or?: Array<{
       fullName?: { $regex: string; $options: string };
       email?: { $regex: string; $options: string };
     }>;
   } = {};
-
-  userFilter.isDeleted = { $ne: true };
 
   if (typeof role === "string" && role.trim()) {
     userFilter.role = role.trim();

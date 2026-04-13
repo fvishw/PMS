@@ -20,6 +20,7 @@ interface IUser {
   email: string;
   phoneNumber?: string | null;
   joiningDate?: Date | string | null;
+  isActive?: boolean;
   role: "admin" | "employee" | "manager";
   designation?: {
     _id: string;

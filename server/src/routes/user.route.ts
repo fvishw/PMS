@@ -1,12 +1,12 @@
 import { Router } from "express";
 import {
   addUser,
-  deleteUser,
   fetchUsersByRole,
   getAllManagers,
   getAllUsers,
   getUserProfile,
   updateUser,
+  updateUserStatus,
 } from "@/controllers/user.controller.js";
 import authMiddleware from "@/middlewares/auth.middleware.js";
 import {
@@ -19,7 +19,11 @@ const userRouter = Router();
 
 userRouter.post("/add", authMiddleware(["admin"]), addUser);
 userRouter.put("/update/:userId", authMiddleware(["admin"]), updateUser);
-userRouter.delete("/delete/:userId", authMiddleware(["admin"]), deleteUser);
+userRouter.patch(
+  "/status/:userId",
+  authMiddleware(["admin"]),
+  updateUserStatus,
+);
 
 userRouter.get("/all-user", authMiddleware(["admin"]), getAllUsers);
 userRouter.get(

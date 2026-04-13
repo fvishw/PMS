@@ -1,8 +1,9 @@
 import type { NextFunction, Request, Response } from "express";
+import { User } from "@/models/user.model.js";
 import AuthService from "@/utils/AuthService.js";
 
 const authMiddleware = (allowedRoles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader?.startsWith("Bearer ")) {
@@ -17,6 +18,15 @@ const authMiddleware = (allowedRoles: string[]) => {
       }
 
       const payload = AuthService.verifyToken(token);
+
+      const currentUser = await User.findOne({
+        _id: payload.id,
+        isActive: { $ne: false },
+      }).select("_id");
+
+      if (!currentUser) {
+        return res.status(401).json({ message: "User account is inactive" });
+      }
 
       if (!allowedRoles.includes(payload.role)) {
         return res.status(403).json({ message: "Forbidden" });

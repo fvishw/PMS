@@ -103,17 +103,16 @@ export function AddCheckInQuestionModal({
               data={fields}
               showPagination={false}
               footerContent={
-                <div
+                <button
+                  type="button"
                   className="flex justify-center items-center gap-2 text-primary cursor-pointer"
                   onClick={() => append({ question: "", type: "text" })}
                 >
                   <span>
                     <CirclePlus className="h-4" />
                   </span>
-                  <span onClick={() => append({ question: "", type: "text" })}>
-                    Add Question
-                  </span>
-                </div>
+                  <span>Add Question</span>
+                </button>
               }
               rowDrag={{
                 getRowId: (row) => row.id,

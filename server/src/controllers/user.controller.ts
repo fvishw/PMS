@@ -8,6 +8,33 @@ import emailService from "@/services/emailService/email.service.js";
 import { Types } from "mongoose";
 import { getPaginationMeta, getPaginationParams } from "@/utils/pagination.js";
 
+const escapeRegex = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const findUserByEmail = (email: string, excludeUserId?: string) => {
+  const filter: Record<string, unknown> = {
+    email: { $regex: `^${escapeRegex(email.trim())}$`, $options: "i" },
+  };
+
+  if (excludeUserId) {
+    filter._id = { $ne: new Types.ObjectId(excludeUserId) };
+  }
+
+  return User.findOne(filter).select("_id");
+};
+
+const findUserByPhoneNumber = (phoneNumber: string, excludeUserId?: string) => {
+  const filter: Record<string, unknown> = {
+    phoneNumber: phoneNumber.trim(),
+  };
+
+  if (excludeUserId) {
+    filter._id = { $ne: new Types.ObjectId(excludeUserId) };
+  }
+
+  return User.findOne(filter).select("_id");
+};
+
 const addUser = asyncHandler(async (req: Request, res: Response) => {
   const parsedPayload = userAddPayloadSchema.safeParse(req.body);
   if (!parsedPayload.success) {
@@ -25,10 +52,26 @@ const addUser = asyncHandler(async (req: Request, res: Response) => {
     adminReviewerId,
   } = parsedPayload.data;
 
+  const normalizedEmail = email.trim().toLowerCase();
+  const normalizedPhoneNumber = phoneNumber.trim();
+
+  const [existingEmailUser, existingPhoneUser] = await Promise.all([
+    findUserByEmail(normalizedEmail),
+    findUserByPhoneNumber(normalizedPhoneNumber),
+  ]);
+
+  if (existingEmailUser) {
+    throw new ApiError(409, "This email address is already used by another user");
+  }
+
+  if (existingPhoneUser) {
+    throw new ApiError(409, "This phone number is already used by another user");
+  }
+
   const user = new User({
     fullName,
-    email,
-    phoneNumber,
+    email: normalizedEmail,
+    phoneNumber: normalizedPhoneNumber,
     joiningDate: new Date(joiningDate),
     role,
     designation: designationId,
@@ -51,35 +94,62 @@ const addUser = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(201, newUser, "User added successfully"));
 });
 
-const deleteUser = asyncHandler(async (req: Request, res: Response) => {
+const updateUserStatus = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.params.userId;
+  const actingAdminId = req.user?.id;
+  const { isActive } = req.body as { isActive?: unknown };
+
   if (!userId) {
     throw new ApiError(400, "User ID is required");
   }
   if (!Types.ObjectId.isValid(userId)) {
     throw new ApiError(400, "Invalid user id format.");
   }
+  if (!actingAdminId || !Types.ObjectId.isValid(actingAdminId)) {
+    throw new ApiError(401, "Unauthorized");
+  }
+  if (userId === actingAdminId) {
+    throw new ApiError(400, "You cannot change your own account status");
+  }
+  if (typeof isActive !== "boolean") {
+    throw new ApiError(400, "isActive must be provided as a boolean value");
+  }
 
-  const user = await User.findOneAndUpdate(
-    { _id: userId, isDeleted: { $ne: true } },
-    { $set: { isDeleted: true } },
-    { new: true },
-  );
+  const user = await User.findById(userId);
 
   if (!user) {
     throw new ApiError(404, "User not found");
   }
+  if (user.role === "admin") {
+    throw new ApiError(
+      400,
+      "Admin account status cannot be changed from this screen",
+    );
+  }
+
+  user.isActive = isActive;
+  await user.save();
 
   return res
     .status(200)
-    .json(new ApiResponse(200, null, "User deleted successfully"));
+    .json(
+      new ApiResponse(
+        200,
+        {
+          user: {
+            _id: user._id,
+            isActive: user.isActive,
+          },
+        },
+        `User marked as ${isActive ? "active" : "inactive"} successfully`,
+      ),
+    );
 });
 
 const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
   const { page, limit, skip } = getPaginationParams(req.query);
   const userFilter = {
     role: { $ne: "admin" },
-    isDeleted: { $ne: true },
   };
 
   const [users, totalItems] = await Promise.all([
@@ -109,7 +179,7 @@ const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
 const getAllManagers = asyncHandler(async (req: Request, res: Response) => {
   const managers = await User.find({
     role: "manager",
-    isDeleted: { $ne: true },
+    isActive: { $ne: false },
   }).select("-password -refreshToken -passwordResetToken");
 
   return res
@@ -128,7 +198,10 @@ const fetchUsersByRole = asyncHandler(async (req: Request, res: Response) => {
     );
   }
 
-  const users = await User.find({ role, isDeleted: { $ne: true } })
+  const users = await User.find({
+    role,
+    isActive: { $ne: false },
+  })
     .select("-password -refreshToken -passwordResetToken")
     .populate({ path: "designation", select: "title role" });
 
@@ -143,7 +216,10 @@ const getUserProfile = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(401, "Unauthorized");
   }
 
-  const user = await User.findOne({ _id: userId, isDeleted: { $ne: true } })
+  const user = await User.findOne({
+    _id: userId,
+    isActive: { $ne: false },
+  })
     .select("-password -refreshToken -passwordResetToken")
     .populate({ path: "designation", select: "title role" })
     .populate({ path: "parentReviewer", select: "fullName email" })
@@ -193,13 +269,23 @@ const updateUser = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(400, "Invalid admin reviewer id format.");
   }
 
-  const user = await User.findOne({ _id: userId, isDeleted: { $ne: true } });
+  const user = await User.findById(userId);
   if (!user) {
     throw new ApiError(404, "User not found");
   }
 
+  const normalizedPhoneNumber = phoneNumber.trim();
+  const existingPhoneUser = await findUserByPhoneNumber(
+    normalizedPhoneNumber,
+    userId,
+  );
+
+  if (existingPhoneUser) {
+    throw new ApiError(409, "This phone number is already used by another user");
+  }
+
   user.fullName = fullName;
-  user.phoneNumber = phoneNumber;
+  user.phoneNumber = normalizedPhoneNumber;
   user.joiningDate = new Date(joiningDate);
   user.role = role;
   user.designation = new Types.ObjectId(designationId);
@@ -232,5 +318,5 @@ export {
   fetchUsersByRole,
   getUserProfile,
   updateUser,
-  deleteUser,
+  updateUserStatus,
 };

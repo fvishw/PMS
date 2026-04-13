@@ -88,8 +88,8 @@ export class API {
   updateUser(userId: string, data: IUserFormData) {
     return this.request(this.instance.put(`/user/update/${userId}`, data));
   }
-  deleteUserById(userId: string) {
-    return this.request(this.instance.delete(`/user/delete/${userId}`));
+  updateUserStatus(userId: string, isActive: boolean) {
+    return this.request(this.instance.patch(`/user/status/${userId}`, { isActive }));
   }
 
   getAllUser(params?: PaginationParams): Promise<GetAllUserResponse> {

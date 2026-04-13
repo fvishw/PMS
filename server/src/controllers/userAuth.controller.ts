@@ -15,7 +15,7 @@ const signUp = asyncHandler(async (req: Request, res: Response) => {
   const existingUser = await User.findOne({
     email,
     isSignUpComplete: false,
-    isDeleted: { $ne: true },
+    isActive: { $ne: false },
   });
 
   if (!existingUser) {
@@ -50,7 +50,7 @@ const login = asyncHandler(async (req: Request, res: Response) => {
   const user = await User.findOne({
     email: email,
     isSignUpComplete: true,
-    isDeleted: { $ne: true },
+    isActive: { $ne: false },
   });
 
   if (!user || !user.comparePassword(password)) {
@@ -92,7 +92,10 @@ const sendResetLink = asyncHandler(async (req: Request, res: Response) => {
   if (!email) {
     throw new ApiError(400, "Email is required");
   }
-  const user = await User.findOne({ email, isDeleted: { $ne: true } });
+  const user = await User.findOne({
+    email,
+    isActive: { $ne: false },
+  });
   if (!user) {
     return res
       .status(400)

@@ -16,21 +16,28 @@ import { toast } from "sonner";
 import toasterPosition from "@/utils/toaster";
 import { queryClient } from "@/utils/queryClient";
 
-type UserActionModal = "edit" | "delete" | null;
+type UserActionModal = "edit" | "status" | null;
 
 export const UserTableAction = ({ user }: { user: IUser }) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [modal, setModal] = useState<UserActionModal>(null);
+  const isActive = user.isActive !== false;
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (userId: string) => Api.deleteUserById(userId),
+    mutationFn: () => Api.updateUserStatus(user._id, !isActive),
     onSuccess: () => {
       setModal(null);
-      toast.success("User deleted successfully", toasterPosition);
+      toast.success(
+        `User marked as ${isActive ? "inactive" : "active"} successfully`,
+        toasterPosition,
+      );
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
     onError: (error) => {
-      toast.error(`Failed to delete user: ${error.message}`, toasterPosition);
+      toast.error(
+        `Failed to update user status: ${error.message}`,
+        toasterPosition,
+      );
     },
   });
 
@@ -49,10 +56,10 @@ export const UserTableAction = ({ user }: { user: IUser }) => {
               Edit User
             </DropdownMenuItem>
             <DropdownMenuItem
-              variant="destructive"
-              onClick={() => setModal("delete")}
+              variant={isActive ? "destructive" : "default"}
+              onClick={() => setModal("status")}
             >
-              Delete User
+              {isActive ? "Mark Inactive" : "Mark Active"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -65,13 +72,14 @@ export const UserTableAction = ({ user }: { user: IUser }) => {
           onOpenChange={setIsEditOpen}
         />
       )}
-      {modal === "delete" && (
+      {modal === "status" && (
         <DeleteUserConfirmationModal
-          isOpen={modal === "delete"}
+          isOpen={modal === "status"}
           onClose={() => setModal(null)}
-          onConfirmDelete={() => mutate(user._id)}
+          onConfirmStatusChange={() => mutate()}
           isPending={isPending}
           userName={user.fullName}
+          nextStatus={isActive ? "inactive" : "active"}
         />
       )}
     </>
