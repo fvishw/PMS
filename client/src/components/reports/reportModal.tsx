@@ -84,6 +84,8 @@ export function ReportModal({
 
     const hasStrengths = data.strengths && data.strengths.length > 0;
     const hasImprovements = data.improvements && data.improvements.length > 0;
+    const hasProjectHighlights =
+      data.projectHighlights && data.projectHighlights.length > 0;
     const hasKpis = data.kpiHighlights && data.kpiHighlights.length > 0;
     const hasCompetencies =
       data.competencyHighlights && data.competencyHighlights.length > 0;
@@ -134,6 +136,37 @@ export function ReportModal({
                 <li key={`improvement-${index}`}>{item}</li>
               ))}
             </ul>
+          </div>
+        ) : null}
+
+        {hasProjectHighlights ? (
+          <div className="rounded-lg border bg-card p-4">
+            <h3 className="text-lg font-semibold">Project Achievements</h3>
+            <div className="mt-3 space-y-3">
+              {data.projectHighlights?.map((item, index) => (
+                <div
+                  key={`project-highlight-${index}`}
+                  className="rounded-lg border bg-muted/50 p-3"
+                >
+                  <div className="text-sm font-semibold">
+                    {item.projectName}
+                  </div>
+                  <p className="mt-1 text-sm text-foreground">
+                    <span className="font-medium">Achievement:</span>{" "}
+                    {item.achievement}
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    <span className="font-medium text-foreground">
+                      Difficulty:
+                    </span>{" "}
+                    {item.difficulty}
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {item.note}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         ) : null}
 

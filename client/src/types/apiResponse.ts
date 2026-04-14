@@ -196,6 +196,12 @@ interface GetUserReport {
     summary: string;
     strengths: string[];
     improvements: string[];
+    projectHighlights?: {
+      projectName: string;
+      achievement: string;
+      difficulty: string;
+      note: string;
+    }[];
     kpiHighlights: { objective: string; note: string }[];
     competencyHighlights: { title: string; note: string }[];
     alignment: { selfVsManagerGap: number; note: string };

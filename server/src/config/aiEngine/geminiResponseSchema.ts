@@ -4,6 +4,14 @@ const geminiResponseSchema = z.object({
   summary: z.string(),
   strengths: z.array(z.string()),
   improvements: z.array(z.string()),
+  projectHighlights: z.array(
+    z.object({
+      projectName: z.string(),
+      achievement: z.string(),
+      difficulty: z.string(),
+      note: z.string(),
+    }),
+  ),
   kpiHighlights: z.array(
     z.object({
       objective: z.string(),
@@ -38,6 +46,20 @@ const geminiResponseSchemaFormat = {
     improvements: {
       type: "array",
       items: { type: "string" },
+    },
+
+    projectHighlights: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          projectName: { type: "string" },
+          achievement: { type: "string" },
+          difficulty: { type: "string" },
+          note: { type: "string" },
+        },
+        required: ["projectName", "achievement", "difficulty", "note"],
+      },
     },
 
     kpiHighlights: {
@@ -88,6 +110,7 @@ const geminiResponseSchemaFormat = {
     "summary",
     "strengths",
     "improvements",
+    "projectHighlights",
     "kpiHighlights",
     "competencyHighlights",
     "alignment",

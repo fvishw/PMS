@@ -6,6 +6,12 @@ interface IUserReportSchema {
   summary: string;
   strengths: string[];
   improvements: string[];
+  projectHighlights: {
+    projectName: string;
+    achievement: string;
+    difficulty: string;
+    note: string;
+  }[];
   kpiHighlights: { objective: string; note: string }[];
   competencyHighlights: { title: string; note: string }[];
   alignment: { selfVsManagerGap: number; note: string };
@@ -32,6 +38,14 @@ const UserReportSchema = new Schema<IUserReportSchema>(
     summary: { type: String, required: true },
     strengths: [{ type: String, required: true }],
     improvements: [{ type: String, required: true }],
+    projectHighlights: [
+      {
+        projectName: { type: String, required: true },
+        achievement: { type: String, required: true },
+        difficulty: { type: String, required: true },
+        note: { type: String, required: true },
+      },
+    ],
     kpiHighlights: [
       {
         objective: { type: String, required: true },

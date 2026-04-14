@@ -30,6 +30,7 @@ async function generateReport(performance: IUserPerformance) {
               - Do NOT assume or invent information.
               - If data is missing, say so explicitly.
               - Evaluate objectively and professionally.
+              - Include project achievements from performance.projects in projectHighlights.
               - Output MUST be valid JSON that strictly matches the given schema.
               - Do NOT include any text outside JSON.
               - At then end provide Score out of 100 based on the data.
