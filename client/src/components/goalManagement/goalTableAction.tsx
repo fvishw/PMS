@@ -15,8 +15,15 @@ import { queryClient } from "@/utils/queryClient";
 import { EditGoalModal } from "./GoalModal/EditGoalModal";
 
 type GoalModalType = "edit" | "delete" | null;
-export const GoalTableAction = ({ goalId }: { goalId: string }) => {
+export const GoalTableAction = ({
+  goalId,
+  status,
+}: {
+  goalId: string;
+  status?: "on_track" | "at_risk" | "completed" | "not_started" | "incomplete";
+}) => {
   const [modal, setModal] = useState<GoalModalType>(null);
+  const isCompleted = status === "completed";
   const handleCloseModal = () => {
     setModal(null);
   };
@@ -50,7 +57,10 @@ export const GoalTableAction = ({ goalId }: { goalId: string }) => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="center">
-            <DropdownMenuItem onClick={() => setModal("edit")}>
+            <DropdownMenuItem
+              onClick={() => setModal("edit")}
+              disabled={isCompleted}
+            >
               Edit Goal
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setModal("delete")}>

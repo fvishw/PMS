@@ -10,6 +10,8 @@ export type GoalRow = {
   title: string;
   owner: string;
   dueDate: string;
+  createdAt: string;
+  updatedAt: string;
   progress: number;
   status: "on_track" | "at_risk" | "completed" | "not_started" | "incomplete";
   subTasks: SubTask[];
@@ -56,6 +58,24 @@ export const columns: ColumnDef<GoalRow>[] = [
     },
   },
   {
+    accessorKey: "createdAt",
+    header: () => <div className="text-center">Created At</div>,
+    cell: ({ row }) => {
+      const raw: Date | string = row.getValue("createdAt");
+      const formattedDate = raw ? dayjs(raw).format("D MMM YY") : "-";
+      return <div className="text-center">{formattedDate}</div>;
+    },
+  },
+  {
+    accessorKey: "updatedAt",
+    header: () => <div className="text-center">Updated At</div>,
+    cell: ({ row }) => {
+      const raw: Date | string = row.getValue("updatedAt");
+      const formattedDate = raw ? dayjs(raw).format("D MMM YY") : "-";
+      return <div className="text-center">{formattedDate}</div>;
+    },
+  },
+  {
     accessorKey: "progress",
     header: () => <div className="text-center">Progress</div>,
     cell: ({ row }) => (
@@ -83,7 +103,10 @@ export const columns: ColumnDef<GoalRow>[] = [
     header: () => <div className="text-center">Actions</div>,
     cell: ({ row }) => (
       <div className="font-medium text-center">
-        <GoalTableAction goalId={row.original._id} />
+        <GoalTableAction
+          goalId={row.original._id}
+          status={row.original.status}
+        />
       </div>
     ),
   },

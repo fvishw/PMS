@@ -126,6 +126,10 @@ const updateGoal = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(404, "Goal with given id not found");
   }
 
+  if (goal.isCompleted) {
+    throw new ApiError(400, "Completed goals cannot be edited");
+  }
+
   const { title, dueDate, subTasks } = parsedPayload.data;
 
   const existingSubTasksMap = new Map(

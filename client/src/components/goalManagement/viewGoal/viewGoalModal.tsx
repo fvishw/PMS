@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useEffect } from "react";
 import getDueDateDifference from "@/utils/goal";
+import dayjs from "dayjs";
 
 interface ViewGoalModalProps {
   goalId: string;
@@ -95,6 +96,20 @@ export const ViewGoalModal = ({
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div>
             <h3 className="text-lg font-medium">{goal.title}</h3>
+            <div className="mt-2 grid gap-2 text-sm text-muted-foreground sm:grid-cols-2">
+              <div>
+                <span className="font-medium text-foreground">Created At:</span>{" "}
+                {goal.createdAt
+                  ? dayjs(goal.createdAt).format("D MMM YY")
+                  : "-"}
+              </div>
+              <div>
+                <span className="font-medium text-foreground">Updated At:</span>{" "}
+                {goal.updatedAt
+                  ? dayjs(goal.updatedAt).format("D MMM YY")
+                  : "-"}
+              </div>
+            </div>
           </div>
           <div className="space-y-2">
             {goal.subTasks.map((subTask: any, index: number) => (

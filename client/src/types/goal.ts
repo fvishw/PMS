@@ -11,6 +11,8 @@ interface Goal {
   title: string;
   owner: IUser | string;
   dueDate: string | Date;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
   subTasks: SubTask[];
   status?: "on_track" | "at_risk" | "completed" | "not_started" | "incomplete";
   isCompleted: boolean;
