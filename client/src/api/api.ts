@@ -104,9 +104,14 @@ export class API {
     return this.request(this.instance.get("/user/profile"));
   }
 
-  fetchAllDesignations(role?: string): Promise<GetAllDesignationsResponse> {
+  fetchAllDesignations(
+    role?: string,
+    includeInactive?: boolean,
+  ): Promise<GetAllDesignationsResponse> {
     return this.request(
-      this.instance.get("/user/all-designations", { params: { role } }),
+      this.instance.get("/user/all-designations", {
+        params: { role, includeInactive },
+      }),
     );
   }
   addCheckIns(data: CheckInPayload) {
@@ -202,6 +207,19 @@ export class API {
 
   addDesignation(data: { title: string; role: string }) {
     return this.request(this.instance.post("/user/add-designation", data));
+  }
+  updateDesignation(
+    designationId: string,
+    data: { title: string; role: string },
+  ) {
+    return this.request(this.instance.put(`/user/designation/${designationId}`, data));
+  }
+  updateDesignationStatus(designationId: string, isActive: boolean) {
+    return this.request(
+      this.instance.patch(`/user/designation-status/${designationId}`, {
+        isActive,
+      }),
+    );
   }
   fetchUsersByRole(role: string): Promise<GetUserByRole> {
     return this.request(

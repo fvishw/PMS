@@ -1,6 +1,7 @@
 import {
   type Icon,
   IconDashboard,
+  IconBriefcase,
   IconDatabaseCog,
   IconEyeEdit,
   IconListCheck,
@@ -29,6 +30,11 @@ export const sidebarItems: Record<role, SidebarItem[]> = {
       title: "User Management",
       url: "manage-users",
       icon: IconUsers,
+    },
+    {
+      title: "Manage Designations",
+      url: "manage-designations",
+      icon: IconBriefcase,
     },
     {
       title: "CheckIn Management",

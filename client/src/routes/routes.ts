@@ -85,6 +85,12 @@ const router = createBrowserRouter([
         Component: lazy(() => import("@/pages/outlets/userManagementLayout")),
       },
       {
+        path: "manage-designations",
+        Component: lazy(
+          () => import("@/pages/outlets/designationManagementLayout"),
+        ),
+      },
+      {
         path: "settings",
         Component: lazy(() => import("@/pages/outlets/settingsLayout")),
       },

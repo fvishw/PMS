@@ -3,6 +3,7 @@ import { Schema, model, Document } from "mongoose";
 interface IDesignation extends Document {
   role: "employee" | "manager" | "admin";
   title: string;
+  isActive: boolean;
 }
 
 const DesignationSchema = new Schema<IDesignation>(
@@ -13,6 +14,7 @@ const DesignationSchema = new Schema<IDesignation>(
       required: true,
     },
     title: { type: String, required: true },
+    isActive: { type: Boolean, default: true, index: true },
   },
   { timestamps: true }
 );

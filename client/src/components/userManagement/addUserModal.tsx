@@ -125,6 +125,7 @@ export function AddUserModal({
   ) => {
     setSelectedRole(role);
     onChange(role);
+    setValue("designationId", "");
     setValue("parentReviewerId", "");
 
     if (role !== "employee") {
@@ -133,7 +134,7 @@ export function AddUserModal({
   };
 
   const modalContent = (
-    <DialogContent className="sm:max-w-[425px] h-[90vh] overflow-y-auto">
+    <DialogContent className="sm:max-w-[700px] h-[90vh] overflow-y-auto">
       <form
         onSubmit={handleSubmit((data) => {
           mutate(data);

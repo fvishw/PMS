@@ -11,10 +11,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { IDesignationOption } from "@/types/user";
-import { Button } from "../ui/button";
-import { IconPlus } from "@tabler/icons-react";
-import { useState } from "react";
-import { AddDesignationModal } from "./addDesignationModal";
 import { Controller, UseFormSetValue } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import { IUserFormData } from "@/types/user";
@@ -35,8 +31,6 @@ export const DesignationSelection = ({
     queryFn: ({ queryKey }) => Api.fetchAllDesignations(queryKey[1]),
     enabled: role !== "",
   });
-
-  const [isOpen, setIsOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -63,7 +57,7 @@ export const DesignationSelection = ({
               }}
               value={field.value}
             >
-              <SelectTrigger className="w-[200px]">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a designation" />
               </SelectTrigger>
               <SelectContent>
@@ -78,20 +72,6 @@ export const DesignationSelection = ({
             </Select>
           )}
         />
-
-        <Button
-          type="button"
-          className="flex items-center"
-          variant="outline"
-          onClick={() => {
-            setIsOpen(true);
-          }}
-        >
-          <span>
-            <IconPlus size={15} />
-          </span>
-          <span>Add</span>
-        </Button>
       </div>
       <ErrorMessage
         errors={errors}
@@ -99,9 +79,6 @@ export const DesignationSelection = ({
         as="p"
         className="text-red-500 text-sm"
       />
-      {isOpen && (
-        <AddDesignationModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
-      )}
     </>
   );
 };

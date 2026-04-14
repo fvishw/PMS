@@ -11,8 +11,9 @@ import {
 import authMiddleware from "@/middlewares/auth.middleware.js";
 import {
   addDesignation,
-  deleteDesignation,
   getAllDesignations,
+  updateDesignation,
+  updateDesignationStatus,
 } from "@/controllers/userDesignation.controller.js";
 
 const userRouter = Router();
@@ -37,10 +38,15 @@ userRouter.get("/all-managers", authMiddleware(["admin"]), getAllManagers);
 userRouter.get("/users-by-role", authMiddleware(["admin"]), fetchUsersByRole);
 
 userRouter.post("/add-designation", authMiddleware(["admin"]), addDesignation);
-userRouter.delete(
-  "/delete-designation/:id",
+userRouter.put(
+  "/designation/:id",
   authMiddleware(["admin"]),
-  deleteDesignation
+  updateDesignation
+);
+userRouter.patch(
+  "/designation-status/:id",
+  authMiddleware(["admin"]),
+  updateDesignationStatus
 );
 userRouter.get(
   "/all-designations",

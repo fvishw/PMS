@@ -24,10 +24,13 @@ import { toast } from "sonner";
 import toasterPosition from "@/utils/toaster";
 import { Controller, useForm } from "react-hook-form";
 import { roles } from "./options";
+import { Designation } from "@/types/user";
 
 interface AddDesignationModalProps {
   isOpen: boolean;
   onClose: () => void;
+  mode?: "add" | "edit";
+  designation?: Designation;
 }
 interface AddDesignationForm {
   title: string;
@@ -37,25 +40,38 @@ interface AddDesignationForm {
 export const AddDesignationModal = ({
   isOpen,
   onClose,
+  mode = "add",
+  designation,
 }: AddDesignationModalProps) => {
+  const isEditMode = mode === "edit";
   const { register, handleSubmit, reset, control } =
     useForm<AddDesignationForm>({
       defaultValues: {
-        title: "",
-        role: "employee",
+        title: designation?.title || "",
+        role: designation?.role || "employee",
       },
     });
 
-  const { mutate: addDesignation } = useMutation({
-    mutationFn: (data: AddDesignationForm) => Api.addDesignation(data),
+  const { mutate, isPending } = useMutation({
+    mutationFn: (data: AddDesignationForm) => {
+      if (isEditMode && designation) {
+        return Api.updateDesignation(designation._id, data);
+      }
+      return Api.addDesignation(data);
+    },
     onSuccess: () => {
-      toast.success("Designation added successfully", toasterPosition);
+      toast.success(
+        isEditMode
+          ? "Designation updated successfully"
+          : "Designation added successfully",
+        toasterPosition,
+      );
       reset();
       queryClient.invalidateQueries({ queryKey: ["designations"] });
       onClose();
     },
-    onError: () => {
-      toast.error("Failed to add designation", toasterPosition);
+    onError: (error) => {
+      toast.error(error.message, toasterPosition);
     },
   });
 
@@ -63,13 +79,17 @@ export const AddDesignationModal = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <form
-          onSubmit={handleSubmit((data) => addDesignation(data))}
+          onSubmit={handleSubmit((data) => mutate(data))}
           className="space-y-4"
         >
           <DialogHeader>
-            <DialogTitle>Add Designation</DialogTitle>
+            <DialogTitle>
+              {isEditMode ? "Edit Designation" : "Add Designation"}
+            </DialogTitle>
             <DialogDescription>
-              Add a new designation by selecting a role and entering a title.
+              {isEditMode
+                ? "Update the designation title and role."
+                : "Add a new designation by selecting a role and entering a title."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4">
@@ -106,7 +126,15 @@ export const AddDesignationModal = ({
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Add Designation</Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending
+                ? isEditMode
+                  ? "Saving..."
+                  : "Adding..."
+                : isEditMode
+                  ? "Save Changes"
+                  : "Add Designation"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

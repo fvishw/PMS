@@ -2,6 +2,7 @@ interface IDesignationOption {
   _id: string;
   title: string;
   role: "employee" | "manager" | "admin";
+  isActive?: boolean;
 }
 interface IUserFormData {
   fullName: string;
@@ -38,6 +39,9 @@ interface Designation {
   _id: string;
   role: "employee" | "manager" | "admin";
   title: string;
+  isActive?: boolean;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
 }
 
 export type { IDesignationOption, IUserFormData, IUser, Designation };
