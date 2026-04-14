@@ -32,7 +32,7 @@ function Competencies({
   control,
 }: CompetenciesProps) {
   return (
-    <SectionWrapper title="Section B: Competency Ratings">
+    <SectionWrapper title="Section C: Competency Ratings">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ">
         {competenciesData?.map((competency: Competency, index: number) => {
           return (

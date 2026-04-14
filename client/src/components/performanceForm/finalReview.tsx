@@ -31,7 +31,7 @@ function FinalReview({
   control,
 }: FinalReviewProps) {
   return (
-    <SectionWrapper title="Section C: Final Comments">
+    <SectionWrapper title="Section D: Final Comments">
       <div>
         {/* admin remark section */}
         <div className="border rounded p-4 ">

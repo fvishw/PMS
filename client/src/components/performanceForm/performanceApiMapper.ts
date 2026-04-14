@@ -19,6 +19,17 @@ const getPostPerformanceApi = (
       _id: item._id,
       score: Number(item.score),
     })),
+    projects: data.projects
+      .map((project) => ({
+        name: project.name.trim(),
+        achievements: project.achievements
+          .map((item) => ({
+            achievement: item.achievement.trim(),
+            difficulty: item.difficulty.trim(),
+          }))
+          .filter((item) => item.achievement && item.difficulty),
+      }))
+      .filter((project) => project.name && project.achievements.length > 0),
     finalComments: data.finalComments,
   };
   const stageApiMap: Record<

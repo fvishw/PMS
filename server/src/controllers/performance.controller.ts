@@ -6,9 +6,10 @@ import { ApiResponse } from "@/utils/ApiResponse.js";
 import { User } from "@/models/user.model.js";
 import {
   adminPayloadSchema,
+  KpiAcceptancePayloadSchema,
   ManagerScorePayloadSchema,
   MasterPerformancePayload,
-  SelfCriteriaSchema,
+  selfReviewKpiPayloadSchema,
   selfReviewPayloadSchema,
   type ManagerCriteria,
   type SelfCriteria,
@@ -156,6 +157,7 @@ const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
 
   const userDesignation = user?.designation;
   const userParentReviewer = user?.parentReviewer;
+  const parsedPayload = KpiAcceptancePayloadSchema.safeParse(req.body ?? {});
 
   if (!userParentReviewer) {
     throw new ApiError(
@@ -172,6 +174,18 @@ const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(404, "Master Template not found for user's designation");
   }
 
+  if (!parsedPayload.success) {
+    throw new ApiError(400, "At least one achievement is required");
+  }
+
+  const existingUserPerformance = await UserPerformance.findOne({
+    user: userId,
+  });
+
+  if (existingUserPerformance) {
+    throw new ApiError(400, "KPI has already been submitted for this user");
+  }
+
   const masterPerformanceTemplate = {
     ...JSON.parse(JSON.stringify(masterPerformance)),
   };
@@ -185,6 +199,7 @@ const updateKpiStatus = asyncHandler(async (req: Request, res: Response) => {
   const userPerformance = new UserPerformance({
     ...masterPerformanceTemplate,
     user: userId,
+    projects: [],
     stage: "self_review",
     parentReviewer: parentReviewerId,
     adminReviewer: adminReviewerId,
@@ -205,13 +220,13 @@ const selfReviewKpi = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(401, "Unauthorized");
   }
 
-  const parsedCriteria = SelfCriteriaSchema.safeParse(req.body);
+  const parsedCriteria = selfReviewKpiPayloadSchema.safeParse(req.body);
 
   if (!parsedCriteria.success) {
-    throw new ApiError(400, "Invalid criteria format");
+    throw new ApiError(400, "Invalid appraisal payload format");
   }
 
-  const { userPerformanceId, criteria } = parsedCriteria.data;
+  const { userPerformanceId, criteria, projects } = parsedCriteria.data;
 
   const userPerformance = await UserPerformance.findById(userPerformanceId);
 
@@ -228,6 +243,7 @@ const selfReviewKpi = asyncHandler(async (req: Request, res: Response) => {
       userKpi.selfComments = item.selfComments;
     }
   });
+  userPerformance.projects = projects;
   userPerformance.stage = "manager_review";
   await userPerformance.save();
 
@@ -365,18 +381,16 @@ const getReviewAppraisalData = asyncHandler(
       UserPerformance.countDocuments(),
     ]);
 
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          {
-            performances,
-            pagination: getPaginationMeta({ totalItems, page, limit }),
-          },
-          "Performance records fetched successfully",
-        ),
-      );
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          performances,
+          pagination: getPaginationMeta({ totalItems, page, limit }),
+        },
+        "Performance records fetched successfully",
+      ),
+    );
   },
 );
 
@@ -466,18 +480,16 @@ const getAllPerformanceTemplates = asyncHandler(
       MasterPerformance.countDocuments(),
     ]);
 
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          {
-            performanceTemplates,
-            pagination: getPaginationMeta({ totalItems, page, limit }),
-          },
-          "Performance templates fetched successfully",
-        ),
-      );
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          performanceTemplates,
+          pagination: getPaginationMeta({ totalItems, page, limit }),
+        },
+        "Performance templates fetched successfully",
+      ),
+    );
   },
 );
 
@@ -645,18 +657,16 @@ const getManagerReviewAppraisalData = asyncHandler(
       UserPerformance.countDocuments(performanceFilter),
     ]);
 
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          {
-            performances,
-            pagination: getPaginationMeta({ totalItems, page, limit }),
-          },
-          "Performance records fetched successfully",
-        ),
-      );
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          performances,
+          pagination: getPaginationMeta({ totalItems, page, limit }),
+        },
+        "Performance records fetched successfully",
+      ),
+    );
   },
 );
 

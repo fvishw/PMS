@@ -62,6 +62,26 @@ const Competency = z.object({
   indicators: z.array(z.string()),
 });
 
+const AchievementItemSchema = z.object({
+  achievement: z.string().min(1),
+  difficulty: z.string().min(1),
+});
+
+const ProjectAchievementSchema = z.object({
+  name: z.string().min(1),
+  achievements: z.array(AchievementItemSchema).min(1),
+});
+
+const selfReviewKpiPayloadSchema = z.object({
+  userPerformanceId: z.string(),
+  criteria: z.array(selfCriteria),
+  projects: z
+    .array(ProjectAchievementSchema)
+    .min(1, "At least one project with achievements is required"),
+});
+
+const KpiAcceptancePayloadSchema = z.object({});
+
 const MasterPerformancePayload = z.object({
   designationId: z.string().min(1, "DesignationId cannot be empty"),
   kpis: z.array(KpiCriteria),
@@ -71,6 +91,10 @@ const MasterPerformancePayload = z.object({
 type SelfCriteria = z.infer<typeof selfCriteria>;
 type ManagerCriteria = z.infer<typeof managerCriteria>;
 type Competencies = z.infer<typeof CompetenciesSchema>;
+type AchievementItem = z.infer<typeof AchievementItemSchema>;
+type ProjectAchievement = z.infer<typeof ProjectAchievementSchema>;
+type KpiAcceptancePayload = z.infer<typeof KpiAcceptancePayloadSchema>;
+type SelfReviewKpiPayload = z.infer<typeof selfReviewKpiPayloadSchema>;
 
 export {
   SelfCriteriaSchema,
@@ -78,7 +102,13 @@ export {
   adminPayloadSchema,
   selfReviewPayloadSchema,
   MasterPerformancePayload,
+  KpiAcceptancePayloadSchema,
   type SelfCriteria,
   type ManagerCriteria,
   type Competencies,
+  type AchievementItem,
+  type ProjectAchievement,
+  type KpiAcceptancePayload,
+  type SelfReviewKpiPayload,
+  selfReviewKpiPayloadSchema,
 };

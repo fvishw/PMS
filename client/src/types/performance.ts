@@ -41,6 +41,15 @@ type CompetenciesType = {
   _id: string;
   score?: number;
 };
+type Achievement = {
+  achievement: string;
+  difficulty: string;
+};
+
+type ProjectAchievements = {
+  name: string;
+  achievements: Achievement[];
+};
 type AdminComments = {
   remarks?: string;
   recommendation?: string;
@@ -60,8 +69,11 @@ interface PerformanceFormValue {
   areaOfStrength: string;
   areaOfImprovement: string;
   competencies: CompetenciesType[];
+  projects: ProjectAchievements[];
   finalComments: IFinalReview;
 }
+
+interface KpiAcceptanceFormValue {}
 
 interface MasterPerformance {
   designation: {
@@ -133,6 +145,7 @@ interface UserPerformanceForm {
       };
   areaOfStrength: string;
   areaOfImprovement: string;
+  projects: ProjectAchievements[];
   stage:
     | "kpi_acceptance"
     | "self_review"
@@ -187,10 +200,13 @@ export type {
   CompetenciesData,
   Competency,
   PerformanceFormValue,
+  KpiAcceptanceFormValue,
   EditPermissions,
   IFinalReview,
   UserPerformanceForm,
   AllPerformanceTemplate,
   MasterPerformance,
   GetPerformanceTableData,
+  Achievement,
+  ProjectAchievements,
 };

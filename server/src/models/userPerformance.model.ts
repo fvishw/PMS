@@ -7,6 +7,13 @@ export interface IUserPerformance extends IMasterPerformance {
   user: Types.ObjectId;
   parentReviewer: Types.ObjectId;
   adminReviewer: Types.ObjectId;
+  projects: {
+    name: string;
+    achievements: {
+      achievement: string;
+      difficulty: string;
+    }[];
+  }[];
   stage:
     | "kpi_acceptance"
     | "self_review"
@@ -38,6 +45,17 @@ const UserPerformanceSchema = new Schema<IUserPerformance>(
         title: String,
         indicators: [{ type: String }],
         score: { type: Number },
+      },
+    ],
+    projects: [
+      {
+        name: { type: String, required: true },
+        achievements: [
+          {
+            achievement: { type: String, required: true },
+            difficulty: { type: String, required: true },
+          },
+        ],
       },
     ],
     areaOfStrength: { type: String },

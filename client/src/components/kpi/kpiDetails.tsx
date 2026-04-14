@@ -1,30 +1,38 @@
 import { queryClient } from "@/utils/queryClient";
 import ApiErrorMessage from "../ApiErrorMessage";
 import { KpiCriteria } from "@/types/criteria";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import Api from "@/api/api";
 import { Button } from "../ui/button";
-import { Label } from "../ui/label";
 import { Checkbox } from "../ui/checkbox";
+import { Label } from "../ui/label";
 import { termsAndConditions } from "@/types/termsAndConditions";
 import Criteria from "../ui/criteria";
+import { KpiAcceptanceFormValue } from "@/types/performance";
 
 const KpiDetails = ({ criteria }: { criteria: KpiCriteria[] }) => {
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const { mutate, isPending, error } = useMutation({
-    mutationFn: () => Api.submitUserKpis(),
+    mutationFn: (payload: KpiAcceptanceFormValue) =>
+      Api.submitUserKpis(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userKpiDetails"] });
     },
   });
 
   const handleSubmit = () => {
-    mutate();
+    mutate({});
   };
+
+  const canSubmit = useMemo(() => {
+    return isChecked;
+  }, [isChecked]);
+
   if (error) {
     return <ApiErrorMessage message={error.message} />;
   }
+
   return (
     <>
       <div className="border p-4 rounded-md flex justify-between items-center">
@@ -70,7 +78,7 @@ const KpiDetails = ({ criteria }: { criteria: KpiCriteria[] }) => {
         <div className="flex justify-end mt-4 sm:mt-0 pr-2">
           <Button
             onClick={handleSubmit}
-            disabled={isPending || isChecked === false}
+            disabled={isPending || isChecked === false || !canSubmit}
           >
             {isPending ? "Submitting..." : "Submit KPIs"}
           </Button>

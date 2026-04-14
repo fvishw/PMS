@@ -32,7 +32,10 @@ import {
 } from "@/types/apiResponse";
 import { CheckInPayload, ICheckInPayload } from "@/types/chekin";
 import { Goal } from "@/types/goal";
-import { PerformanceFormValue } from "@/types/performance";
+import {
+  KpiAcceptanceFormValue,
+  PerformanceFormValue,
+} from "@/types/performance";
 import { IUserFormData } from "@/types/user";
 import { getDynamicApiUrl } from "@/utils/url";
 import axios, { AxiosInstance } from "axios";
@@ -79,8 +82,8 @@ export class API {
   fetchUserPerformanceForm(): Promise<UserPerformanceFormResponse> {
     return this.request(this.instance.get("/performance/performance-form"));
   }
-  submitUserKpis() {
-    return this.request(this.instance.put("/performance/accept-kpi"));
+  submitUserKpis(data: KpiAcceptanceFormValue) {
+    return this.request(this.instance.put("/performance/accept-kpi", data));
   }
   addUser(data: IUserFormData) {
     return this.request(this.instance.post("/user/add", data));
@@ -89,7 +92,9 @@ export class API {
     return this.request(this.instance.put(`/user/update/${userId}`, data));
   }
   updateUserStatus(userId: string, isActive: boolean) {
-    return this.request(this.instance.patch(`/user/status/${userId}`, { isActive }));
+    return this.request(
+      this.instance.patch(`/user/status/${userId}`, { isActive }),
+    );
   }
 
   getAllUser(params?: PaginationParams): Promise<GetAllUserResponse> {
@@ -156,7 +161,9 @@ export class API {
   fetchAllUserCheckIns(
     params?: PaginationParams,
   ): Promise<GetUserCheckInsResponse> {
-    return this.request(this.instance.get("/check-ins/user-checkins", { params }));
+    return this.request(
+      this.instance.get("/check-ins/user-checkins", { params }),
+    );
   }
   fetchUserKpiDetails(): Promise<GetUserKPiDetails> {
     return this.request(this.instance.get("/performance/user-kpi-details"));
@@ -171,7 +178,9 @@ export class API {
   getAllQuestionByVersion(
     params?: PaginationParams,
   ): Promise<GetCheckInQuestionSets> {
-    return this.request(this.instance.get("/check-ins/question-sets", { params }));
+    return this.request(
+      this.instance.get("/check-ins/question-sets", { params }),
+    );
   }
   setActiveQuestionSet(version: string, designationId: string) {
     return this.request(
@@ -258,9 +267,7 @@ export class API {
   updateGoalById(goalId: string, data: Goal) {
     return this.request(this.instance.put(`/goals/update/${goalId}`, data));
   }
-  getAdminGoals(
-    filter: GoalFilterType & PaginationParams,
-  ): Promise<GetGoals> {
+  getAdminGoals(filter: GoalFilterType & PaginationParams): Promise<GetGoals> {
     return this.request(
       this.instance.get("/goals/get-all/admin", { params: filter }),
     );
@@ -299,7 +306,9 @@ export class API {
     return this.request(this.instance.put("/settings/", data));
   }
   fetchUserPastReports(params?: PaginationParams): Promise<GetUserReports> {
-    return this.request(this.instance.get("/reports/user-past-reports", { params }));
+    return this.request(
+      this.instance.get("/reports/user-past-reports", { params }),
+    );
   }
   fetchAdminReports(filters?: {
     quarter?: string;

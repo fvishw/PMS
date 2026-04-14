@@ -19,6 +19,15 @@ import { IUser } from "@/types/user";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { UserDetailsCard } from "./userDetailsCard";
+import { useFieldArray } from "react-hook-form";
+import SectionWrapper from "./sectionWrapper";
+import { ProjectSection } from "./projectSection";
+
+const createProjectRow = () => ({
+  name: "",
+  achievements: [{ achievement: "", difficulty: "" }],
+});
+
 interface PerformanceFormProps {
   performanceId?: string;
 }
@@ -32,21 +41,25 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
     queryFn: getPerformanceApi(performanceId),
   });
 
+  const { control, handleSubmit, reset, register } =
+    useForm<PerformanceFormValue>({
+      defaultValues: {
+        userPerformanceId: "",
+        areaOfImprovement: "",
+        areaOfStrength: "",
+        criteria: [],
+        competencies: [],
+        projects: [createProjectRow()],
+        finalComments: {},
+      },
+    });
   const {
+    fields: projectFields,
+    append: appendProject,
+    remove: removeProject,
+  } = useFieldArray({
     control,
-    handleSubmit,
-    reset,
-    register,
-    // formState: { errors },
-  } = useForm<PerformanceFormValue>({
-    defaultValues: {
-      userPerformanceId: "",
-      areaOfImprovement: "",
-      areaOfStrength: "",
-      criteria: [],
-      competencies: [],
-      finalComments: {},
-    },
+    name: "projects",
   });
   const stage = data?.userPerformanceRecord?.stage || "";
   const isCompleted = stage === "completed";
@@ -84,17 +97,62 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
   });
 
   const onsubmit = (formData: PerformanceFormValue) => {
-    mutate(formData);
+    const normalizedProjects = formData.projects.map((project) => ({
+      name: project.name.trim(),
+      achievements: project.achievements.map((achievement) => ({
+        achievement: achievement.achievement.trim(),
+        difficulty: achievement.difficulty.trim(),
+      })),
+    }));
+
+    if (
+      permissions.canEditSelf &&
+      !normalizedProjects.some(
+        (project) =>
+          project.name &&
+          project.achievements.some((a) => a.achievement && a.difficulty),
+      )
+    ) {
+      toast.error(
+        "Add at least one project with complete achievement details before submitting.",
+        {
+          position: "top-right",
+        },
+      );
+      return;
+    }
+
+    mutate({
+      ...formData,
+      projects: normalizedProjects.filter(
+        (project) =>
+          project.name &&
+          project.achievements.some((a) => a.achievement && a.difficulty),
+      ),
+    });
   };
 
   const record = data?.userPerformanceRecord;
 
-  const getEntityId = (
-    entity?: string | { _id: string } | null,
-  ): string => {
+  const getEntityId = (entity?: string | { _id: string } | null): string => {
     if (!entity) return "";
     return typeof entity === "string" ? entity : entity._id;
   };
+
+  const permissions: EditPermissions = record
+    ? getPerformancePermission({
+        stage: record?.stage || "",
+        currentUser: currentUser as unknown as IUser,
+        parentReviewer: getEntityId(record?.parentReviewer),
+        adminReviewer: getEntityId(record?.adminReviewer),
+        employeeId: getEntityId(record?.user),
+      })
+    : {
+        canEditSelf: false,
+        canEditManager: false,
+        canEditAdmin: false,
+        canEditUserFinalComments: false,
+      };
 
   useEffect(() => {
     if (record?._id) {
@@ -104,10 +162,16 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
         areaOfImprovement: record.areaOfImprovement || "",
         areaOfStrength: record.areaOfStrength || "",
         competencies: record.competencies || [],
+        projects:
+          record.projects?.length > 0
+            ? record.projects
+            : permissions.canEditSelf
+              ? [createProjectRow()]
+              : [],
         finalComments: record.finalReview || {},
       });
     }
-  }, [record?._id, reset]);
+  }, [permissions.canEditSelf, record, reset]);
 
   if (isLoading) {
     return (
@@ -143,14 +207,6 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
       );
     }
 
-    const permissions: EditPermissions = getPerformancePermission({
-      stage: record?.stage || "",
-      currentUser: currentUser as unknown as IUser,
-      parentReviewer: getEntityId(record?.parentReviewer),
-      adminReviewer: getEntityId(record?.adminReviewer),
-      employeeId: getEntityId(record?.user),
-    });
-
     if (
       isAppraisalEnabled &&
       hasUserAcceptedKpi &&
@@ -159,7 +215,8 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
     ) {
       return (
         <form className="space-y-4" onSubmit={handleSubmit(onsubmit)}>
-          {(currentUser?.role === "manager" || currentUser?.role === "admin") && (
+          {(currentUser?.role === "manager" ||
+            currentUser?.role === "admin") && (
             <UserDetailsCard
               user={record?.user}
               stage={record?.stage}
@@ -172,6 +229,48 @@ export const PerformanceForm = ({ performanceId }: PerformanceFormProps) => {
             permissions={permissions}
             register={register}
           />
+          <SectionWrapper title="Section B: Project Achievements">
+            <div className="border rounded-md p-4 space-y-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <h3 className="font-semibold">Project Achievements</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Add projects with their achievements and difficulties you
+                    faced.
+                  </p>
+                </div>
+                {permissions.canEditSelf ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => appendProject(createProjectRow())}
+                  >
+                    Add Project
+                  </Button>
+                ) : null}
+              </div>
+
+              {projectFields.length === 0 && !permissions.canEditSelf ? (
+                <p className="text-sm text-muted-foreground">
+                  No projects were submitted for this appraisal.
+                </p>
+              ) : null}
+
+              <div className="space-y-4">
+                {projectFields.map((project, projectIndex) => (
+                  <ProjectSection
+                    key={project.id}
+                    projectIndex={projectIndex}
+                    control={control}
+                    register={register}
+                    permissions={permissions}
+                    removeProject={removeProject}
+                    projectFieldsLength={projectFields.length}
+                  />
+                ))}
+              </div>
+            </div>
+          </SectionWrapper>
           <Competencies
             competenciesData={record?.competencies || []}
             permissions={permissions}
