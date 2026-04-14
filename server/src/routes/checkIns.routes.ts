@@ -24,7 +24,7 @@ router.get("/", authMiddleware(["employee", "manager", "admin"]), getCheckIns);
 
 router.get(
   "/past-checkins",
-  authMiddleware(["employee", "admin"]),
+  authMiddleware(["employee", "manager", "admin"]),
   getPastCheckIns,
 );
 
