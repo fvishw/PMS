@@ -62,7 +62,10 @@ export const GoalManagement = () => {
   if (data) {
     contentToDisplay = (
       <div className="space-y-6">
-        <GoalSummaryCards />
+        <GoalSummaryCards
+          stats={data.stats}
+          isLoading={goalsLoading}
+        />
         <GoalFilter
           filter={filter}
           onChange={(newFilter) => {

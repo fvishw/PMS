@@ -2,7 +2,7 @@ import { model, Document, Schema, Types } from "mongoose";
 
 interface ICheckInQuestion extends Document {
   question: string;
-  type: "rating" | "text";
+  type: "rating" | "text" | "star_rating";
   version: string;
   isActive: boolean;
   createdAt: Date;
@@ -13,7 +13,7 @@ const CheckInQuestionSchema = new Schema<ICheckInQuestion>({
   question: { type: String, required: true },
   type: {
     type: String,
-    enum: ["rating", "text"],
+    enum: ["rating", "text", "star_rating"],
   },
   version: { type: String, required: true },
   isActive: { type: Boolean, default: false, required: true },

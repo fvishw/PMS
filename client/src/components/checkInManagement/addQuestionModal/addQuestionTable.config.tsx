@@ -15,7 +15,7 @@ import { RowDragHandle } from "../../customTable";
 
 type QuestionRow = {
   question: string;
-  type: "rating" | "text";
+  type: "rating" | "text" | "star_rating";
 };
 
 type QuestionFieldRow = QuestionRow & {

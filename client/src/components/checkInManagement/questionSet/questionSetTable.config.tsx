@@ -58,7 +58,7 @@ export const columns: ColumnDef<QuestionTableColumn>[] = [
         {row.getValue("isActive") ? (
           <Badge variant="default">Active</Badge>
         ) : (
-          <Badge variant="outline">Inactive</Badge>
+          <Badge variant="destructive">Inactive</Badge>
         )}
       </div>
     ),

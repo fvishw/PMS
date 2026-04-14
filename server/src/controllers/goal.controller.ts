@@ -205,7 +205,7 @@ const getAllGoals = asyncHandler(async (req: Request, res: Response) => {
   if (year) {
     filter.year = Number(year);
   }
-  const [goals, totalItems] = await Promise.all([
+  const [goals, totalItems, allMatchingGoals] = await Promise.all([
     Goal.find(filter)
       .populate({
         path: "owner",
@@ -215,7 +215,32 @@ const getAllGoals = asyncHandler(async (req: Request, res: Response) => {
       .skip(skip)
       .limit(limit),
     Goal.countDocuments(filter),
+    Goal.find(filter),
   ]);
+
+  const stats = {
+    notStartedGoals: 0,
+    completedGoals: 0,
+    atRiskGoals: 0,
+    onTrackGoals: 0,
+    incompleteGoals: 0,
+  };
+
+  allMatchingGoals.forEach((goal) => {
+    const status = goal.getStatus();
+
+    if (status === "completed") {
+      stats.completedGoals += 1;
+    } else if (status === "not_started") {
+      stats.notStartedGoals += 1;
+    } else if (status === "at_risk") {
+      stats.atRiskGoals += 1;
+    } else if (status === "incomplete") {
+      stats.incompleteGoals += 1;
+    } else if (status === "on_track") {
+      stats.onTrackGoals += 1;
+    }
+  });
 
   const formattedGoals = goals.map((goal) => ({
     ...goal.toObject(),
@@ -230,6 +255,7 @@ const getAllGoals = asyncHandler(async (req: Request, res: Response) => {
         200,
         {
           goals: formattedGoals,
+          stats,
           pagination: getPaginationMeta({ totalItems, page, limit }),
         },
         "Goals fetched successfully",

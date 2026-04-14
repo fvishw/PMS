@@ -1,9 +1,7 @@
-import Api from "@/api/api";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useQuery } from "@tanstack/react-query";
 import GoalsSummary from "./GoalsSummary";
-import ApiErrorMessage from "../ApiErrorMessage";
+import type { GetGoals } from "@/types/apiResponse";
 
 function GoalSummaryCardsSkeleton() {
   return (
@@ -23,31 +21,25 @@ function GoalSummaryCardsSkeleton() {
   );
 }
 
-function GoalSummaryCards() {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["sectionCard"],
-    queryFn: () => Api.getGoalCardStatus(),
-  });
-  let summaryData;
-
-  if (error) {
-    return <ApiErrorMessage message={error.message} />;
-  }
-  if (isLoading || !data?.stats) {
+function GoalSummaryCards({
+  stats,
+  isLoading = false,
+}: {
+  stats?: GetGoals["stats"];
+  isLoading?: boolean;
+}) {
+  if (isLoading || !stats) {
     return <GoalSummaryCardsSkeleton />;
-  }
-  if (data?.stats) {
-    summaryData = data.stats;
   }
 
   return (
     <>
       <GoalsSummary
-        notStartedGoals={summaryData?.notStartedGoals ?? 0}
-        completedGoals={summaryData?.completedGoals ?? 0}
-        atRiskGoals={summaryData?.atRiskGoals ?? 0}
-        onTrackGoals={summaryData?.onTrackGoals ?? 0}
-        incompleteGoals={summaryData?.incompleteGoals ?? 0}
+        notStartedGoals={stats.notStartedGoals}
+        completedGoals={stats.completedGoals}
+        atRiskGoals={stats.atRiskGoals}
+        onTrackGoals={stats.onTrackGoals}
+        incompleteGoals={stats.incompleteGoals}
       />
     </>
   );

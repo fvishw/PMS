@@ -30,7 +30,7 @@ const UserCheckInsSchema = new Schema<IUserCheckIns>({
       },
       type: {
         type: String,
-        enum: ["rating", "text"],
+        enum: ["rating", "text", "star_rating"],
       },
       answer: {
         type: String,

@@ -1,7 +1,7 @@
 import z from "zod";
 
 const Question = z.object({
-  type: z.enum(["rating", "text"]),
+  type: z.enum(["rating", "text", "star_rating"]),
   question: z.string().min(1, "Question cannot be empty"),
 });
 

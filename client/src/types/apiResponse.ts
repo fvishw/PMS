@@ -91,6 +91,13 @@ interface GetMasterPerformance {
 
 interface GetGoals {
   goals: Goal[];
+  stats?: {
+    notStartedGoals: number;
+    completedGoals: number;
+    atRiskGoals: number;
+    onTrackGoals: number;
+    incompleteGoals: number;
+  };
   pagination: PaginationMeta;
 }
 

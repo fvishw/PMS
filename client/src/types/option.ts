@@ -13,6 +13,10 @@ const TypeOptions = [
     label: "Rating",
     value: "rating",
   },
+  {
+    label: "Star Rating",
+    value: "star_rating",
+  },
 ];
 
 const currentYear = new Date().getFullYear();

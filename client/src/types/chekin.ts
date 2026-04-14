@@ -43,7 +43,7 @@ interface UserCheckIn {
 type IAnswer = {
   _id: string;
   question: string;
-  type: "rating" | "text";
+  type: "rating" | "text" | "star_rating";
   answer: string;
 };
 
@@ -52,7 +52,7 @@ type UserPastCheckIn = {
     _id: string;
     question: string;
     answer: string;
-    type: "rating" | "text";
+    type: "rating" | "text" | "star_rating";
   }[];
   user: string;
   version: string;
@@ -63,7 +63,7 @@ type UserPastCheckIn = {
 interface ICheckInQuestion {
   _id: string;
   question: string;
-  type: "rating" | "text";
+  type: "rating" | "text" | "star_rating";
   version: string;
   isActive: boolean;
   createdAt: string;

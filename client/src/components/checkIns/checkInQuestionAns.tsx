@@ -1,3 +1,4 @@
+import { Star } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
@@ -8,8 +9,16 @@ export type IQuestion = {
   _id: string;
   question: string;
   answer?: string;
-  type: "rating" | "text";
+  type: "rating" | "text" | "star_rating";
 };
+
+const starRatingOptions = [
+  { label: "1 Star", value: "1" },
+  { label: "2 Stars", value: "2" },
+  { label: "3 Stars", value: "3" },
+  { label: "4 Stars", value: "4" },
+  { label: "5 Stars", value: "5" },
+];
 
 interface CheckInQuestionAnsProps {
   questions: IQuestion[] | null;
@@ -58,6 +67,47 @@ function CheckInQuestionAns(props: CheckInQuestionAnsProps) {
                     </Label>
                   </div>
                 ))}
+              </RadioGroup>
+            </div>
+          ) : checkIn.type === "star_rating" ? (
+            <div className="flex flex-col space-y-1">
+              <RadioGroup
+                className="flex justify-center items-center mt-4 space-x-4"
+                {...(isPastCheckIn
+                  ? {}
+                  : {
+                      onValueChange: (value) =>
+                        setValue(`${idx}.answer`, value),
+                    })}
+                defaultValue={checkIn?.answer || ""}
+              >
+                {starRatingOptions.map((option) => {
+                  const starCount = Number(option.value);
+
+                  return (
+                    <div
+                      key={option.value}
+                      className="flex flex-col items-center space-y-1"
+                    >
+                      <RadioGroupItem
+                        value={option.value}
+                        id={`${checkIn.question}-${option.value}`}
+                        disabled={isPastCheckIn}
+                      />
+                      <Label
+                        htmlFor={`${checkIn.question}-${option.value}`}
+                        className="mt-1 flex items-center gap-0.5 text-sm"
+                      >
+                        {Array.from({ length: starCount }).map((_, starIdx) => (
+                          <Star
+                            key={`${option.value}-${starIdx}`}
+                            className="size-4 fill-amber-400 text-amber-400"
+                          />
+                        ))}
+                      </Label>
+                    </div>
+                  );
+                })}
               </RadioGroup>
             </div>
           ) : (
