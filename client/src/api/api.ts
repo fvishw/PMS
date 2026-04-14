@@ -31,7 +31,7 @@ import {
   GetCurrentQuarterStatus,
 } from "@/types/apiResponse";
 import { CheckInPayload, ICheckInPayload } from "@/types/chekin";
-import { Goal } from "@/types/goal";
+import { Goal, UpdateGoalPayload } from "@/types/goal";
 import {
   KpiAcceptanceFormValue,
   PerformanceFormValue,
@@ -264,7 +264,7 @@ export class API {
   addGoalByAdmin(data: Goal) {
     return this.request(this.instance.post("/goals/add", data));
   }
-  updateGoalById(goalId: string, data: Goal) {
+  updateGoalById(goalId: string, data: UpdateGoalPayload) {
     return this.request(this.instance.put(`/goals/update/${goalId}`, data));
   }
   getAdminGoals(filter: GoalFilterType & PaginationParams): Promise<GetGoals> {

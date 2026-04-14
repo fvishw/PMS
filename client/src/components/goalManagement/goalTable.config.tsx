@@ -3,7 +3,6 @@ import dayjs from "dayjs";
 import { Progress } from "../ui/progress";
 import { Badge } from "../ui/badge";
 import { GoalTableAction } from "./goalTableAction";
-import { IBadgeVariant } from "@/types/badge";
 import { SubTask } from "@/types/goal";
 
 export type GoalRow = {
@@ -17,11 +16,11 @@ export type GoalRow = {
 };
 
 const statusStyles: Record<string, string> = {
-  "On Track": "secondary",
-  "At Risk": "destructive",
-  Completed: "default",
-  Incomplete: "destructive",
-  "Not Started": "outline",
+  "On Track": "bg-sky-100 text-sky-800 border-sky-200",
+  "At Risk": "bg-orange-100 text-orange-800 border-orange-200",
+  Completed: "bg-green-100 text-green-800 border-green-200",
+  Incomplete: "bg-red-100 text-red-800 border-red-200",
+  "Not Started": "bg-slate-100 text-slate-700 border-slate-200",
 };
 
 const statusMapping: Record<string, string> = {
@@ -72,7 +71,7 @@ export const columns: ColumnDef<GoalRow>[] = [
       const statusStyle = statusStyles[currentStatus];
       return (
         <div className="text-center">
-          <Badge variant={statusStyle as IBadgeVariant["variant"]}>
+          <Badge variant="outline" className={statusStyle}>
             {currentStatus}
           </Badge>
         </div>

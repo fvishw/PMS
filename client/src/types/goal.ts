@@ -18,4 +18,10 @@ interface Goal {
   year: number;
 }
 
-export { Goal, SubTask };
+interface UpdateGoalPayload {
+  title: string;
+  dueDate: string | Date;
+  subTasks: Pick<SubTask, "_id" | "title">[];
+}
+
+export { Goal, SubTask, UpdateGoalPayload };

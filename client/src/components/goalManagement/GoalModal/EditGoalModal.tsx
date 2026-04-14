@@ -20,8 +20,7 @@ import { useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import SubTaskItem from "./subTaskItem";
-import { UserSelection } from "./userSelection";
-import { Goal } from "@/types/goal";
+import { Goal, UpdateGoalPayload } from "@/types/goal";
 
 interface EditGoalModalProps {
   goalId: string;
@@ -29,12 +28,12 @@ interface EditGoalModalProps {
   onClose: () => void;
 }
 
-export const EditGoalModal = ({ goalId, isOpen, onClose }: EditGoalModalProps) => {
-  const {
-    data,
-    isLoading,
-    error,
-  } = useQuery({
+export const EditGoalModal = ({
+  goalId,
+  isOpen,
+  onClose,
+}: EditGoalModalProps) => {
+  const { data, isLoading, error } = useQuery({
     queryKey: ["goal", goalId],
     queryFn: async () => Api.getGoalById(goalId),
     enabled: isOpen && !!goalId,
@@ -75,7 +74,8 @@ export const EditGoalModal = ({ goalId, isOpen, onClose }: EditGoalModalProps) =
   }, [data, reset]);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (formData: Goal) => Api.updateGoalById(goalId, formData),
+    mutationFn: (formData: UpdateGoalPayload) =>
+      Api.updateGoalById(goalId, formData),
     onSuccess: () => {
       toast.success("Goal updated successfully", {
         position: "top-right",
@@ -94,17 +94,12 @@ export const EditGoalModal = ({ goalId, isOpen, onClose }: EditGoalModalProps) =
       toast.error("Due date is required.");
       return;
     }
-    const ownerId =
-      typeof formData.owner === "string" ? formData.owner : formData.owner?._id;
-
-    if (!ownerId) {
-      toast.error("Owner is required.");
-      return;
-    }
-
     mutate({
-      ...formData,
-      owner: ownerId,
+      title: formData.title,
+      subTasks: formData.subTasks.map((subTask) => ({
+        _id: subTask._id,
+        title: subTask.title,
+      })),
       dueDate: new Date(formData.dueDate),
     });
   };
@@ -157,10 +152,6 @@ export const EditGoalModal = ({ goalId, isOpen, onClose }: EditGoalModalProps) =
             ))}
           </div>
           <div className="grid gap-2">
-            <Label className="text-sm font-medium">Owner</Label>
-            <UserSelection control={control} disabled />
-          </div>
-          <div className="grid gap-2">
             <span className="text-sm font-medium">Due date</span>
             <Input type="date" {...register("dueDate", { required: true })} />
           </div>
@@ -183,7 +174,8 @@ export const EditGoalModal = ({ goalId, isOpen, onClose }: EditGoalModalProps) =
         <DialogHeader>
           <DialogTitle>Edit Goal</DialogTitle>
           <DialogDescription>
-            Update goal details. Status can only be changed from task completion by owner or manager.
+            Update goal details. Status can only be changed from task completion
+            by owner or manager.
           </DialogDescription>
         </DialogHeader>
         {contentToRender}

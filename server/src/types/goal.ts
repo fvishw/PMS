@@ -19,12 +19,6 @@ const updateGoalSchema = z.object({
       title: z.string().min(1, "Subtask title cannot be empty"),
     }),
   ),
-  owner: z.union([
-    z.string(),
-    z.object({
-      _id: z.string(),
-    }),
-  ]),
   dueDate: z.coerce.date(),
 });
 

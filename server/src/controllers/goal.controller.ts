@@ -126,18 +126,13 @@ const updateGoal = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(404, "Goal with given id not found");
   }
 
-  const { title, owner, dueDate, subTasks } = parsedPayload.data;
-  const ownerId = typeof owner === "string" ? owner : owner._id;
-  if (!Types.ObjectId.isValid(ownerId)) {
-    throw new ApiError(400, "Invalid owner id format.");
-  }
+  const { title, dueDate, subTasks } = parsedPayload.data;
 
   const existingSubTasksMap = new Map(
     goal.subTasks.map((task) => [String(task._id), task.isCompleted]),
   );
 
   goal.title = title;
-  goal.owner = new Types.ObjectId(ownerId);
   goal.dueDate = dueDate;
   const normalizedSubTasks: {
     _id: Types.ObjectId;
@@ -155,7 +150,9 @@ const updateGoal = asyncHandler(async (req: Request, res: Response) => {
     return {
       _id: subTaskId,
       title: task.title,
-      isCompleted: task._id ? Boolean(existingSubTasksMap.get(task._id)) : false,
+      isCompleted: task._id
+        ? Boolean(existingSubTasksMap.get(task._id))
+        : false,
     };
   });
   goal.subTasks = normalizedSubTasks;
@@ -248,19 +245,17 @@ const getAllGoals = asyncHandler(async (req: Request, res: Response) => {
     owner: goal.owner ? (goal.owner as any).fullName : "Unknown",
   }));
 
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        {
-          goals: formattedGoals,
-          stats,
-          pagination: getPaginationMeta({ totalItems, page, limit }),
-        },
-        "Goals fetched successfully",
-      ),
-    );
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        goals: formattedGoals,
+        stats,
+        pagination: getPaginationMeta({ totalItems, page, limit }),
+      },
+      "Goals fetched successfully",
+    ),
+  );
 });
 
 const getGoalById = asyncHandler(async (req: Request, res: Response) => {
