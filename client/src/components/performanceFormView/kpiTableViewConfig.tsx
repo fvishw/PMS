@@ -77,7 +77,7 @@ const getColumns = (): ColumnDef<KPI>[] => [
   },
   {
     id: "managerScore",
-    header: () => <div className="text-center">Manager Score</div>,
+    header: () => <div className="text-center">Parent Reviewer Score</div>,
     cell: ({ row }) => {
       return (
         <span className="text-center">
@@ -92,7 +92,7 @@ const getColumns = (): ColumnDef<KPI>[] => [
   },
   {
     id: "managerComments",
-    header: () => <div className="text-center">Manager Comments</div>,
+    header: () => <div className="text-center">Parent Reviewer Comments</div>,
     cell: ({ row }) => {
       return (
         <span className="text-center">

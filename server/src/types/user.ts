@@ -6,9 +6,7 @@ const userAddPayloadSchema = z.object({
   phoneNumber: z
     .string()
     .trim()
-    .min(7, "Phone number must be at least 7 characters")
-    .max(20, "Phone number must be at most 20 characters")
-    .regex(/^[0-9+\-\s()]+$/, "Invalid phone number"),
+    .regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
   joiningDate: z
     .string()
     .min(1, "Joining date is required")

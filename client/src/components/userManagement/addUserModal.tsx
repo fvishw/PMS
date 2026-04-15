@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { DesignationSelection } from "./designationSelection";
 import { roles } from "./options";
 import { ParentSelection } from "./parentSelection";
@@ -133,6 +133,14 @@ export function AddUserModal({
     }
   };
 
+  const handlePhoneNumberInput = (event: ChangeEvent<HTMLInputElement>) => {
+    const onlyDigits = event.target.value.replace(/\D/g, "").slice(0, 10);
+    setValue("phoneNumber", onlyDigits, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
+
   const modalContent = (
     <DialogContent className="sm:max-w-[700px] h-[90vh] overflow-y-auto">
       <form
@@ -186,10 +194,18 @@ export function AddUserModal({
             <Label htmlFor="phoneNumber">Phone Number</Label>
             <Input
               id="phoneNumber"
-              placeholder="+91 9876543210"
+              type="tel"
+              inputMode="numeric"
+              maxLength={10}
+              placeholder="9876543210"
               {...register("phoneNumber", {
                 required: "Phone Number is required",
+                pattern: {
+                  value: /^\d{10}$/,
+                  message: "Phone Number must be exactly 10 digits",
+                },
               })}
+              onChange={handlePhoneNumberInput}
             />
             <ErrorMessage
               errors={errors}
