@@ -1,12 +1,12 @@
 import { type Request, type Response } from "express";
-import { User } from "@/models/user.model.js";
-import { ApiError } from "@/utils/ApiError.js";
-import asyncHandler from "@/utils/asyncHandler.js";
-import { ApiResponse } from "@/utils/ApiResponse.js";
-import { userAddPayloadSchema, userUpdatePayloadSchema } from "@/types/user.js";
-import emailService from "@/services/emailService/email.service.js";
+import { User } from "../models/user.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { userAddPayloadSchema, userUpdatePayloadSchema } from "../types/user.js";
+import emailService from "../services/emailService/email.service.js";
 import { Types } from "mongoose";
-import { getPaginationMeta, getPaginationParams } from "@/utils/pagination.js";
+import { getPaginationMeta, getPaginationParams } from "../utils/pagination.js";
 
 const escapeRegex = (value: string) =>
   value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

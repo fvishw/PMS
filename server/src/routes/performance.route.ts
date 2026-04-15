@@ -14,8 +14,8 @@ import {
   getReviewAppraisalData,
   getUserPerformanceFormById,
   getManagerReviewAppraisalData,
-} from "@/controllers/performance.controller.js";
-import authMiddleware from "@/middlewares/auth.middleware.js";
+} from "../controllers/performance.controller.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
 
 const router = Router();
 

@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
-import { UserPerformance } from "@/models/userPerformance.model.js";
-import asyncHandler from "@/utils/asyncHandler.js";
-import { ApiError } from "@/utils/ApiError.js";
-import { ApiResponse } from "@/utils/ApiResponse.js";
-import { User } from "@/models/user.model.js";
+import { UserPerformance } from "../models/userPerformance.model.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { User } from "../models/user.model.js";
 import {
   adminPayloadSchema,
   KpiAcceptancePayloadSchema,
@@ -13,11 +13,11 @@ import {
   selfReviewPayloadSchema,
   type ManagerCriteria,
   type SelfCriteria,
-} from "@/types/performance.js";
-import { MasterPerformance, type IKpis } from "@/models/masterPerformance.js";
+} from "../types/performance.js";
+import { MasterPerformance, type IKpis } from "../models/masterPerformance.js";
 import { Types } from "mongoose";
-import Settings from "@/models/settings.model.js";
-import { getPaginationMeta, getPaginationParams } from "@/utils/pagination.js";
+import Settings from "../models/settings.model.js";
+import { getPaginationMeta, getPaginationParams } from "../utils/pagination.js";
 
 const createPerformanceRecord = asyncHandler(
   async (req: Request, res: Response) => {

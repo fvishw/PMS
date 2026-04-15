@@ -1,13 +1,13 @@
-import generateReport from "@/config/aiEngine/geminiEngine.js";
-import { UserReportModel } from "@/models/report.model.js";
-import Settings from "@/models/settings.model.js";
-import { UserPerformance } from "@/models/userPerformance.model.js";
-import { User } from "@/models/user.model.js";
-import { ApiError } from "@/utils/ApiError.js";
-import { ApiResponse } from "@/utils/ApiResponse.js";
-import asyncHandler from "@/utils/asyncHandler.js";
+import generateReport from "../config/aiEngine/geminiEngine.js";
+import { UserReportModel } from "../models/report.model.js";
+import Settings from "../models/settings.model.js";
+import { UserPerformance } from "../models/userPerformance.model.js";
+import { User } from "../models/user.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import asyncHandler from "../utils/asyncHandler.js";
 import type { Request, Response } from "express";
-import { getPaginationMeta, getPaginationParams } from "@/utils/pagination.js";
+import { getPaginationMeta, getPaginationParams } from "../utils/pagination.js";
 
 const getUserReports = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
@@ -26,18 +26,16 @@ const getUserReports = asyncHandler(async (req: Request, res: Response) => {
     UserReportModel.countDocuments(reportFilter),
   ]);
 
-  res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        {
-          reports: userReports,
-          pagination: getPaginationMeta({ totalItems, page, limit }),
-        },
-        "User reports fetched successfully",
-      ),
-    );
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        reports: userReports,
+        pagination: getPaginationMeta({ totalItems, page, limit }),
+      },
+      "User reports fetched successfully",
+    ),
+  );
 });
 
 const generateUserReport = asyncHandler(async (req: Request, res: Response) => {
@@ -191,18 +189,16 @@ const getAdminReports = asyncHandler(async (req: Request, res: Response) => {
     UserReportModel.countDocuments(reportFilter),
   ]);
 
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        {
-          reports,
-          pagination: getPaginationMeta({ totalItems, page, limit }),
-        },
-        "Admin reports fetched successfully",
-      ),
-    );
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        reports,
+        pagination: getPaginationMeta({ totalItems, page, limit }),
+      },
+      "Admin reports fetched successfully",
+    ),
+  );
 });
 
 const getCurrentQuarterReportStatus = asyncHandler(

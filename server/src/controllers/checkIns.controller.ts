@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
 import mongoose, { Types } from "mongoose";
-import { QuestionsPayload, AnswerPayload } from "@/types/checkIns.js";
-import { ApiError } from "@/utils/ApiError.js";
-import asyncHandler from "@/utils/asyncHandler.js";
+import { QuestionsPayload, AnswerPayload } from "../types/checkIns.js";
+import { ApiError } from "../utils/ApiError.js";
+import asyncHandler from "../utils/asyncHandler.js";
 import {
   CheckInQuestions,
   type ICheckInQuestion,
@@ -10,7 +10,7 @@ import {
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User, type IUser } from "../models/user.model.js";
 import UserCheckIns from "../models/userCheckIns.model.js";
-import { getPaginationMeta, getPaginationParams } from "@/utils/pagination.js";
+import { getPaginationMeta, getPaginationParams } from "../utils/pagination.js";
 
 const addCheckIns = asyncHandler(async (req: Request, res: Response) => {
   const { checkIns } = req.body;

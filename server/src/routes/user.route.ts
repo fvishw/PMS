@@ -7,14 +7,14 @@ import {
   getUserProfile,
   updateUser,
   updateUserStatus,
-} from "@/controllers/user.controller.js";
-import authMiddleware from "@/middlewares/auth.middleware.js";
+} from "../controllers/user.controller.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
 import {
   addDesignation,
   getAllDesignations,
   updateDesignation,
   updateDesignationStatus,
-} from "@/controllers/userDesignation.controller.js";
+} from "../controllers/userDesignation.controller.js";
 
 const userRouter = Router();
 

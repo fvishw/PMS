@@ -1,11 +1,11 @@
-import Goal from "@/models/goal.model.js";
-import { MasterPerformance } from "@/models/masterPerformance.js";
-import Settings from "@/models/settings.model.js";
-import { User } from "@/models/user.model.js";
-import { UserPerformance } from "@/models/userPerformance.model.js";
-import { ApiError } from "@/utils/ApiError.js";
-import { ApiResponse } from "@/utils/ApiResponse.js";
-import asyncHandler from "@/utils/asyncHandler.js";
+import Goal from "../models/goal.model.js";
+import { MasterPerformance } from "../models/masterPerformance.js";
+import Settings from "../models/settings.model.js";
+import { User } from "../models/user.model.js";
+import { UserPerformance } from "../models/userPerformance.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import asyncHandler from "../utils/asyncHandler.js";
 import type { Request, Response } from "express";
 import { Types } from "mongoose";
 

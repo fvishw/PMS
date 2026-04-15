@@ -4,8 +4,8 @@ import {
   GMAIL_APP_PASSWORD,
   NODE_ENV,
   SENDER_EMAIL,
-} from "@/constants/env.js";
-import { ApiError } from "@/utils/ApiError.js";
+} from "../../constants/env.js";
+import { ApiError } from "../../utils/ApiError.js";
 import { EmailTemplate } from "./emailTemplate.js";
 
 interface SendEmailPayload {

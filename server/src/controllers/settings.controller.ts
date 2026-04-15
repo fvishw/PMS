@@ -1,8 +1,8 @@
-import Settings, { SETTINGS_NAME } from "@/models/settings.model.js";
-import { SettingsSchema } from "@/types/settings.js";
-import { ApiError } from "@/utils/ApiError.js";
-import { ApiResponse } from "@/utils/ApiResponse.js";
-import asyncHandler from "@/utils/asyncHandler.js";
+import Settings, { SETTINGS_NAME } from "../models/settings.model.js";
+import { SettingsSchema } from "../types/settings.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import asyncHandler from "../utils/asyncHandler.js";
 import type { Request, Response } from "express";
 
 const defaultSettings = {

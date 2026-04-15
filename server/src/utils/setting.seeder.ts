@@ -1,4 +1,4 @@
-import Settings, { SETTINGS_NAME } from "@/models/settings.model.js";
+import Settings, { SETTINGS_NAME } from "../models/settings.model.js";
 
 const initAppraisalSettings = async () => {
   const isSettingExist = await Settings.findOne({

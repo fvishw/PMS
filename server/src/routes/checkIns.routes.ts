@@ -9,9 +9,9 @@ import {
   getAllCheckInQuestionsByVersion,
   activateQuestionSet,
   getAllCheckInQuestions,
-} from "@/controllers/checkIns.controller.js";
+} from "../controllers/checkIns.controller.js";
 
-import authMiddleware from "@/middlewares/auth.middleware.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
 
 const router = Router();
 

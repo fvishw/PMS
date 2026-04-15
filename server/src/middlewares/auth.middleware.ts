@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
-import { User } from "@/models/user.model.js";
-import AuthService from "@/utils/AuthService.js";
+import { User } from "../models/user.model.js";
+import AuthService from "../utils/AuthService.js";
 
 const authMiddleware = (allowedRoles: string[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {

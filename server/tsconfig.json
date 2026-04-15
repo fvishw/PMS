@@ -18,9 +18,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
     "noEmit": false,
-    "moduleResolution": "node16",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "moduleResolution": "node16"
   }
 }

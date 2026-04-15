@@ -3,8 +3,8 @@ import {
   goalCardStats,
   performanceStatus,
   reviewDashboardStats,
-} from "@/controllers/cards.controller.js";
-import authMiddleware from "@/middlewares/auth.middleware.js";
+} from "../controllers/cards.controller.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
 import { Router } from "express";
 
 const router = Router();

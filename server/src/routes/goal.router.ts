@@ -6,8 +6,8 @@ import {
   getGoalsByOwner,
   markAsComplete,
   updateGoal,
-} from "@/controllers/goal.controller.js";
-import authMiddleware from "@/middlewares/auth.middleware.js";
+} from "../controllers/goal.controller.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
 import { Router } from "express";
 
 const router = Router();

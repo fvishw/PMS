@@ -1,12 +1,12 @@
-import { GEMINI_API_KEY } from "@/constants/env.js";
-import type { IUserPerformance } from "@/models/userPerformance.model.js";
+import { GEMINI_API_KEY } from "../../constants/env.js";
+import type { IUserPerformance } from "../../models/userPerformance.model.js";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 import {
   geminiResponseSchema,
   geminiResponseSchemaFormat,
 } from "./geminiResponseSchema.js";
-import { ApiError } from "@/utils/ApiError.js";
+import { ApiError } from "../../utils/ApiError.js";
 dotenv.config();
 
 const ai = new GoogleGenAI({

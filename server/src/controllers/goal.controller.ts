@@ -1,16 +1,16 @@
-import Goal from "@/models/goal.model.js";
-import Settings from "@/models/settings.model.js";
+import Goal from "../models/goal.model.js";
+import Settings from "../models/settings.model.js";
 import {
   GoalSchema,
   markAsCompletedSchema,
   updateGoalSchema,
-} from "@/types/goal.js";
-import { ApiError } from "@/utils/ApiError.js";
-import { ApiResponse } from "@/utils/ApiResponse.js";
-import asyncHandler from "@/utils/asyncHandler.js";
+} from "../types/goal.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import asyncHandler from "../utils/asyncHandler.js";
 import type { Request, Response } from "express";
 import { Types } from "mongoose";
-import { getPaginationMeta, getPaginationParams } from "@/utils/pagination.js";
+import { getPaginationMeta, getPaginationParams } from "../utils/pagination.js";
 
 const isGoalCompletedFromSubTasks = (
   subTasks: { isCompleted: boolean }[],

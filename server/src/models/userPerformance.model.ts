@@ -1,5 +1,5 @@
-import type { Quarter } from "@/constants/quarter.js";
-import { QUARTERS } from "@/constants/quarter.js";
+import type { Quarter } from "../constants/quarter.js";
+import { QUARTERS } from "../constants/quarter.js";
 import { Schema, model, Types } from "mongoose";
 import type { IMasterPerformance } from "./masterPerformance.js";
 

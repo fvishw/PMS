@@ -5,8 +5,8 @@ import {
   getCurrentQuarterReportStatus,
   getReportById,
   getUserReports,
-} from "@/controllers/report.controller.js";
-import authMiddleware from "@/middlewares/auth.middleware.js";
+} from "../controllers/report.controller.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
 import { Router } from "express";
 
 const router = Router();

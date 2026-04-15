@@ -1,10 +1,10 @@
 import type { Request, Response } from "express";
-import asyncHandler from "@/utils/asyncHandler.js";
-import { ApiError } from "@/utils/ApiError.js";
-import { User } from "@/models/user.model.js";
-import { ApiResponse } from "@/utils/ApiResponse.js";
-import AuthService from "@/utils/AuthService.js";
-import EmailService from "@/services/emailService/email.service.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import { ApiError } from "../utils/ApiError.js";
+import { User } from "../models/user.model.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import AuthService from "../utils/AuthService.js";
+import EmailService from "../services/emailService/email.service.js";
 import z from "zod";
 
 const changePasswordPayloadSchema = z.object({

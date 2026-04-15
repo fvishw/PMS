@@ -1,4 +1,4 @@
-import { QUARTERS } from "@/constants/quarter.js";
+import { QUARTERS } from "../constants/quarter.js";
 import z from "zod";
 
 const SettingsSchema = z.object({
