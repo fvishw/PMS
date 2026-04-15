@@ -32,7 +32,13 @@ import {
 
 export const description = "An interactive area chart"
 
-const chartData = [
+type ChartDatum = {
+  date: string
+  desktop: number
+  mobile: number
+}
+
+const chartData: ChartDatum[] = [
   { date: "2024-04-01", desktop: 222, mobile: 150 },
   { date: "2024-04-02", desktop: 97, mobile: 180 },
   { date: "2024-04-03", desktop: 167, mobile: 120 },
@@ -247,7 +253,7 @@ export function ChartAreaInteractive() {
               axisLine={false}
               tickMargin={8}
               minTickGap={32}
-              tickFormatter={(value) => {
+              tickFormatter={(value: string) => {
                 const date = new Date(value)
                 return date.toLocaleDateString("en-US", {
                   month: "short",
@@ -259,7 +265,7 @@ export function ChartAreaInteractive() {
               cursor={false}
               content={
                 <ChartTooltipContent
-                  labelFormatter={(value) => {
+                  labelFormatter={(value: string) => {
                     return new Date(value).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
