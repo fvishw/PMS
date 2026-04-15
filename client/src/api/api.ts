@@ -103,6 +103,14 @@ export class API {
   getUserProfile(): Promise<GetUserProfileResponse> {
     return this.request(this.instance.get("/user/profile"));
   }
+  changePassword(oldPassword: string, newPassword: string) {
+    return this.request(
+      this.instance.put("/user/auth/change-password", {
+        oldPassword,
+        newPassword,
+      }),
+    );
+  }
 
   fetchAllDesignations(
     role?: string,

@@ -5,6 +5,14 @@ import { User } from "@/models/user.model.js";
 import { ApiResponse } from "@/utils/ApiResponse.js";
 import AuthService from "@/utils/AuthService.js";
 import EmailService from "@/services/emailService/email.service.js";
+import z from "zod";
+
+const changePasswordPayloadSchema = z.object({
+  oldPassword: z.string().min(1, "Old password is required"),
+  newPassword: z
+    .string()
+    .min(8, "New password must be at least 8 characters long"),
+});
 
 const signUp = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -172,6 +180,55 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, null, "Password reset successful"));
 });
 
+const changePassword = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized");
+  }
+
+  const parsedPayload = changePasswordPayloadSchema.safeParse(req.body);
+
+  if (!parsedPayload.success) {
+    const firstIssue = parsedPayload.error.issues[0];
+    throw new ApiError(400, firstIssue?.message || "Invalid request payload");
+  }
+
+  const { oldPassword, newPassword } = parsedPayload.data;
+
+  if (oldPassword === newPassword) {
+    throw new ApiError(
+      400,
+      "New password must be different from your current password",
+    );
+  }
+
+  const user = await User.findOne({
+    _id: userId,
+    isActive: { $ne: false },
+  });
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  if (!user.isSignUpComplete || !user.password) {
+    throw new ApiError(400, "Password has not been set for this account");
+  }
+
+  if (!user.comparePassword(oldPassword)) {
+    throw new ApiError(401, "Current password is incorrect");
+  }
+
+  user.password = newPassword;
+  user.postPasswordResetCleanup();
+  await user.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Password changed successfully"));
+});
+
 export {
   signUp,
   login,
@@ -179,4 +236,5 @@ export {
   sendResetLink,
   verifyPasswordResetLink,
   resetPassword,
+  changePassword,
 };

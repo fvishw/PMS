@@ -7,6 +7,7 @@ import {
   signUp,
   verifyPasswordResetLink,
   resetPassword,
+  changePassword,
 } from "@/controllers/userAuth.controller.js";
 
 const userAuth = Router();
@@ -26,5 +27,11 @@ userAuth.post("/send-reset-link", sendResetLink);
 userAuth.post("/verify-password-reset-link", verifyPasswordResetLink);
 
 userAuth.post("/reset-password", resetPassword);
+
+userAuth.put(
+  "/change-password",
+  authMiddleware(["admin", "employee", "manager"]),
+  changePassword,
+);
 
 export default userAuth;

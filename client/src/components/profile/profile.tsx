@@ -2,20 +2,34 @@ import Api from "@/api/api";
 import ApiErrorMessage from "@/components/ApiErrorMessage";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardAction,
   CardContent,
+  CardDescription as UiCardDescription,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type { ReactNode } from "react";
+import { useForm } from "react-hook-form";
 import {
   IconBriefcase,
   IconCalendarEvent,
+  IconEye,
+  IconEyeClosed,
+  IconKey,
   IconMail,
   IconPhone,
   IconRosetteDiscountCheck,
@@ -24,6 +38,14 @@ import {
   IconUsersGroup,
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
+import { toast } from "sonner";
+import { useState } from "react";
+
+type ChangePasswordFormValues = {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+};
 
 function getInitials(name?: string) {
   if (!name) return "NA";
@@ -65,10 +87,53 @@ function ProfileField({
 }
 
 function Profile() {
+  const [isOldPasswordVisible, setIsOldPasswordVisible] = useState(false);
+  const [isNewPasswordVisible, setIsNewPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
+    useState(false);
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["profile"],
     queryFn: () => Api.getUserProfile(),
   });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm<ChangePasswordFormValues>({
+    defaultValues: {
+      oldPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+  });
+
+  const newPasswordValue = watch("newPassword");
+
+  const { mutate: changePassword, isPending: isChangingPassword } =
+    useMutation({
+      mutationFn: ({
+        oldPassword,
+        newPassword,
+      }: {
+        oldPassword: string;
+        newPassword: string;
+      }) => Api.changePassword(oldPassword, newPassword),
+      onSuccess: () => {
+        toast.success("Password changed successfully", {
+          position: "top-right",
+        });
+        reset();
+      },
+      onError: (mutationError) => {
+        toast.error(mutationError.message, {
+          position: "top-right",
+        });
+      },
+    });
+
   const user = data?.user;
 
   if (isLoading) {
@@ -92,6 +157,13 @@ function Profile() {
   const joiningDate = user?.joiningDate
     ? dayjs(user.joiningDate).format("D MMM YYYY")
     : "Not available";
+
+  const onSubmit = (formData: ChangePasswordFormValues) => {
+    changePassword({
+      oldPassword: formData.oldPassword,
+      newPassword: formData.newPassword,
+    });
+  };
 
   return (
     <div className="w-full space-y-4">
@@ -179,6 +251,149 @@ function Profile() {
               value={user?.adminReviewer?.fullName || "Not assigned"}
             />
           </div>
+        </CardContent>
+      </Card>
+
+      <Card className="mx-auto w-full max-w-5xl">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-xl">
+            <IconKey size={18} />
+            Change Password
+          </CardTitle>
+          <UiCardDescription>
+            Update your password by entering your current password and a new
+            one.
+          </UiCardDescription>
+        </CardHeader>
+        <CardContent>
+          <form
+            className="grid gap-4 md:grid-cols-2"
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <Field>
+              <FieldLabel htmlFor="oldPassword">Current Password</FieldLabel>
+              <div className="relative">
+                <Input
+                  id="oldPassword"
+                  type={isOldPasswordVisible ? "text" : "password"}
+                  {...register("oldPassword", {
+                    required: "Current password is required",
+                  })}
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  onClick={() =>
+                    setIsOldPasswordVisible((previous) => !previous)
+                  }
+                  aria-label={
+                    isOldPasswordVisible
+                      ? "Hide current password"
+                      : "Show current password"
+                  }
+                >
+                  {isOldPasswordVisible ? (
+                    <IconEye size={18} />
+                  ) : (
+                    <IconEyeClosed size={18} />
+                  )}
+                </button>
+              </div>
+              <FieldError errors={[errors.oldPassword]} />
+            </Field>
+
+            <div className="hidden md:block" />
+
+            <Field>
+              <FieldLabel htmlFor="newPassword">New Password</FieldLabel>
+              <div className="relative">
+                <Input
+                  id="newPassword"
+                  type={isNewPasswordVisible ? "text" : "password"}
+                  {...register("newPassword", {
+                    required: "New password is required",
+                    minLength: {
+                      value: 8,
+                      message: "New password must be at least 8 characters long",
+                    },
+                    validate: (value) =>
+                      value !== watch("oldPassword") ||
+                      "New password must be different from your current password",
+                  })}
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  onClick={() =>
+                    setIsNewPasswordVisible((previous) => !previous)
+                  }
+                  aria-label={
+                    isNewPasswordVisible
+                      ? "Hide new password"
+                      : "Show new password"
+                  }
+                >
+                  {isNewPasswordVisible ? (
+                    <IconEye size={18} />
+                  ) : (
+                    <IconEyeClosed size={18} />
+                  )}
+                </button>
+              </div>
+              <FieldError errors={[errors.newPassword]} />
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="confirmPassword">
+                Confirm New Password
+              </FieldLabel>
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type={isConfirmPasswordVisible ? "text" : "password"}
+                  {...register("confirmPassword", {
+                    required: "Please confirm your new password",
+                    validate: (value) =>
+                      value === newPasswordValue || "Passwords do not match",
+                  })}
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  onClick={() =>
+                    setIsConfirmPasswordVisible((previous) => !previous)
+                  }
+                  aria-label={
+                    isConfirmPasswordVisible
+                      ? "Hide confirm password"
+                      : "Show confirm password"
+                  }
+                >
+                  {isConfirmPasswordVisible ? (
+                    <IconEye size={18} />
+                  ) : (
+                    <IconEyeClosed size={18} />
+                  )}
+                </button>
+              </div>
+              <FieldError errors={[errors.confirmPassword]} />
+            </Field>
+
+            <div className="md:col-span-2">
+              <FieldGroup className="gap-3">
+                <FieldDescription>
+                  Use at least 8 characters for your new password.
+                </FieldDescription>
+                <Button type="submit" disabled={isChangingPassword}>
+                  {isChangingPassword ? (
+                    <Spinner className="size-4" />
+                  ) : (
+                    "Change Password"
+                  )}
+                </Button>
+              </FieldGroup>
+            </div>
+          </form>
         </CardContent>
       </Card>
     </div>
