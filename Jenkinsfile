@@ -2,7 +2,7 @@ pipeline{
   agent any
   stages{
     stage("test"){
-      step{
+      steps{
         sh echo "running testing...."
       }
     }
