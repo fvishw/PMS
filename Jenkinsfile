@@ -3,22 +3,22 @@ pipeline{
   stages{
     stage("test"){
       steps{
-        sh echo "running testing...."
+        echo "running testing...."
       }
     }
     stage("build"){
       steps{
-        sh echo "build artifact"
+        echo "build artifact"
       }
     }
     stage("publish"){
       steps{
-        sh echo "publish artifact to docker hub"
+        echo "publish artifact to docker hub"
       }
     }
     stage("deploy"){
       steps{
-        sh echo "deploying app  to ec2"
+        echo "deploying app  to ec2"
       }
     }
   }
